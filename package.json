@@ -1,0 +1,32 @@
+{
+  "name": "tripfoliobackend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tripfolio/TripfolioBackEnd.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tripfolio/TripfolioBackEnd/issues"
+  },
+  "homepage": "https://github.com/Tripfolio/TripfolioBackEnd#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "drizzle-kit": "^0.31.1",
+    "drizzle-orm": "^0.44.0",
+    "express": "^5.1.0",
+    "pg": "^8.16.0"
+  }
+}

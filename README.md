@@ -1,7 +1,7 @@
 # 🌍 Tripfolio Backend
 📌 這是 **Tripfolio** 的後端專案，提供 RESTful API 支援前端操作，包含會員管理、行程規劃、地圖資訊與資料庫串接功能。
 <br>
-📌 搭配前端專案請參考 → [link](https://github.com/LeoChen517)
+📌 搭配前端專案請參考 → [link](https://github.com/Tripfolio/TripfolioFrontEnd)
 
 ## 開發環境
 - Node.js   
@@ -10,7 +10,7 @@
 ## 後端
 - Express
 ## 資料庫
-	@@ -31,17 +51,27 @@
+- PostgreSQL
 ## 安裝步驟
 1. 克隆這個專案：
     ```bash

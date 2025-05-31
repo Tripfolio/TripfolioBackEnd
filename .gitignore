@@ -13,6 +13,7 @@ node_modules/
 # System files
 .DS_Store
 
+
 # Build output
 dist/
 dist-ssr/
@@ -39,3 +40,6 @@ cypress/screenshots/
 
 # 假資料 API
 backend/mock/
+
+# Drizzle ORM migration meta files
+drizzle/meta/

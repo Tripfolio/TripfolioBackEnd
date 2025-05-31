@@ -1,4 +1,3 @@
-// schema.js
 const { pgTable, serial, text, integer } = require('drizzle-orm/pg-core')
 
 const itineraryPlaces = pgTable('itinerary_places', {

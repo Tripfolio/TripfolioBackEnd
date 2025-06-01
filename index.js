@@ -1,16 +1,23 @@
 const express = require("express");
+const app = express();
 const cors = require("cors");
 
-const app = express();
+const authRoutes = require("./src/routes/authRoutes");
+
+console.log("✅ 已掛載 /api/login 路由");
+
+
 app.use(
   cors({
     origin: "http://localhost:5173",
-    credentials: true,
+    method: ["GET", "POST", "PUT", "DELETE"],
   })
 );
-app.use(express.json());
 
-const PORT = process.env.PORT || 3000;
+app.use(express.json());
+app.use('/api', authRoutes)
+
+const PORT = 3000;
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`server running on port ${PORT}`);
 });

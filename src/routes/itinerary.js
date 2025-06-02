@@ -1,4 +1,3 @@
-// routes/itinerary.js
 const express = require('express')
 const router = express.Router()
 const { db } = require('../db/index')
@@ -7,7 +6,7 @@ const { and, eq } = require('drizzle-orm')
 
 router.post('/add-place', async (req, res) => {
   const { itineraryId, name, address } = req.body
-  if (!itineraryId || !name || name === 'undefined') {
+  if (!itineraryId || typeof name !== 'string' || !name.trim()) {
     return res
       .status(400)
       .json({ success: false, message: '缺少必要參數或參數錯誤' })

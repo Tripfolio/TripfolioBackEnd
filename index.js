@@ -3,9 +3,8 @@ const app = express();
 const cors = require("cors");
 
 const authRoutes = require("./src/routes/authRoutes");
-
-console.log("✅ 已掛載 /api/login 路由");
-
+const protectedRoutes = require("./src/routes/protectedRoutes");
+app.use('/api', protectedRoutes);
 
 app.use(
   cors({

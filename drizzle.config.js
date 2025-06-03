@@ -5,7 +5,7 @@ dotenv.config();
 
 module.exports = defineConfig({
   out: "./src/drizzle",
-  schema: './src/models',
+  schema: "./src/models",
   dialect: "postgresql",
   dbCredentials: {
     url: process.env.DATABASE_URL,

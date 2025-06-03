@@ -3,7 +3,7 @@ const { itineraryPlaces } = require('../models/itinerary')
 const { and, eq } = require('drizzle-orm')
 
 async function addPlace(req, res){
-  const { itineraryId, name, address } = req.body
+  const { itineraryId, name, address, photo } = req.body
   if (!itineraryId || typeof name !== 'string' || !name.trim()) {
     return res
       .status(400)
@@ -14,7 +14,8 @@ async function addPlace(req, res){
     await db.insert(itineraryPlaces).values({
       itineraryId,
       name,
-      address
+      address,
+      photo
     })
     res.json({ success: true })
   } catch (err) {

@@ -4,7 +4,8 @@ const itineraryPlaces = pgTable('itinerary_places', {
   id: serial('id').primaryKey(),
   itineraryId: integer('itinerary_id'),
   name: text('name'),
-  address: text('address')
+  address: text('address'),
+  photo: text('photo')
 })
 
 module.exports = {

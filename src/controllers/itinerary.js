@@ -1,5 +1,5 @@
-const { db } = require('../db/index')
-const { itineraryPlaces } = require('../db/schema')
+const { db } = require('../config/db')
+const { itineraryPlaces } = require('../models/itinerary')
 const { and, eq } = require('drizzle-orm')
 
 async function addPlace(req, res){

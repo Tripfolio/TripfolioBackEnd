@@ -1,16 +1,17 @@
-const express = require("express");
-const cors = require("cors");
+const express = require('express');
+const cors = require('cors');
+const memberRoutes = require('./src/routes/memberRoutes');
 
 const app = express();
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-);
+require('dotenv').config();
+
+app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
+app.use('/api', memberRoutes);
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+    console.log(`Server runnung on port ${PORT}`);
 });

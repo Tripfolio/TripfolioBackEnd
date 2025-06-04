@@ -1,7 +1,6 @@
 const { db } = require("../config/db");
 const { emailPreferences } = require("../models/emailPreferences");
 const { eq } = require("drizzle-orm");
-app.use(express.json());
 
 async function getPreferences(req, res) {
   const userId = req.user.id;

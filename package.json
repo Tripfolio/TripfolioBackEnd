@@ -16,7 +16,8 @@
     "drizzle-kit": "^0.31.1",
     "drizzle-orm": "^0.43.1",
     "express": "^5.1.0",
-    "pg": "^8.16.0"
+    "pg": "^8.16.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

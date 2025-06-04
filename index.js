@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
-
+const dotenv = require("dotenv");
+dotenv.config();
+const tripSharesRoute = require("./src/routes/tripSharesRoute");
 const app = express();
 app.use(
   cors({
@@ -9,6 +11,8 @@ app.use(
   })
 );
 app.use(express.json());
+
+app.use("/api/trip-shares", tripSharesRoute);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

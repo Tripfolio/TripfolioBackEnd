@@ -1,0 +1,35 @@
+{
+  "env": {
+    "node": true,
+    "es2021": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 12
+  },
+  "rules": {
+    // ✅ 基本防錯
+    "no-console": "warn",                  // 避免太多 console.log
+    "eqeqeq": "error",                     // 要求使用 === 和 !==
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "no-undef": "error",
+    "no-use-before-define": ["error", { "functions": false, "classes": true }],
+    "no-empty": ["error", { "allowEmptyCatch": false }],
+    "no-empty-function": ["warn", { "allow": ["arrowFunctions"] }],
+    "require-await": "warn",
+    "no-throw-literal": "error",
+    "default-case": "error",
+
+    // ✅ 排版建議（非強制格式）
+    "comma-dangle": "off",
+    "semi": "off",
+    "quotes": "off",
+    "indent": "off",
+    "space-before-function-paren": "off",
+    "object-curly-spacing": "off",
+    "key-spacing": "off",
+    "spaced-comment": "off",
+    "keyword-spacing": "off",
+    "curly": "off",
+    "no-multiple-empty-lines": "off"
+  }
+}

@@ -14,7 +14,7 @@
 ## 安裝步驟
 1. 克隆這個專案：
     ```bash
-    git clone https://github.com/LeoChen517/Tripfolio-Backend.git
+    git clone https://github.com/Tripfolio/TripfolioBackEnd.git
     ```
 2. 安裝依賴：
     ```bash

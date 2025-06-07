@@ -1,14 +1,14 @@
 const { pgTable, serial, text, varchar, date, timestamp, integer } = require('drizzle-orm/pg-core');
 
-const schedules = pgTable('schedules', {
+const travelSchedules = pgTable('travel_schedules', {
     id: serial('id').primaryKey(),
     memberId: integer('member_id').notNull(),
-    title: varchar('title', { length: 10 }),
-    phone: varchar('phone', { length: 20 }),
-    email: varchar('email', { length:100 }),
-    birthday: date('birthday'),
-    password: varchar('password', { length:100 }),
-    avatar: text('avatar'),
+    title: varchar('title', { length: 20 }).notNull(),
+    startDate: date('start_date').notNull(),
+    endDate: date('end_date').notNull(),
+    description: text('description'),
+    coverURL: text('cover_url'),
+    createdAt: timestamp('created_at').defaultNow(),
 });
 
-module.exports = { members };
+module.exports = { travelSchedules };

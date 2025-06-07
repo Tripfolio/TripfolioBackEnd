@@ -7,8 +7,27 @@ on:
     branches: [main, dev]
 
 jobs:
-  install-lint-start:
+  backend-ci:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ci_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/ci_db
+      PORT: 3000
 
     steps:
       - name: Checkout repository
@@ -22,13 +41,21 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Create .env file (if exists)
-        run: cp .env.example .env || echo " Skipping .env creation, .env.example not found."
+      - name: Run ESLint (warn but pass)
+        run: npm run lint || true
 
-      - name: Run ESLint for code quality
-        run: |
-          npm run lint || echo " Lint warnings found."
+      - name: Validate Drizzle schema
+        run: npx drizzle-kit generate:pg
 
-      - name: Try starting backend (health check only)
+      - name: Push schema to test DB
         run: |
-          timeout 5s npm run dev || echo " Backend started or timed out (OK for CI)"
+          npx drizzle-kit push || (echo "❌ Schema push failed" && exit 1)
+
+      - name: Introspect DB schema (detect drift)
+        run: |
+          npx drizzle-kit introspect || (echo "❌ Schema introspection failed" && exit 1)
+
+      - name: Start backend in background
+        run: |
+          nohup npm run dev > server.log 2>&1 &
+          sleep 5

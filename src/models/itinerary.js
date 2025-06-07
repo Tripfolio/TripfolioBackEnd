@@ -1,13 +1,15 @@
-const { pgTable, serial, text, integer } = require('drizzle-orm/pg-core')
+const { pgTable, serial, text, integer, time } = require("drizzle-orm/pg-core");
 
-const itineraryPlaces = pgTable('itinerary_places', {
-  id: serial('id').primaryKey(),
-  itineraryId: integer('itinerary_id'),
-  name: text('name'),
-  address: text('address'),
-  photo: text('photo')
-})
+const itineraryPlaces = pgTable("itinerary_places", {
+  id: serial("id").primaryKey(),
+  itineraryId: integer("itinerary_id"),
+  name: text("name"),
+  address: text("address"),
+  photo: text("photo"),
+  arrivalTime: time("arrival_time"),
+  leaveTime: time("leave_time"),
+});
 
 module.exports = {
-  itineraryPlaces
-}
+  itineraryPlaces,
+};

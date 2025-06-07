@@ -1,7 +1,7 @@
 const { db } = require('../config/db');
-const { members } = require('../models/schema');
+const { members } = require('../models/scheduleschema');
 const { eq } = require('drizzle-orm');
-const validatePassword = require('../utils/validatePassword');
+const validatePassword = require('../utils/generateFilename');
 
 //抓取會員名單
 exports.getMember = async (req, res) => {

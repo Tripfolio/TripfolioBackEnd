@@ -4,3 +4,6 @@ dist/
 *.log
 npm-debug.log*
 .DS_Store
+
+#忽略測試用JWT產生器
+getToken.js

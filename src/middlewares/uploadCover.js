@@ -3,6 +3,7 @@ const multerS3 = require('multer-s3');
 const s3 = require('../config/s3');
 const path = require('path')
 
+//圖片上傳s3
 const uploadCover = multer({
     storage: multerS3({
         s3: s3,

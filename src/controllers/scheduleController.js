@@ -1,6 +1,6 @@
 const { db } = require("../config/db");
 const { travelSchedules } = require("../models/scheduleSchema");
-
+const { eq } = require("drizzle-orm");
 
 //建立行程
 const createSchedule = async (req, res) => {
@@ -26,7 +26,7 @@ const createSchedule = async (req, res) => {
             startDate,
             endDate,
             description,
-            coverURL,
+            coverURL: coverURL
         })
         .returning();
     
@@ -44,4 +44,23 @@ const createSchedule = async (req, res) => {
     } 
 };
 
-module.exports = { createSchedule };
+
+//刪除行程
+const deleteSchedule = async (req, res) => {
+    const memberId = req.user.id;
+    const scheduleId = Number(req.params.id);
+
+    try {
+        const deleted = await db.delete(travelSchedules)
+        .where(eq(travelSchedules.id, scheduleId));
+
+        res.json({ message: "刪除成功"});
+    } catch (err) {
+        console.error('刪除失敗', err);
+        res.status(500).json({ message:"刪除失敗", error: err.message});
+    }
+};
+
+
+
+module.exports = { createSchedule, deleteSchedule };

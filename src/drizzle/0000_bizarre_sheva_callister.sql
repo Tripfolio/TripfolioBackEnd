@@ -4,8 +4,8 @@ CREATE TABLE "itinerary_places" (
 	"name" text,
 	"address" text,
 	"photo" text,
-	"arrival_time" time,
-	"leave_time" time
+	"arrival_hour" integer,
+	"arrival_minute" integer
 );
 --> statement-breakpoint
 CREATE TABLE "members" (

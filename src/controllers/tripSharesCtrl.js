@@ -1,13 +1,14 @@
 const { tripShares } = require("../models/tripShares");
 const { trips } = require("../models/trips"); //需確認有該檔案(行程資料)
+const { users } = require("../models/users"); //需確認有該檔案(會員資料)
 const { db } = require("../config/db");
 const { v4: uuidv4 } = require("uuid");
 const { eq } = require("drizzle-orm");
 
 const shareTrip = async (req, res) => {
   const { tripId } = req.params;
-  const { sharedWithUserId, permission } = req.body;
-  const sharedByUserId = req.user?.id;
+  const { permission } = req.body;
+  const userId = req.user.id;
 
   const trip = await db.query.trips.findFirst({
     where: (trips, { eq }) => eq(trips.id, tripId),
@@ -17,7 +18,7 @@ const shareTrip = async (req, res) => {
     return res.status(404).json({ message: "找不到該行程" });
   }
 
-  if (trip.createdBy !== sharedByUserId) {
+  if (trip.createdBy !== userId) {
     return res.status(403).json({ message: "你沒有權限分享這個行程" });
   }
 
@@ -25,31 +26,18 @@ const shareTrip = async (req, res) => {
     return res.status(400).json({ message: "權限值無效" });
   }
 
-  const existingShare = await db.query.tripShares.findFirst({
-    where: (tripShares, { and, eq }) =>
-      and(
-        eq(tripShares.tripId, tripId),
-        eq(tripShares.sharedWithUserId, sharedWithUserId)
-      ),
-  });
-
-  if (existingShare) {
-    return res.status(409).json({ message: "已經分享給該使用者" });
-  }
-
   const token = uuidv4();
 
   await db.insert(tripShares).values({
     tripId,
-    sharedWithUserId,
-    sharedByUserId,
-    permission,
+    createdBy: userId,
     token,
+    permission,
   });
 
   res.status(201).json({
     message: "分享成功",
-    shareLink: `${process.env.SHARE_BASE_URL}/Link/${token}`,
+    shareLink: `${process.env.SHARE_BASE_URL}/GetInvite/${token}`,
   });
 };
 
@@ -71,9 +59,9 @@ const getTripShareList = async (req, res) => {
   const shareList = await db.query.tripShares.findMany({
     where: (tripShares, { eq }) => eq(tripShares.tripId, tripId),
     columns: {
-      sharedWithUserId: true,
+      token: true,
       permission: true,
-      createdTime: true,
+      sharedWithUserId: true,
     },
   });
   res.json(shareList);
@@ -158,7 +146,6 @@ const viewSharedTrip = async (req, res) => {
   }
 };
 
-// PUT /api/trip-shares/by-token/:token（已驗證 token + 登入 + editor 權限）
 const editSharedTrip = async (req, res) => {
   try {
     const { tripId } = req.sharedTrip;
@@ -176,6 +163,84 @@ const editSharedTrip = async (req, res) => {
   }
 };
 
+const getInviteInfo = async (req, res) => {
+  const { token } = req.params;
+  const userId = req.user?.id;
+
+  try {
+    const share = await db.query.tripShares.findFirst({
+      where: (tripShares, { eq }) => eq(tripShares.token, token),
+    });
+
+    if (!share) {
+      return res.status(404).json({ message: "分享連結不存在或已失效" });
+    }
+
+    const { tripId, permission, sharedWithUserId } = share;
+
+    // 取得 trip 資料
+    const trip = await db.query.trips.findFirst({
+      where: (trips, { eq }) => eq(trips.id, tripId),
+    });
+
+    if (!trip) {
+      return res.status(404).json({ message: "找不到對應的行程資料" });
+    }
+
+    // 主揪資料
+    const owner = await db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.id, trip.createdBy),
+    });
+
+    const alreadyJoined = sharedWithUserId === userId;
+
+    res.json({
+      trip: {
+        id: trip.id,
+        title: trip.title,
+        date: trip.date,
+        ownerName: owner?.name || "主揪",
+        permission,
+      },
+      alreadyJoined,
+    });
+  } catch (err) {
+    console.error("getInviteInfo error:", err);
+    res.status(500).json({ message: "伺服器錯誤" });
+  }
+};
+
+const acceptShare = async (req, res) => {
+  const { token } = req.params;
+  const userId = req.user?.id;
+
+  try {
+    const share = await db.query.tripShares.findFirst({
+      where: (tripShares, { eq }) => eq(tripShares.token, token),
+    });
+
+    if (!share) {
+      return res.status(404).json({ message: "分享不存在或已失效" });
+    }
+
+    // 防止重複加入
+    if (share.sharedWithUserId === userId) {
+      return res.status(409).json({ message: "你已是共編者" });
+    }
+
+    // 更新這筆分享為你
+    await db
+      .update(tripShares)
+      .set({ sharedWithUserId: userId })
+      .where((tripShares, { eq }) => eq(tripShares.token, token));
+
+    res.json({ message: "已成功加入共編者" });
+  } catch (err) {
+    console.error("acceptShare error:", err);
+    res.status(500).json({ message: "伺服器錯誤" });
+  }
+};
+
 module.exports = {
   shareTrip,
   getTripShareList,
@@ -183,4 +248,6 @@ module.exports = {
   cancelShare,
   viewSharedTrip,
   editSharedTrip,
+  getInviteInfo,
+  acceptShare,
 };

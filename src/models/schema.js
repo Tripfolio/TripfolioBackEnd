@@ -12,3 +12,4 @@ const members = pgTable('members', {
 });
 
 module.exports = { members };
+

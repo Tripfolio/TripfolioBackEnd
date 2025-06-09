@@ -1,21 +1,26 @@
-const express = require('express');
-const cors = require('cors');
-const memberRoutes = require('./src/routes/memberRoutes');
-const itineraryRouter = require('./src/routes/itinerary')
-const emailPreferencesRoute = require('./src/routes/emailPreferencesRoute');
-const app = express();
-require('dotenv').config();
+import { pgTable, serial, text, varchar, timestamp, boolean } from 'drizzle-orm/pg-core';
+export const users = pgTable('users', {
+  id: serial('id').primaryKey(),
+  username: varchar('username', { length: 256 }).notNull().unique(),
+  email: varchar('email', { length: 256 }).notNull().unique(),
+  password_hash: text('password_hash').notNull(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+});
 
-app.use(cors());
-app.use(express.json());
-app.use('/uploads', express.static('uploads'));
-app.use('/api', memberRoutes);
-app.use('/api/itinerary', itineraryRouter);
-app.use("/api/email-preferences", emailPreferencesRoute);
+export const members = pgTable('members', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }).notNull().unique(),
+  password: varchar('password', { length: 255 }).notNull(),
+  profile_picture: text('profile_picture'),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull(),
+});
 
-
-const PORT = process.env.PORT || 3000
-
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`)
-})
+export const emailPreferences = pgTable('email_preferences', {
+  id: serial('id').primaryKey(),
+  member_id: serial('member_id').unique().notNull(),
+  marketing_emails: boolean('marketing_emails').default(true).notNull(),
+  newsletter: boolean('newsletter').default(true).notNull(),
+  product_updates: boolean('product_updates').default(true).notNull(),
+});

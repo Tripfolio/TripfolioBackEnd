@@ -1,14 +1,16 @@
-const { pgTable, serial, varchar, text, date } = require('drizzle-orm/pg-core');
+const { pgTable, serial, varchar, text, date, timestamp } = require('drizzle-orm/pg-core');
 
 const members = pgTable('members', {
     id: serial('id').primaryKey(),
     name: varchar('name', { length: 50 }),
     gender: varchar('gender', { length: 10 }),
     phone: varchar('phone', { length: 20 }),
-    email: varchar('email', { length:100 }),
+    email: varchar('email', { length: 100 }),
     birthday: date('birthday'),
-    password: varchar('password', { length:100 }),
+    password: varchar('password', { length: 100 }),
     avatar: text('avatar'),
+    googleId: varchar('google_id', { length: 100 }),
+    createdAt: timestamp('created_at').defaultNow(),
 });
 
 module.exports = { members };

@@ -1,0 +1,1 @@
+ALTER TABLE "itinerary_places" ADD COLUMN "order" integer;

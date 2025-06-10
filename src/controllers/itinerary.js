@@ -3,8 +3,15 @@ const { itineraryPlaces } = require("../models/itinerary");
 const { and, eq } = require("drizzle-orm");
 
 async function addPlace(req, res) {
-  const { itineraryId, name, address, photo, arrivalHour, arrivalMinute } =
-    req.body;
+  const {
+    itineraryId,
+    name,
+    address,
+    photo,
+    arrivalHour,
+    arrivalMinute,
+    order,
+  } = req.body;
   if (!itineraryId || typeof name !== "string" || !name.trim()) {
     return res
       .status(400)
@@ -19,6 +26,7 @@ async function addPlace(req, res) {
       photo,
       arrivalHour,
       arrivalMinute,
+      order,
     });
     res.json({ success: true });
   } catch (err) {
@@ -74,7 +82,7 @@ async function getPlaces(req, res) {
   }
 }
 
-async function updateTime(req, res) {
+async function updatePlace(req, res) {
   const placeId = Number(req.params.id);
   const { arrivalHour, arrivalMinute } = req.body;
 
@@ -95,4 +103,23 @@ async function updateTime(req, res) {
   }
 }
 
-module.exports = { addPlace, deletePlace, getPlaces, updateTime };
+async function updateOrder(req, res) {
+  console.log("here");
+  console.log(req.body);
+
+  // try {
+  //   for (const place of places) {
+  //     await db.query(`UPDATE itinerary_places SET "order" = $1 WHERE id = $2`, [
+  //       place.order,
+  //       place.id,
+  //     ]);
+  //   }
+
+  //   res.json({ success: true });
+  // } catch (err) {
+  //   console.error("更新順序失敗", err);
+  //   res.status(500).json({ success: false, message: "更新順序失敗" });
+  // }
+}
+
+module.exports = { addPlace, deletePlace, getPlaces, updatePlace, updateOrder };

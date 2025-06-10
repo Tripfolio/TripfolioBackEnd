@@ -1,6 +1,6 @@
 {
-  "id": "645896f3-6435-4aae-a877-1a9698fe7b59",
-  "prevId": "099ace4e-89e4-4f5d-ab11-08bfcdea3669",
+  "id": "f7761263-46ea-4b29-b0e4-aa578ae4ce5e",
+  "prevId": "645896f3-6435-4aae-a877-1a9698fe7b59",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -46,12 +46,6 @@
         },
         "arrival_minute": {
           "name": "arrival_minute",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "order": {
-          "name": "order",
           "type": "integer",
           "primaryKey": false,
           "notNull": false

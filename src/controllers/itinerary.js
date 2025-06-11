@@ -69,4 +69,25 @@ async function getPlaces(req, res){
   }
 };
 
-module.exports = {addPlace, deletePlace, getPlaces}
+// 更新使用者選擇的交通方式
+async function updateTransportMode(req, res) {
+  const { itineraryId, selectedTransportMode } = req.body;
+
+  if (!itineraryId || !selectedTransportMode) {
+    return res.status(400).json({ success: false, message: '缺少必要參數' });
+  }
+
+  try {
+    await db
+      .update(itinerary)
+      .set({ selectedTransportMode })
+      .where(eq(itinerary.id, Number(itineraryId)));
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error('更新交通方式失敗:', err);
+    res.status(500).json({ success: false, message: '伺服器錯誤' });
+  }
+}
+
+module.exports = {addPlace, deletePlace, getPlaces ,updateTransportMode}

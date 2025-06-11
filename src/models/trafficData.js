@@ -1,8 +1,8 @@
-const { pgTable, varchar, serial, integer, timestamp } = require ('drizzle-orm/pg-core');
+const { pgTable, varchar, serial, integer } = require ('drizzle-orm/pg-core');
 
 const trafficData = pgTable("traffic_data", {
   id: serial('id').primaryKey(),
-  itineraryId: integer('itinerary_id'),
+  itineraryId: integer('itinerary_id').references(() => itinerary.id, { onDelete: 'cascade' }), //外鍵
   fromPlaceId: varchar("from_place_id", { length: 255 }).notNull(),
   toPlaceId: varchar("to_place_id", { length: 255 }).notNull(),
   transportMode: varchar("transport_mode", { length: 20 }).notNull(), 

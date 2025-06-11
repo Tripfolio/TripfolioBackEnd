@@ -1,5 +1,4 @@
-// controllers/itineraryLogic.js
-const { trafficData } = require('../models/schema');
+const { trafficData } = require('../models/trafficData');
 const { db } = require('../config/db');
 const { eq, and } = require('drizzle-orm');
 const axios = require('axios');

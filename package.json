@@ -1,6 +1,7 @@
 {
   "name": "tripfoliobackend",
   "version": "1.0.0",
+  "type": "commonjs",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -20,6 +21,7 @@
     "drizzle-kit": "^0.31.1",        
     "drizzle-orm": "^0.43.1",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "nodemailer": "^7.0.3",         
     "multer": "^2.0.0",             
     "multer-s3": "^2.10.0",         

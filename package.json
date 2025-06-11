@@ -1,10 +1,11 @@
 {
   "name": "tripfoliobackend",
   "version": "1.0.0",
+  "type": "commonjs",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node index.js",       
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,13 +13,18 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^6.0.0",
+    "axios": "^1.9.0",               
+    "aws-sdk": "^2.1692.0",          
+    "bcrypt": "^6.0.0",              
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
-    "drizzle-kit": "^0.31.1",
+    "drizzle-kit": "^0.31.1",        
     "drizzle-orm": "^0.43.1",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^7.0.3",          
+    "multer": "^2.0.0",              
+    "multer-s3": "^2.10.0",          
     "pg": "^8.16.0"
   },
   "devDependencies": {

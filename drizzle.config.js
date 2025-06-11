@@ -1,13 +1,11 @@
-const dotenv = require("dotenv");
-const { defineConfig } = require("drizzle-kit");
-
+const dotenv = require('dotenv');
 dotenv.config();
-
 module.exports = defineConfig({
   out: "./src/drizzle",
-  schema: "./src/models/schema.js",
+  schema: "./src/models",
   dialect: "postgresql",
   dbCredentials: {
     url: process.env.DATABASE_URL,
   },
 });
+

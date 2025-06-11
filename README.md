@@ -14,7 +14,7 @@
 ## 安裝步驟
 1. 克隆這個專案：
     ```bash
-    git clone https://github.com/LeoChen517/Tripfolio-Backend.git
+    git clone https://github.com/Tripfolio/TripfolioBackEnd.git
     ```
 2. 安裝依賴：
     ```bash
@@ -35,5 +35,5 @@
 |蘇怡瑄|[mmaysu](https://github.com/mmaysu)|加入景點功能|關鍵字搜尋||
 |林芳綺|[yanamint](https://github.com/yanamint)|串接 google calender||註冊|
 |周子筠|[yumi-chou](https://github.com/yumi-chou)|通勤方式與時間功能|路線與通勤時間
-|許家瑜|[Ninahsuuuuu](https://github.com/Ninahsuuuuu)|個人頁面編輯||資料變更|
-|劉暄|[pearl-liu-1203](https://github.com/pearl-liu-1203)|提醒功能||登入|
+|許家瑜|[Ninahsuuuuu](https://github.com/Ninahsuuuuu)|行程總覽建立||資料變更|
+|劉暄|[pearl-liu-1203](https://github.com/pearl-liu-1203)|行程頁面編輯||登入|

@@ -54,7 +54,7 @@ exports.handleGoogleLogin = async (req, res) => {
 
         return res.status(200).json({
             message: "驗證成功",
-            token,
+            accessToken: accessToken,
             user: {
                 id: userId,
                 email,

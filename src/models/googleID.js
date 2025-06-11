@@ -1,4 +1,4 @@
-const { pgTable, serial, varchar, text, date, timestamp } = require('drizzle-orm/pg-core');
+const { pgTable, varchar, timestamp } = require('drizzle-orm/pg-core');
 
 const googleID = pgTable('googleID', {
     googleId: varchar('google_id', { length: 100 }),

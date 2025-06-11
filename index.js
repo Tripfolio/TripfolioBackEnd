@@ -1,7 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const memberRoutes = require('./src/routes/memberRoutes');
-const itineraryRouter = require('./src/routes/itinerary')
+const itineraryRouter = require('./src/routes/itinerary');
+const googleLoginRoutes = require('./src/routes/googleLoginRoutes');
 const app = express();
 require('dotenv').config();
 
@@ -9,6 +10,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 app.use('/api', memberRoutes);
+app.use('/auth', googleLoginRoutes); // 處理Google 登入時加入 COOP headers
 
 
 app.use('/api/itinerary', itineraryRouter);

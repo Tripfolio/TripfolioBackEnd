@@ -25,7 +25,6 @@ async function addPlace(req, res){
 }
 
 async function deletePlace(req, res){
-  console.log('▶️ 收到 DELETE /api/itinerary/place', req.query)
   const { itineraryId, name } = req.query
 
   if (!itineraryId || !name) {

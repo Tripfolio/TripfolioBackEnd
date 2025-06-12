@@ -10,6 +10,10 @@ app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 app.use("/api", memberRoutes);
 
+// app.put("/api/itinerary/places/reorder", (req, res) => {
+//   console.log(req.body); // 應該能收到 { places: [...] }
+//   // res.json({ success: true });
+// });
 app.use("/api/itinerary", itineraryRouter);
 
 const PORT = process.env.PORT || 3000;

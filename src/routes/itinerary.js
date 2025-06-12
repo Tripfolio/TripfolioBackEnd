@@ -9,4 +9,5 @@ router.delete("/place", ctrl.deletePlace);
 router.get("/places", ctrl.getPlaces);
 router.put("/places/:id", ctrl.updatePlace);
 router.put("/places/reorder", ctrl.updateOrder);
+
 module.exports = router;

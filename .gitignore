@@ -1,6 +1,48 @@
-node_modules/
-.env
-dist/
+# Logs
+logs
 *.log
 npm-debug.log*
 .DS_Store
+
+#忽略測試用JWT產生器
+getToken.js
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node modules
+node_modules/
+
+# System files
+.DS_Store
+
+# Build output
+dist/
+dist-ssr/
+coverage/
+*.tsbuildinfo
+
+# Cypress
+cypress/videos/
+cypress/screenshots/
+
+# Environment variables
+.env
+.env.local
+
+# IDE/editor folders
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 假資料 API
+backend/mock/
+
+#drizzle
+src/drizzle/

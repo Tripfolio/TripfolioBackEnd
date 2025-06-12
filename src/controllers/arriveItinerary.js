@@ -1,11 +1,10 @@
 const { db } = require("../config/db.js");
 const { eq } = require("drizzle-orm");
-const itineraryPlaces = require("../models/itinerary");
+const { itineraryPlaces } = require("../models/itinerary"); // ← 修正這一行
 
 async function updatePlace(req, res) {
   const placeId = Number(req.params.id);
   const { arrivalHour, arrivalMinute } = req.body;
-  console.log(req.body);
 
   if (!placeId || arrivalHour === undefined || arrivalMinute === undefined) {
     return res.status(400).json({ success: false, message: "缺少必要參數" });

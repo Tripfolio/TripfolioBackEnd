@@ -9,8 +9,6 @@ const members = pgTable('members', {
     birthday: date('birthday'),
     password: varchar('password', { length: 100 }),
     avatar: text('avatar'),
-    googleId: varchar('google_id', { length: 100 }),
-    createdAt: timestamp('created_at').defaultNow(),
 });
 
 module.exports = { members };

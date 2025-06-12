@@ -84,7 +84,8 @@ async function getPlaces(req, res) {
 
 async function updatePlace(req, res) {
   const placeId = Number(req.params.id);
-  const { arrivalHour, arrivalMinute } = req.body;
+  // const { arrivalHour, arrivalMinute } = req.body;
+  console.log(req.body);
 
   if (!placeId || arrivalHour === undefined || arrivalMinute === undefined) {
     return res.status(400).json({ success: false, message: "缺少必要參數" });
@@ -104,8 +105,8 @@ async function updatePlace(req, res) {
 }
 
 async function updateOrder(req, res) {
-  console.log("here");
-  console.log(req.body);
+  console.log("收到請求");
+  console.log("req.body", req.body);
 
   // try {
   //   for (const place of places) {

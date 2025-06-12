@@ -82,45 +82,44 @@ async function getPlaces(req, res) {
   }
 }
 
-async function updatePlace(req, res) {
-  const placeId = Number(req.params.id);
-  // const { arrivalHour, arrivalMinute } = req.body;
-  // console.log(req.body);
+// async function updatePlace(req, res) {
+//   const placeId = Number(req.params.id);
+//   // const { arrivalHour, arrivalMinute } = req.body;
+//   // console.log(req.body);
 
-  if (!placeId || arrivalHour === undefined || arrivalMinute === undefined) {
-    return res.status(400).json({ success: false, message: "缺少必要參數" });
-  }
+//   if (!placeId || arrivalHour === undefined || arrivalMinute === undefined) {
+//     return res.status(400).json({ success: false, message: "缺少必要參數" });
+//   }
+
+//   try {
+//     await db
+//       .update(itineraryPlaces)
+//       .set({ arrivalHour, arrivalMinute })
+//       .where(eq(itineraryPlaces.id, placeId));
+
+//     res.json({ success: true });
+//   } catch (err) {
+//     console.error("❌ 更新時間失敗:", err);
+//     res.status(500).json({ success: false, message: "伺服器錯誤" });
+//   }
+// }
+
+async function updateOrder(req, res) {
+  const { places } = req.body;
 
   try {
-    await db
-      .update(itineraryPlaces)
-      .set({ arrivalHour, arrivalMinute })
-      .where(eq(itineraryPlaces.id, placeId));
+    for (const place of places) {
+      await db.$client.query(
+        `UPDATE itinerary_places SET "order" = $1 WHERE id = $2`,
+        [place.order, place.id]
+      );
+    }
 
     res.json({ success: true });
   } catch (err) {
-    console.error("❌ 更新時間失敗:", err);
-    res.status(500).json({ success: false, message: "伺服器錯誤" });
+    console.error("更新順序失敗", err);
+    res.status(500).json({ success: false, message: "更新順序失敗" });
   }
 }
 
-async function updateOrder(req, res) {
-  console.log("收到請求");
-  console.log("req.body", req.body);
-
-  // try {
-  //   for (const place of places) {
-  //     await db.query(`UPDATE itinerary_places SET "order" = $1 WHERE id = $2`, [
-  //       place.order,
-  //       place.id,
-  //     ]);
-  //   }
-
-  //   res.json({ success: true });
-  // } catch (err) {
-  //   console.error("更新順序失敗", err);
-  //   res.status(500).json({ success: false, message: "更新順序失敗" });
-  // }
-}
-
-module.exports = { addPlace, deletePlace, getPlaces, updatePlace, updateOrder };
+module.exports = { addPlace, deletePlace, getPlaces, updateOrder };

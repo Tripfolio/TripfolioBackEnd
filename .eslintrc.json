@@ -7,9 +7,8 @@
     "ecmaVersion": 12
   },
   "rules": {
-    // ✅ 基本防錯
-    "no-console": "warn",                  // 避免太多 console.log
-    "eqeqeq": "error",                     // 要求使用 === 和 !==
+    "no-console": "warn",                  
+    "eqeqeq": "error",            
     "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     "no-undef": "error",
     "no-use-before-define": ["error", { "functions": false, "classes": true }],
@@ -19,7 +18,7 @@
     "no-throw-literal": "error",
     "default-case": "error",
 
-    // ✅ 排版建議（非強制格式）
+    // 排版
     "comma-dangle": "off",
     "semi": "off",
     "quotes": "off",

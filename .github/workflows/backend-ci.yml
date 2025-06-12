@@ -49,11 +49,11 @@ jobs:
 
       - name: Push schema to test DB
         run: |
-          npx drizzle-kit push || (echo "❌ Schema push failed" && exit 1)
+          npx drizzle-kit push || (echo "Schema push failed" && exit 1)
 
       - name: Introspect DB schema (detect drift)
         run: |
-          npx drizzle-kit introspect || (echo "❌ Schema introspection failed" && exit 1)
+          npx drizzle-kit introspect || (echo "Schema introspection failed" && exit 1)
 
       - name: Start backend in background
         run: |

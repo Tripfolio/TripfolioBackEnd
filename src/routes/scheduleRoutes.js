@@ -1,12 +1,20 @@
 const express = require("express");
 const router = express.Router();
 
-const { createSchedule, deleteSchedule } = require("../controllers/scheduleController");
+const {
+  createSchedule,
+  deleteSchedule,
+} = require("../controllers/scheduleController");
 const uploadCover = require("../middlewares/uploadCover");
-const { authenticateToken } = require("../middlewares/authMiddleware")
+const { authenticateToken } = require("../middlewares/authMiddleware");
 const { getSchedules } = require("../controllers/getSchedule");
 
-router.post("/", authenticateToken, uploadCover.single("cover"), createSchedule);
+router.post(
+  "/",
+  authenticateToken,
+  uploadCover.single("cover"),
+  createSchedule,
+);
 router.get("/", authenticateToken, getSchedules);
 router.delete("/:id", authenticateToken, deleteSchedule);
 

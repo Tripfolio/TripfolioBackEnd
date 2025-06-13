@@ -1,5 +1,5 @@
-const dotenv = require('dotenv');
-const { defineConfig } = require('drizzle-kit');
+const dotenv = require("dotenv");
+const { defineConfig } = require("drizzle-kit");
 dotenv.config();
 module.exports = defineConfig({
   out: "./src/drizzle",
@@ -9,4 +9,3 @@ module.exports = defineConfig({
     url: process.env.DATABASE_URL,
   },
 });
-

@@ -1,4 +1,4 @@
-const { db } = require("../config/db");
+const { dbSchedule } = require("../config/db");
 const { travelSchedules } = require("../models/scheduleSchema");
 const { eq } = require("drizzle-orm");
 
@@ -18,7 +18,7 @@ const createSchedule = async (req, res) => {
         const coverURL = req.file?.location || null;
 
         //存入資料庫
-        const inserted = await db
+        const inserted = await dbSchedule
         .insert(travelSchedules)
         .values({
             memberId: Number(memberId),
@@ -51,7 +51,7 @@ const deleteSchedule = async (req, res) => {
     const scheduleId = Number(req.params.id);
 
     try {
-        const deleted = await db.delete(travelSchedules)
+        const deleted = await dbSchedule.delete(travelSchedules)
         .where(eq(travelSchedules.id, scheduleId));
 
         res.json({ message: "刪除成功"});

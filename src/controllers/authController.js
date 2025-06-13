@@ -51,7 +51,7 @@ const registerUser = async (req, res) => {
 
 		res.status(201).json({ message: '註冊成功，請重新登入' });
 	} catch (err) {
-		console.error('❌ 寫入資料庫失敗:', err);
+		console.error('寫入資料庫失敗:', err);
 		res.status(500).json({ errors: ['伺服器錯誤，請稍後再試'] });
 	}
 };

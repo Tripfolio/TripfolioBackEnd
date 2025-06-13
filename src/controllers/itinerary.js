@@ -35,10 +35,9 @@ async function addPlace(req, res) {
   }
 }
 
-async function deletePlace(req, res) {
-  console.log("▶️ 收到 DELETE /api/itinerary/place", req.query);
-  const { itineraryId, name } = req.query;
 
+async function deletePlace(req, res){
+  const { itineraryId, name } = req.query
   if (!itineraryId || !name) {
     return res.status(400).json({ success: false, message: "缺少必要參數" });
   }

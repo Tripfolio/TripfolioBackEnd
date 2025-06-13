@@ -19,7 +19,6 @@ async function addPlace(req, res){
     })
     res.json({ success: true })
   } catch (err) {
-    console.error('資料庫寫入錯誤:', err)
     res.status(500).json({ success: false, message: '伺服器錯誤' })
   }
 }
@@ -43,7 +42,6 @@ async function deletePlace(req, res){
 
     res.json({ success: true })
   } catch (error) {
-    console.error('刪除景點失敗：', error)
     res.status(500).json({ success: false, message: '刪除失敗' })
   }
 }
@@ -63,7 +61,6 @@ async function getPlaces(req, res){
 
     res.json({ success: true, places });
   } catch (err) {
-    console.error('查詢景點失敗:', err);
     res.status(500).json({ success: false, message: '伺服器錯誤' });
   }
 };

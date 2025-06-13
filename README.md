@@ -12,11 +12,11 @@
 ## 資料庫
 - PostgreSQL
 ## 安裝步驟
-1. 克隆這個專案：
+1. 下載這個專案：
     ```bash
     git clone https://github.com/Tripfolio/TripfolioBackEnd.git
     ```
-2. 安裝依賴：
+2. 安裝：
     ```bash
     npm install
     ```

@@ -1,10 +1,10 @@
 const { handleNewPlaceAdded, updateTrafficAfterReorder } = require('./trafficData');
 
 async function addTraffic(req, res) {
-  const { itineraryId, newPlaceId, prevPlaceId, fromAddress, toAddress } = req.body;
-  if (!itineraryId || !newPlaceId || !prevPlaceId || !fromAddress || !toAddress) {
-    return res.status(400).json({ success: false, message: '缺少必要參數' });
-  }
+    const { itineraryId, newPlaceId, prevPlaceId, fromAddress, toAddress } = req.body;
+    if (!itineraryId || !newPlaceId || !prevPlaceId || !fromAddress || !toAddress) {
+        return res.status(400).json({ success: false, message: '缺少必要參數' });
+    }
 
   try {
     await handleNewPlaceAdded(itineraryId, newPlaceId, prevPlaceId, fromAddress, toAddress);

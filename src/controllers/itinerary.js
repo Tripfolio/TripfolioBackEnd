@@ -109,10 +109,10 @@ async function updateOrder(req, res) {
 
   try {
     for (const place of places) {
-      await db.$client.query(
-        `UPDATE itinerary_places SET "order" = $1 WHERE id = $2`,
-        [place.order, place.id]
-      );
+      await db
+        .update(itineraryPlaces)
+        .set({ placeOrder: place.placeOrder }) // JS 層用駝峰式
+        .where(eq(itineraryPlaces.id, place.id));
     }
 
     res.json({ success: true });

@@ -3,6 +3,7 @@ const cors = require('cors');
 const memberRoutes = require('./src/routes/memberRoutes');
 const itineraryRouter = require('./src/routes/itinerary')
 const emailPreferencesRoute = require('./src/routes/emailPreferencesRoute');
+const updateScheduleRoutes = require('./src/routes/updateScheduleRoutes');
 const app = express();
 require('dotenv').config();
 
@@ -12,6 +13,7 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api', memberRoutes);
 app.use('/api/itinerary', itineraryRouter);
 app.use("/api/email-preferences", emailPreferencesRoute);
+app.use('/api/travelSchedule', updateScheduleRoutes);
 
 
 const PORT = process.env.PORT || 3000

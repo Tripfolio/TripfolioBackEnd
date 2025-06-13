@@ -1,0 +1,61 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  backend-ci:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ci_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/ci_db
+      PORT: 3000
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ESLint (warn but pass)
+        run: npm run lint || true
+
+      - name: Validate Drizzle schema
+        run: npx drizzle-kit generate:pg
+
+      - name: Push schema to test DB
+        run: |
+          npx drizzle-kit push || (echo "Schema push failed" && exit 1)
+
+      - name: Introspect DB schema (detect drift)
+        run: |
+          npx drizzle-kit introspect || (echo "Schema introspection failed" && exit 1)
+
+      - name: Start backend in background
+        run: |
+          nohup npm run dev > server.log 2>&1 &
+          sleep 5

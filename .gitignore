@@ -43,6 +43,3 @@ cypress/screenshots/
 
 # 假資料 API
 backend/mock/
-
-#drizzle
-src/drizzle/

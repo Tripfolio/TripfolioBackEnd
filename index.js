@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 app.use("/api", memberRoutes);
-app.use("/api/itineraries", arriveItinerary);
+app.use("/api/itineraryTime", arriveItinerary);
 app.use("/api/itinerary", itineraryRouter);
 
 const PORT = process.env.PORT || 3000;

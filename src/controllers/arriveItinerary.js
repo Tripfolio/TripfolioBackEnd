@@ -2,7 +2,7 @@ const { db } = require("../config/db.js");
 const { eq } = require("drizzle-orm");
 const { itineraryPlaces } = require("../models/itinerary"); // ← 修正這一行
 
-async function updatePlace(req, res) {
+async function updateArriveTime(req, res) {
   const placeId = Number(req.params.id);
   const { arrivalHour, arrivalMinute } = req.body;
 
@@ -22,4 +22,4 @@ async function updatePlace(req, res) {
     res.status(500).json({ success: false, message: "伺服器錯誤" });
   }
 }
-module.exports = { updatePlace };
+module.exports = { updateArriveTime };

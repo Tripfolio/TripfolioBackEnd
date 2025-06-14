@@ -4,7 +4,6 @@ require("dotenv").config();
 
 const app = express();
 const arriveItinerary = require("./src/routes/arriveItinerary");
-
 const authRoutes = require("./src/routes/authRoutes"); 
 const protectedRoutes = require("./src/routes/protectedRoutes"); 
 const memberRoutes = require('./src/routes/memberRoutes');
@@ -22,8 +21,6 @@ app.use(
 );
 
 app.use(express.json());
-
-
 app.use('/api', authRoutes); 
 app.use('/api', protectedRoutes); 
 app.use('/api/members', memberRoutes);
@@ -32,7 +29,6 @@ app.use('/api/itinerary', itineraryRouter);
 app.use("/uploads", express.static("uploads"));
 app.use("/api/itineraryTime", arriveItinerary);
 app.use("/api/itinerary", itineraryRouter);
-app.use("/api/members", memberRoutes);
 app.use("/api/email-preferences", emailPreferencesRoute);
 app.use("/api/travelSchedule", travelSchedulesRoutes);
 

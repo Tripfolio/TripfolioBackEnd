@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "id": "2e414d15-6609-4024-ad35-cffdab64bf8e",
   "prevId": "d5010df3-2bf6-46eb-9043-c262692cd87b",
   "version": "7",
@@ -86,6 +87,13 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+=======
+  "id": "645896f3-6435-4aae-a877-1a9698fe7b59",
+  "prevId": "099ace4e-89e4-4f5d-ab11-08bfcdea3669",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+>>>>>>> 1c8e9e2e57883f9554c5d0397a6dc35a0c6e2950
     "public.itinerary_places": {
       "name": "itinerary_places",
       "schema": "",
@@ -119,6 +127,7 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+<<<<<<< HEAD
         }
       },
       "indexes": {},
@@ -283,6 +292,26 @@
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
+=======
+        },
+        "arrival_hour": {
+          "name": "arrival_hour",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "arrival_minute": {
+          "name": "arrival_minute",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+>>>>>>> 1c8e9e2e57883f9554c5d0397a6dc35a0c6e2950
         }
       },
       "indexes": {},

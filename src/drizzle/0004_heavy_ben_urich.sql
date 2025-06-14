@@ -1,0 +1,1 @@
+ALTER TABLE "itinerary_places" RENAME COLUMN "order" TO "place_order";

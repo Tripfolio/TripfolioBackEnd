@@ -1,9 +1,12 @@
 {
-  "id": "d5010df3-2bf6-46eb-9043-c262692cd87b",
+
+  "id": "2248736c-9fad-4b0b-9b1c-38f701df853d",
+
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+
     "public.email_preferences": {
       "name": "email_preferences",
       "schema": "",
@@ -86,6 +89,7 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+
     "public.itinerary_places": {
       "name": "itinerary_places",
       "schema": "",
@@ -119,6 +123,19 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "arrival_time": {
+          "name": "arrival_time",
+          "type": "time",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "leave_time": {
+          "name": "leave_time",
+          "type": "time",
+          "primaryKey": false,
+          "notNull": false
+
         }
       },
       "indexes": {},
@@ -251,6 +268,7 @@
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
+
     },
     "public.users": {
       "name": "users",
@@ -303,6 +321,7 @@
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
+
     }
   },
   "enums": {},

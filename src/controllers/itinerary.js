@@ -1,13 +1,21 @@
-const { db } = require('../config/db')
-const { itineraryPlaces } = require('../models/itinerary')
-const { and, eq } = require('drizzle-orm')
+const { db } = require("../config/db");
+const { itineraryPlaces } = require("../models/itinerary");
+const { and, eq } = require("drizzle-orm");
 
-async function addPlace(req, res){
-  const { itineraryId, name, address, photo } = req.body
-  if (!itineraryId || typeof name !== 'string' || !name.trim()) {
+async function addPlace(req, res) {
+  const {
+    itineraryId,
+    name,
+    address,
+    photo,
+    arrivalHour,
+    arrivalMinute,
+    placeOrder,
+  } = req.body;
+  if (!itineraryId || typeof name !== "string" || !name.trim()) {
     return res
       .status(400)
-      .json({ success: false, message: '缺少必要參數或參數錯誤' })
+      .json({ success: false, message: "缺少必要參數或參數錯誤" });
   }
 
   try {
@@ -15,20 +23,23 @@ async function addPlace(req, res){
       itineraryId,
       name,
       address,
-      photo
-    })
-    res.json({ success: true })
+      photo,
+      arrivalHour,
+      arrivalMinute,
+      placeOrder,
+    });
+    res.json({ success: true });
   } catch (err) {
-    console.error('資料庫寫入錯誤:', err)
-    res.status(500).json({ success: false, message: '伺服器錯誤' })
+    console.error("資料庫寫入錯誤:", err);
+    res.status(500).json({ success: false, message: "伺服器錯誤" });
   }
 }
 
+
 async function deletePlace(req, res){
   const { itineraryId, name } = req.query
-
   if (!itineraryId || !name) {
-    return res.status(400).json({ success: false, message: '缺少必要參數' })
+    return res.status(400).json({ success: false, message: "缺少必要參數" });
   }
 
   try {
@@ -39,20 +50,22 @@ async function deletePlace(req, res){
           eq(itineraryPlaces.itineraryId, Number(itineraryId)),
           eq(itineraryPlaces.name, name)
         )
-      )
+      );
 
-    res.json({ success: true })
+    res.json({ success: true });
   } catch (error) {
-    console.error('刪除景點失敗：', error)
-    res.status(500).json({ success: false, message: '刪除失敗' })
+    console.error("刪除景點失敗：", error);
+    res.status(500).json({ success: false, message: "刪除失敗" });
   }
 }
 
-async function getPlaces(req, res){
+async function getPlaces(req, res) {
   const { itineraryId } = req.query;
 
   if (!itineraryId) {
-    return res.status(400).json({ success: false, message: '缺少 itineraryId' });
+    return res
+      .status(400)
+      .json({ success: false, message: "缺少 itineraryId" });
   }
 
   try {
@@ -63,9 +76,27 @@ async function getPlaces(req, res){
 
     res.json({ success: true, places });
   } catch (err) {
-    console.error('查詢景點失敗:', err);
-    res.status(500).json({ success: false, message: '伺服器錯誤' });
+    console.error("查詢景點失敗:", err);
+    res.status(500).json({ success: false, message: "伺服器錯誤" });
   }
-};
+}
 
-module.exports = {addPlace, deletePlace, getPlaces}
+async function updateOrder(req, res) {
+  const { places } = req.body;
+
+  try {
+    for (const place of places) {
+      await db
+        .update(itineraryPlaces)
+        .set({ placeOrder: place.placeOrder }) // JS 層用駝峰式
+        .where(eq(itineraryPlaces.id, place.id));
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("更新順序失敗", err);
+    res.status(500).json({ success: false, message: "更新順序失敗" });
+  }
+}
+
+module.exports = { addPlace, deletePlace, getPlaces, updateOrder };

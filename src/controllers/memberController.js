@@ -3,7 +3,7 @@ const { members } = require("../models/schema");
 const { eq } = require("drizzle-orm");
 const validatePassword = require("../utils/validatePassword");
 
-//抓取會員名單
+//抓取會員資料
 exports.getMember = async (req, res) => {
   const memberId = +req.params.id;
   const result = await db
@@ -25,47 +25,45 @@ exports.getMember = async (req, res) => {
 
 //會員資料修改
 exports.updateMember = async (req, res) => {
-  const id = +req.params.id;
-  const { name, gender, phone, email, birthday } = req.body;
-  const result = await db
-    .update(members)
-    .set({ name, gender, phone, email, birthday })
-    .where(eq(members.id, id))
-    .returning();
-  res.json(result[0]);
+    const id = +req.params.id;
+    const { name, gender, phone, birthday } = req.body;
+
+    const existing = await db
+        .select()
+        .from(members)
+        .where(eq(members.id, id));
+
+    const updateData = {};
+    if(name!== undefined) updateData.name = name ;
+    if(gender!== undefined) updateData.gender = gender ;
+    if(phone!== undefined) updateData.phone = phone ;
+    if(birthday!== undefined && birthday !== '') updateData.birthday = birthday ;    
+    try{
+        if (existing.length === 0) {
+            const result = await db.insert(members).values({
+                id,
+                ...updateData,
+            }).returning();
+            return res.json(result[0]);
+        } else {
+            const result = await db.update(members)
+                .set(updateData)
+                .where(eq(members.id, id))
+                .returning();
+        return res.json(result[0]);
+        }
+  } catch (err) {
+    console.error('會員資料更新失敗', err);
+    return res.status(500).json({ error: '資料庫錯誤，請稍後再試'})
+  }
 };
 
 //大頭貼修改
-exports.uploadAvatar = async (req, res) => {
-  const memberId = req.body.memberId;
-  const fileUrl = req.file.location;
-  await db
-    .update(members)
-    .set({ avatar: fileUrl })
-    .where(eq(members.id, memberId));
-  res.json({ message: "上傳成功", path: fileUrl });
-};
-
-//密碼修改與驗證舊密碼
-exports.updatePassword = async (req, res) => {
-  const id = +req.params.id;
-  const { oldPassword, newPassword } = req.body;
-
-  const result = await db.select().from(members).where(eq(members.id, id));
-  const user = result[0];
-
-  if (!user) return res.status(404).json({ message: "會員不存在" });
-  if (user.password !== oldPassword)
-    return res.status(400).json({ message: "舊密碼輸入錯誤" });
-
-  const passwordError = validatePassword(newPassword, user.email);
-  if (passwordError) {
-    return res.status(400).json({ error: passwordError });
-  }
-
-  await db
-    .update(members)
-    .set({ password: newPassword })
-    .where(eq(members.id, id));
-  res.json({ message: "密碼更新成功" });
+exports.uploadAvatar = async(req, res) => {
+    const memberId = req.body.memberId;
+    const fileUrl = req.file.location;
+    await db.update(members)
+        .set({ avatar: fileUrl })
+        .where(eq(members.id, memberId));
+    res.json({ message:'上傳成功', path: fileUrl });
 };

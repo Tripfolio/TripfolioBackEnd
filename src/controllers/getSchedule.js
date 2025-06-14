@@ -2,7 +2,7 @@ const { eq, desc } = require("drizzle-orm");
 const { db } = require("../config/db");
 const { travelSchedules } = require("../models/scheduleSchema");
 
-//撈取會員資料庫行程
+//抓取會員資料庫行程
 const getSchedules = async (req, res) => {
   try {
     const memberId = req.user.id;

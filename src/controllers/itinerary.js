@@ -30,13 +30,13 @@ async function addPlace(req, res) {
     });
     res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ success: false, message: '伺服器錯誤' })
+    res.status(500).json({ success: false, message: "伺服器錯誤" });
   }
 }
 
+async function deletePlace(req, res) {
+  const { itineraryId, name } = req.query;
 
-async function deletePlace(req, res){
-  const { itineraryId, name } = req.query
   if (!itineraryId || !name) {
     return res.status(400).json({ success: false, message: "缺少必要參數" });
   }
@@ -47,13 +47,13 @@ async function deletePlace(req, res){
       .where(
         and(
           eq(itineraryPlaces.itineraryId, Number(itineraryId)),
-          eq(itineraryPlaces.name, name)
-        )
+          eq(itineraryPlaces.name, name),
+        ),
       );
 
     res.json({ success: true });
   } catch (error) {
-    res.status(500).json({ success: false, message: '刪除失敗' })
+    res.status(500).json({ success: false, message: "刪除失敗" });
   }
 }
 
@@ -74,7 +74,8 @@ async function getPlaces(req, res) {
 
     res.json({ success: true, places });
   } catch (err) {
-    res.status(500).json({ success: false, message: '伺服器錯誤' });
+
+    res.status(500).json({ success: false, message: "伺服器錯誤" });
   }
 }
 
@@ -113,4 +114,4 @@ async function updateArriveTime(req, res) {
     res.status(500).json({ success: false, message: "伺服器錯誤" });
   }
 }
-module.exports = { addPlace, deletePlace, getPlaces, updateOrder };
+module.exports = { addPlace, deletePlace, getPlaces, updateOrder, updateArriveTime };

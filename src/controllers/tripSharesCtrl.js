@@ -123,46 +123,6 @@ const cancelShare = async (req, res) => {
   res.json({ message: "已成功取消分享" });
 };
 
-const viewSharedTrip = async (req, res) => {
-  try {
-    const { tripId } = req.sharedTrip;
-
-    const tripRows = await db
-      .select()
-      .from(trips)
-      .where(eq(trips.id, tripId))
-      .limit(1);
-
-    const trip = tripRows[0];
-
-    if (!trip) {
-      return res.status(404).json({ error: "找不到該行程" });
-    }
-
-    res.json({ trip });
-  } catch (error) {
-    console.error("viewSharedTrip error:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-const editSharedTrip = async (req, res) => {
-  try {
-    const { tripId } = req.sharedTrip;
-    const updatedData = req.body;
-
-    const result = await db
-      .update(trips)
-      .set(updatedData)
-      .where(eq(trips.id, tripId));
-
-    res.json({ success: true, message: "行程編輯成功" });
-  } catch (error) {
-    console.error("editSharedTrip error:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
 const getInviteInfo = async (req, res) => {
   const { token } = req.params;
   const userId = req.user?.id;
@@ -205,7 +165,6 @@ const getInviteInfo = async (req, res) => {
       alreadyJoined,
     });
   } catch (err) {
-    console.error("getInviteInfo error:", err);
     res.status(500).json({ message: "伺服器錯誤" });
   }
 };
@@ -236,7 +195,6 @@ const acceptShare = async (req, res) => {
 
     res.json({ message: "已成功加入共編者" });
   } catch (err) {
-    console.error("acceptShare error:", err);
     res.status(500).json({ message: "伺服器錯誤" });
   }
 };
@@ -246,8 +204,6 @@ module.exports = {
   getTripShareList,
   updateSharePermission,
   cancelShare,
-  viewSharedTrip,
-  editSharedTrip,
   getInviteInfo,
   acceptShare,
 };

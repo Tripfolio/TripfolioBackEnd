@@ -28,7 +28,7 @@ async function isPreferenceEnabled(userId, field) {
   } catch (err) {
     console.error(
       `Error fetching preference for user ${userId} and field ${field}:`,
-      err
+      err,
     );
     return false;
   }
@@ -66,7 +66,7 @@ async function notifyLoginfail(userId) {
     await sendEmail(
       email,
       "登入失敗警示",
-      `<p>⚠️ 偵測到異常登入失敗，請確認是否為本人操作。</p>`
+      `<p>⚠️ 偵測到異常登入失敗，請確認是否為本人操作。</p>`,
     );
   } catch (err) {
     console.error(`Error notifying login failure for user ${userId}:`, err);
@@ -81,7 +81,7 @@ async function notifyVerify(userId) {
     await sendEmail(
       email,
       "信箱驗證提醒",
-      `<p>請盡快完成信箱驗證以保障帳號安全。</p>`
+      `<p>請盡快完成信箱驗證以保障帳號安全。</p>`,
     );
   } catch (err) {
     console.error(`Error notifying verification for user ${userId}:`, err);
@@ -96,7 +96,7 @@ async function notifyCommented(userId, commentContent) {
     await sendEmail(
       email,
       "您的貼文有新留言",
-      `<p>留言內容：${commentContent}</p>`
+      `<p>留言內容：${commentContent}</p>`,
     );
   } catch (err) {
     console.error(`Error notifying comment for user ${userId}:`, err);
@@ -111,7 +111,7 @@ async function notifyLiked(userId, likerName) {
     await sendEmail(
       email,
       "您的貼文被按讚",
-      `<p>${likerName} 按讚了您的貼文！</p>`
+      `<p>${likerName} 按讚了您的貼文！</p>`,
     );
   } catch (err) {
     console.error(`Error notifying like for user ${userId}:`, err);
@@ -126,7 +126,7 @@ async function notifyBookmarked(userId, bookmarkerName) {
     await sendEmail(
       email,
       "您的貼文被收藏",
-      `<p>${bookmarkerName} 收藏了您的貼文。</p>`
+      `<p>${bookmarkerName} 收藏了您的貼文。</p>`,
     );
   } catch (err) {
     console.error(`Error notifying bookmark for user ${userId}:`, err);
@@ -141,7 +141,7 @@ async function notifyShared(userId, sharerName) {
     await sendEmail(
       email,
       "您的貼文被分享",
-      `<p>${sharerName} 分享了您的貼文。</p>`
+      `<p>${sharerName} 分享了您的貼文。</p>`,
     );
   } catch (err) {
     console.error(`Error notifying share for user ${userId}:`, err);
@@ -156,7 +156,7 @@ async function notifyCustomerReplied(userId, replyContent) {
     await sendEmail(
       email,
       "客服回覆通知",
-      `<p>客服回覆內容：${replyContent}</p>`
+      `<p>客服回覆內容：${replyContent}</p>`,
     );
   } catch (err) {
     console.error(`Error notifying customer reply for user ${userId}:`, err);

@@ -11,6 +11,7 @@ const memberRoutes = require("./src/routes/memberRoutes");
 const itineraryRouter = require("./src/routes/itinerary");
 const emailPreferencesRoute = require("./src/routes/emailPreferencesRoute");
 const travelSchedulesRoutes = require("./src/routes/scheduleRoutes");
+const trafficRoutes = require("./src/routes/trafficData");
 
 app.use(cors({
   origin: "http://localhost:5173",
@@ -27,6 +28,7 @@ app.use('/api/itinerary', itineraryRouter);
 app.use("/api/email-preferences", emailPreferencesRoute);
 app.use("/api/travelSchedule", travelSchedulesRoutes);
 app.use("/api/itineraryTime", arriveItinerary);
+app.use("/api/traffic", trafficRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

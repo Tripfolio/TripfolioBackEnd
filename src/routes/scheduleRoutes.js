@@ -10,7 +10,7 @@ const { authenticateToken } = require("../middlewares/authMiddleware");
 const { getSchedules } = require("../controllers/getSchedule");
 
 router.post("/", authenticateToken, uploadCover.single("cover"), createSchedule);
-router.get("/schedules/user", authenticateToken, getSchedules);
+router.get("/user", authenticateToken, getSchedules);
 router.delete("/:id", authenticateToken, deleteSchedule);
 
 module.exports = router;

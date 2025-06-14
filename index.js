@@ -8,6 +8,7 @@ const app = express();
 const authRoutes = require("./src/routes/authRoutes"); 
 const protectedRoutes = require("./src/routes/protectedRoutes"); 
 const memberRoutes = require('./src/routes/memberRoutes');
+const userRoutes = require('./src/routes/userRoutes');
 const itineraryRouter = require('./src/routes/itinerary');
 const emailPreferencesRoute = require('./src/routes/emailPreferencesRoute'); 
 const travelSchedulesRoutes = require('./src/routes/scheduleRoutes');
@@ -28,6 +29,7 @@ app.use('/api', protectedRoutes);
 
 
 app.use('/api/members', memberRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/itinerary', itineraryRouter);
 app.use("/api/email-preferences", emailPreferencesRoute);
 app.use('/api/travelSchedule', travelSchedulesRoutes);

@@ -16,7 +16,31 @@ CREATE TABLE "itinerary_places" (
 	"itinerary_id" integer,
 	"name" text,
 	"address" text,
-	"photo" text
+	"photo" text,
+	"arrival_hour" integer,
+	"arrival_minute" integer,
+	"place_order" integer,
+	"selected_transport_mode" varchar(20) DEFAULT 'walking'
+);
+--> statement-breakpoint
+CREATE TABLE "users" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"email" varchar(100) NOT NULL,
+	"password" varchar(255) NOT NULL,
+	"phone" varchar(20) NOT NULL,
+	"created_at" timestamp (2) DEFAULT now(),
+	CONSTRAINT "users_email_unique" UNIQUE("email")
+);
+--> statement-breakpoint
+CREATE TABLE "schedules" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"member_id" integer NOT NULL,
+	"title" varchar(20) NOT NULL,
+	"start_date" date NOT NULL,
+	"end_date" date NOT NULL,
+	"description" text,
+	"cover_url" text,
+	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
 CREATE TABLE "members" (
@@ -39,3 +63,5 @@ CREATE TABLE "traffic_data" (
 	"duration" integer NOT NULL,
 	"distance" integer
 );
+--> statement-breakpoint
+ALTER TABLE "traffic_data" ADD CONSTRAINT "traffic_data_itinerary_id_itinerary_places_id_fk" FOREIGN KEY ("itinerary_id") REFERENCES "public"."itinerary_places"("id") ON DELETE cascade ON UPDATE no action;

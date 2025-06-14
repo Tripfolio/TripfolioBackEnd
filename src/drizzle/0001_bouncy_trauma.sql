@@ -1,3 +1,0 @@
-ALTER TABLE "itinerary_places" ADD COLUMN "order" integer;--> statement-breakpoint
-ALTER TABLE "itinerary_places" ADD COLUMN "selected_transport_mode" varchar(20) DEFAULT 'walking';--> statement-breakpoint
-ALTER TABLE "traffic_data" ADD CONSTRAINT "traffic_data_itinerary_id_itinerary_places_id_fk" FOREIGN KEY ("itinerary_id") REFERENCES "public"."itinerary_places"("id") ON DELETE cascade ON UPDATE no action;

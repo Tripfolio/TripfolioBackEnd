@@ -3,7 +3,7 @@ const cors = require("cors");
 const dotenv = require('dotenv');
 dotenv.config(); 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT;
 
 const authRoutes = require("./src/routes/authRoutes"); 
 const protectedRoutes = require("./src/routes/protectedRoutes"); 
@@ -17,7 +17,7 @@ const arriveItinerary = require("./src/routes/arriveItinerary");
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.VITE_API_URL,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   })
@@ -33,7 +33,7 @@ app.use('/api/itinerary', itineraryRouter);
 app.use("/api/email-preferences", emailPreferencesRoute);
 app.use('/api/travelSchedule', travelSchedulesRoutes);
 app.use('/api', communityRoutes);
-app.use('/api', arriveItinerary);
+app.use("/api/itineraryTime", arriveItinerary);
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

@@ -30,14 +30,13 @@ async function addPlace(req, res) {
     });
     res.json({ success: true });
   } catch (err) {
-    console.error("資料庫寫入錯誤:", err);
     res.status(500).json({ success: false, message: "伺服器錯誤" });
   }
 }
 
+async function deletePlace(req, res) {
+  const { itineraryId, name } = req.query;
 
-async function deletePlace(req, res){
-  const { itineraryId, name } = req.query
   if (!itineraryId || !name) {
     return res.status(400).json({ success: false, message: "缺少必要參數" });
   }
@@ -48,13 +47,12 @@ async function deletePlace(req, res){
       .where(
         and(
           eq(itineraryPlaces.itineraryId, Number(itineraryId)),
-          eq(itineraryPlaces.name, name)
-        )
+          eq(itineraryPlaces.name, name),
+        ),
       );
 
     res.json({ success: true });
   } catch (error) {
-    console.error("刪除景點失敗：", error);
     res.status(500).json({ success: false, message: "刪除失敗" });
   }
 }
@@ -76,7 +74,7 @@ async function getPlaces(req, res) {
 
     res.json({ success: true, places });
   } catch (err) {
-    console.error("查詢景點失敗:", err);
+
     res.status(500).json({ success: false, message: "伺服器錯誤" });
   }
 }
@@ -94,7 +92,6 @@ async function updateOrder(req, res) {
 
     res.json({ success: true });
   } catch (err) {
-    console.error("更新順序失敗", err);
     res.status(500).json({ success: false, message: "更新順序失敗" });
   }
 }

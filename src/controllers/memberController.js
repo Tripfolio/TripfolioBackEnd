@@ -1,24 +1,26 @@
-const { db } = require('../config/db');
-const { members } = require('../models/memberSchema');
-const { eq } = require('drizzle-orm');
+const { db } = require("../config/db");
+const { members } = require("../models/schema");
+const { eq } = require("drizzle-orm");
+const validatePassword = require("../utils/validatePassword");
 
 //抓取會員資料
 exports.getMember = async (req, res) => {
-    const memberId = +req.params.id;
-    const result = await db
-        .select({
-            id: members.id,
-            name: members.name,
-            gender: members.gender,
-            phone: members.phone,
-            birthday: members.birthday,
-            avatar: members.avatar
-        })
-        .from(members)
-        .where(eq(members.id, memberId));
+  const memberId = +req.params.id;
+  const result = await db
+    .select({
+      id: members.id,
+      name: members.name,
+      gender: members.gender,
+      phone: members.phone,
+      email: members.email,
+      birthday: members.birthday,
+      avatar: members.avatar,
+    })
+    .from(members)
+    .where(eq(members.id, memberId));
 
-    if(!result.length) return res.status(404).json({ error: '會員不存在' });
-    res.json(result[0]);
+  if (!result.length) return res.status(404).json({ error: "會員不存在" });
+  res.json(result[0]);
 };
 
 //會員資料修改

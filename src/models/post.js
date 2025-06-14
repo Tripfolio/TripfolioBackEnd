@@ -1,5 +1,3 @@
-// src/models/communityPost.js
-
 const { pgTable, serial, integer, text, timestamp } = require('drizzle-orm/pg-core');
 
 const communityPosts = pgTable('community_posts', {

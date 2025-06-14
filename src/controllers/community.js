@@ -1,5 +1,5 @@
 const { db } = require('../config/db');
-const { posts } = require('../models/post');
+const { communityPosts } = require('../models/post');
 
 async function createCommunityPost(req, res) {
   try {
@@ -7,7 +7,7 @@ async function createCommunityPost(req, res) {
     const { scheduleId, content } = req.body;
     const coverURL = req.file?.location || null;
 
-    const result = await db.insert(posts).values({
+    const result = await db.insert(communityPosts).values({
       memberId,
       scheduleId,
       content,

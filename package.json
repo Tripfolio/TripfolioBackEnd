@@ -13,6 +13,7 @@
   "dependencies": {
     "aws-sdk": "^2.1692.0",
     "axios": "^1.9.0",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.43.1",
@@ -21,7 +22,8 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.0",
     "multer-s3": "^2.10.0",
-    "pg": "^8.16.0"
+    "pg": "^8.16.0",
+    "vue3-google-login": "^2.0.33"
   },
   "devDependencies": {
     "@types/pg": "^8.15.4",

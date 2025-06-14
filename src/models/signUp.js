@@ -7,8 +7,6 @@ const users = pgTable('users', {
 	phone: varchar('phone', { length: 20 }).notNull(),
 	created_at: timestamp('created_at', { precision: 2 }).defaultNow(),
     googleId: varchar('google_id', { length: 100 }),
-    createdAt: timestamp('created_at').defaultNow(),
-    updatedAt: timestamp('updated_at').defaultNow(),
 });
 
 module.exports = { users };

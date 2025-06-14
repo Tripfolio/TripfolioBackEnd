@@ -1,21 +1,35 @@
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
+const dotenv = require('dotenv');
+dotenv.config(); 
+
+const app = express();
+
+const authRoutes = require("./src/routes/authRoutes"); 
+const protectedRoutes = require("./src/routes/protectedRoutes"); 
 const memberRoutes = require('./src/routes/memberRoutes');
 const itineraryRouter = require('./src/routes/itinerary');
-const googleLoginRoutes = require('./src/routes/googleLoginRoutes');
-const app = express();
-require('dotenv').config();
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173",
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], 
+  credentials: true 
+}));
+
 app.use(express.json());
-app.use('/uploads', express.static('uploads'));
-app.use('/api', memberRoutes);
-app.use('/auth', googleLoginRoutes); // 處理Google 登入時加入 COOP headers
+
+app.use('/uploads', express.static('uploads')); 
+
+app.use('/api', authRoutes); 
+
+app.use('/api', protectedRoutes); 
 
 
+app.use('/api/members', memberRoutes);
 app.use('/api/itinerary', itineraryRouter);
 
-const PORT = process.env.PORT || 3000
+
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`)
-})
+  console.log(`Server running at http://localhost:${PORT}`);
+});

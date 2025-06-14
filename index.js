@@ -13,6 +13,7 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api', memberRoutes);
 app.use('/api/itinerary', itineraryRouter);
 app.use("/api/email-preferences", emailPreferencesRoute);
+app.use('/api/traffic', trafficRoutes);
 
 
 

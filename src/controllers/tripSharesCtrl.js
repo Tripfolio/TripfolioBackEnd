@@ -90,7 +90,7 @@ const updateSharePermission = async (req, res) => {
     return res.status(403).json({ message: "你沒有權限修改此分享" });
   }
 
-  const result = await db
+  await db
     .update(tripShares)
     .set({ permission })
     .where((tripShares, { eq }) => eq(tripShares.token, token));
@@ -117,7 +117,7 @@ const cancelShare = async (req, res) => {
     return res.status(403).json({ message: "你沒有權限取消此分享" });
   }
 
-  const result = await db
+  await db
     .delete(tripShares)
     .where((tripShares, { eq }) => eq(tripShares.token, token));
   res.json({ message: "已成功取消分享" });

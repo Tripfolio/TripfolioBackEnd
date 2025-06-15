@@ -87,4 +87,4 @@ function verifyShareToken(requiredPermission) {
   };
 }
 
-module.exports = verifyShareToken;
+module.exports = { verifyShareToken };

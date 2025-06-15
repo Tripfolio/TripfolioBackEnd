@@ -8,8 +8,8 @@ const {
   getInviteInfo,
   acceptShare,
 } = require("../controllers/tripSharesCtrl");
-const verifyShareToken = require("../middlewares/shareMiddleware");
-const authenticateToken = require("..middlewares/authMiddleware"); //需確認有該檔案
+const { verifyShareToken } = require("../middlewares/shareMiddleware");
+const { authenticateToken } = require("../middlewares/authMiddleware"); //需確認有該檔案
 
 router.post("/:tripId", authenticateToken, shareTrip);
 router.get("/:tripId", authenticateToken, getTripShareList);
@@ -19,13 +19,13 @@ router.get(
   "/:token/inviteInfo",
   authenticateToken,
   verifyShareToken("viewer"),
-  getInviteInfo
+  getInviteInfo,
 );
 router.post(
   "/:token/accept",
   authenticateToken,
   verifyShareToken("viewer"),
-  acceptShare
+  acceptShare,
 );
 
 module.exports = router;

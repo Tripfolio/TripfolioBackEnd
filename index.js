@@ -1,8 +1,6 @@
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
 const app = express();
-const memberRoutes = require('./src/routes/memberRoutes');
-const itineraryRouter = require('./src/routes/itinerary');
 const tripSharesRoute = require("./src/routes/tripSharesRoute");
 const arriveItinerary = require("./src/routes/arriveItinerary");
 const authRoutes = require("./src/routes/authRoutes");
@@ -11,20 +9,22 @@ const memberRoutes = require("./src/routes/memberRoutes");
 const itineraryRouter = require("./src/routes/itinerary");
 const emailPreferencesRoute = require("./src/routes/emailPreferencesRoute");
 const travelSchedulesRoutes = require("./src/routes/scheduleRoutes");
-require('dotenv').config();
+require("dotenv").config();
 
-app.use(cors({
-  origin: "http://localhost:5173",
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], 
-  credentials: true 
-}));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true,
+  }),
+);
 
 app.use(express.json());
-app.use('/uploads', express.static('uploads')); 
-app.use('/api', authRoutes); 
-app.use('/api', protectedRoutes); 
-app.use('/api/members', memberRoutes);
-app.use('/api/itinerary', itineraryRouter);
+app.use("/uploads", express.static("uploads"));
+app.use("/api", authRoutes);
+app.use("/api", protectedRoutes);
+app.use("/api/members", memberRoutes);
+app.use("/api/itinerary", itineraryRouter);
 app.use("/api/trip-shares", tripSharesRoute);
 
 app.use("/api/email-preferences", emailPreferencesRoute);

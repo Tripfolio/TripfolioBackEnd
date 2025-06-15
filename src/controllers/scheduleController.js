@@ -35,7 +35,6 @@ const createSchedule = async (req, res) => {
       schedule: inserted[0],
     });
   } catch (err) {
-    console.error("建立行程失敗", err);
     res.status(500).json({
       message: "行程建立失敗",
       error: err.message,
@@ -55,7 +54,6 @@ const deleteSchedule = async (req, res) => {
 
     res.json({ message: "刪除成功" });
   } catch (err) {
-    console.error("刪除失敗", err);
     res.status(500).json({ message: "刪除失敗", error: err.message });
   }
 };
@@ -72,7 +70,6 @@ const getSchedulesByMemberId = async(req, res) => {
 
       res.json(result);
   } catch (err) {
-    console.error('行程抓取失敗', err);
     res.status(500).json({ error: '伺服器錯誤'});
   }
 };

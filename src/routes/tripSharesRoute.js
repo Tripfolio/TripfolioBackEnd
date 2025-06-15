@@ -9,7 +9,7 @@ const {
   acceptShare,
 } = require("../controllers/tripSharesCtrl");
 const { verifyShareToken } = require("../middlewares/shareMiddleware");
-const { authenticateToken } = require("../middlewares/authMiddleware"); //需確認有該檔案
+const { authenticateToken } = require("../middlewares/authMiddleware");
 
 router.post("/:tripId", authenticateToken, shareTrip);
 router.get("/:tripId", authenticateToken, getTripShareList);

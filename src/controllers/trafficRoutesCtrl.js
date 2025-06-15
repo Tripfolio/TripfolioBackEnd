@@ -1,4 +1,23 @@
-const { handleNewPlaceAdded, updateTrafficAfterReorder } = require('./trafficData');
+const { getTrafficData, handleNewPlaceAdded, updateTrafficAfterReorder } = require('./trafficData');
+
+async function getTraffic(req, res) {
+  const { from, to, mode } = req.query;
+  if (!from || !to || !mode) {
+    return res.status(400).json({ success: false, message: '缺少必要參數' });
+  }
+  try {
+    const traffic = await getTrafficData(from, to, mode);
+    if (!traffic) {
+      return res.json({ duration: null, distance: null });
+    }
+    res.json({
+      duration: traffic.duration,
+      distance: traffic.distance
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: '伺服器錯誤' });
+  }
+}
 
 async function addTraffic(req, res) {
     const { itineraryId, newPlaceId, prevPlaceId, fromAddress, toAddress } = req.body;
@@ -30,4 +49,5 @@ async function reorderTraffic(req, res) {
   }
 }
 
-module.exports = { addTraffic, reorderTraffic };
+
+module.exports = { addTraffic, reorderTraffic, getTraffic };

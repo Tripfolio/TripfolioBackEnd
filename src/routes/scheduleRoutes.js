@@ -9,6 +9,8 @@ const uploadCover = require("../middlewares/uploadCover");
 const { authenticateToken } = require("../middlewares/authMiddleware");
 const { getSchedules } = require("../controllers/getSchedule");
 
+const { getSchedulesByMemberId } = require("../controllers/scheduleController")
+
 router.post(
   "/",
   authenticateToken,
@@ -17,5 +19,6 @@ router.post(
 );
 router.get("/", authenticateToken, getSchedules);
 router.delete("/:id", authenticateToken, deleteSchedule);
+router.get("/member/:memberId", getSchedulesByMemberId);
 
 module.exports = router;

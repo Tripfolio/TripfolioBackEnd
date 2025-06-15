@@ -1,5 +1,5 @@
 const { db } = require("../config/db");
-const { travelSchedules } = require("../models/scheduleSchema");
+const { travelSchedules } = require("../models/scheduleschema");
 const { eq } = require("drizzle-orm");
 
 //建立行程
@@ -60,4 +60,21 @@ const deleteSchedule = async (req, res) => {
   }
 };
 
-module.exports = { createSchedule, deleteSchedule };
+//動態追蹤取得會員建立過的行程
+const getSchedulesByMemberId = async(req, res) => {
+  const { memberId } = req.params;
+
+  try {
+    const result = await db
+      .select()
+      .from(travelSchedules)
+      .where(eq(travelSchedules.memberId, memberId));
+
+      res.json(result);
+  } catch (err) {
+    console.error('行程抓取失敗', err);
+    res.status(500).json({ error: '伺服器錯誤'});
+  }
+};
+
+module.exports = { createSchedule, deleteSchedule, getSchedulesByMemberId };

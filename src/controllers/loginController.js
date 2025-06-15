@@ -33,7 +33,6 @@ async function login(req, res) {
       },
     });
   } catch (err) {
-    console.error("登入錯誤：", err);
     return res.status(500).json({ message: "伺服器錯誤" });
   }
 }

@@ -14,7 +14,6 @@ async function getPreferences(req, res) {
     }
     res.json(result[0]);
   } catch (err) {
-    console.error("偏好設定查詢錯誤", err);
     res.status(500).json({ message: "伺服器錯誤" });
   }
 }
@@ -39,7 +38,6 @@ async function updatePreferences(req, res) {
       .where(eq(emailPreferences.userId, userId));
     res.json({ message: "偏好設定已更新" });
   } catch (err) {
-    console.error("更新錯誤", err);
     res.status(500).json({ message: "伺服器錯誤" });
   }
 }

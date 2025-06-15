@@ -1,6 +1,6 @@
 const { eq, desc } = require("drizzle-orm");
 const { db } = require("../config/db");
-const { travelSchedules } = require("../models/scheduleSchema");
+const { travelSchedules } = require("../models/scheduleschema");
 
 //撈取會員資料庫行程
 const getSchedules = async (req, res) => {

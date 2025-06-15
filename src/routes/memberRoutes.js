@@ -2,15 +2,13 @@ const express = require("express");
 const router = express.Router();
 const upload = require("../middlewares/uploadAvatar");
 const {
-  getMember,
-  updateMember,
-  updatePassword,
-  uploadAvatar,
-} = require("../controllers/memberController");
+    getMember,
+    updateMember,
+    uploadAvatar
+} = require('../controllers/memberController');
 
-router.get("/members/:id", getMember);
-router.put("/members/:id", updateMember);
-router.put("/members/:id/password", updatePassword);
-router.post("/upload-avatar", upload.single("avatar"), uploadAvatar);
+router.get('/:id', getMember);
+router.put('/:id', updateMember);
+router.post('/upload-avatar', upload.single('avatar'), uploadAvatar);
 
 module.exports = router;

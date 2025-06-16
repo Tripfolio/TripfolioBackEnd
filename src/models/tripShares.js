@@ -5,6 +5,7 @@ const {
   text,
   timestamp,
 } = require("drizzle-orm/pg-core");
+const { relations } = require("drizzle-orm");
 // const { users } = require("./users"); //需有users.js提供使用者的id
 // const { trips } = require("./trips"); //需有trips.js提供行程的id
 
@@ -26,4 +27,18 @@ const tripShares = pgTable("trip_shares", {
   createdTime: timestamp("created_time").defaultNow(),
 });
 
-module.exports = { tripShares };
+const tripSharesRelations = relations(tripShares, ({ one }) => ({
+  user: one(users, {
+    fields: [tripShares.sharedWithUserId],
+    references: [users.id],
+  }),
+  trip: one(trips, {
+    fields: [tripShares.tripId],
+    references: [trips.id],
+  }),
+}));
+
+module.exports = {
+  tripShares,
+  tripSharesRelations,
+};

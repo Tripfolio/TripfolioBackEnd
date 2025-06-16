@@ -45,26 +45,42 @@ const getTripShareList = async (req, res) => {
   const { tripId } = req.params;
   const currentUserId = req.user?.id;
 
-  const trip = await db.query.trips.findFirst({
-    where: (trips, { eq }) => eq(trips.id, tripId),
-  });
+  try {
+    const trip = await db.query.trips.findFirst({
+      where: (trips, { eq }) => eq(trips.id, tripId),
+    });
 
-  if (!trip) {
-    return res.status(404).json({ message: "找不到該行程" });
-  }
+    if (!trip) {
+      return res.status(404).json({ message: "找不到該行程" });
+    }
 
-  if (trip.createdBy !== currentUserId) {
-    return res.status(403).json({ message: "你沒有權限查看此分享清單" });
+    if (trip.createdBy !== currentUserId) {
+      return res.status(403).json({ message: "你沒有權限查看此分享清單" });
+    }
+
+    const shareList = await db.query.tripShares.findMany({
+      where: (tripShares, { eq }) => eq(tripShares.tripId, tripId),
+      with: {
+        user: true, // 關聯到使用者表，取得名字與頭像
+      },
+      columns: {
+        token: true,
+        permission: true,
+        createdTime: true,
+      },
+    });
+
+    const formatted = shareList.map((item) => ({
+      token: item.token,
+      permission: item.permission,
+      name: item.user?.name || "未知使用者",
+      avatarUrl: item.user?.avatarUrl,
+    }));
+
+    res.json(formatted);
+  } catch (err) {
+    res.status(500).json({ message: "伺服器錯誤" });
   }
-  const shareList = await db.query.tripShares.findMany({
-    where: (tripShares, { eq }) => eq(tripShares.tripId, tripId),
-    columns: {
-      token: true,
-      permission: true,
-      sharedWithUserId: true,
-    },
-  });
-  res.json(shareList);
 };
 
 const updateSharePermission = async (req, res) => {

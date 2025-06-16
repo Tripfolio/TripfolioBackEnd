@@ -1,5 +1,5 @@
 const { db } = require("../config/db");
-const { users } = require("../models/loginSchema");
+const { users } = require("../models/signUpSchema");
 const { eq } = require("drizzle-orm");
 const bcrypt = require('bcrypt');
 const validatePassword = require('../utils/validatePassword');

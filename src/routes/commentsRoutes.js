@@ -4,6 +4,6 @@ const { addComment, deleteComment, getComment } = require("commentsCtrl");
 
 router.get("/comments", getComment);
 router.post("/comments", addComment);
-router.delete("/comments", deleteComment);
+router.delete("/comments/:id", deleteComment);
 
 module.exports = router;

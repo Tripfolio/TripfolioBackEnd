@@ -35,8 +35,8 @@ const getComment = async (req, res) => {
 const deleteComment = async (req, res) => {
   try {
     const commentId = parseInt(req.params.id);
+    const currentMemberId = req.user.id; // 從 JWT 或 session 取得
 
-    // 檢查留言是否存在
     const existingComment = await db
       .select()
       .from(comments)
@@ -47,12 +47,14 @@ const deleteComment = async (req, res) => {
       return res.status(404).json({ error: "留言不存在" });
     }
 
-    // 刪除留言
-    await db.delete(comments).where(eq(comments.id, commentId));
+    // 檢查是否為留言作者
+    if (existingComment[0].memberId !== currentMemberId) {
+      return res.status(403).json({ error: "無權限刪除此留言" });
+    }
 
-    res.json({ message: "留言已刪除", id: commentId });
+    await db.delete(comments).where(eq(comments.id, commentId));
+    res.json({ message: "留言已刪除" });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: "刪除留言失敗" });
   }
 };

@@ -10,8 +10,8 @@ const googleAuthCallback = (req, res, next) => {
     if (!user) return res.redirect("/auth/google"); // 沒登入成功就導回去
 
     // 登入成功：把 user 資料傳到前端
-    const userData = encodeURIComponent(JSON.stringify(user));
-    res.redirect(`http://localhost:5173/home?user=${userData}`);
+    // const userData = encodeURIComponent(JSON.stringify(user));
+    res.redirect(`http://localhost:5173/profile`);
   })(req, res, next);
 };
 

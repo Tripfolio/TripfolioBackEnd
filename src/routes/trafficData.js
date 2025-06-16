@@ -1,10 +1,18 @@
-
 const express = require('express');
 const router = express.Router();
-const ctrl = require('../controllers/trafficRoutesCtrl');
+const {
+  addTrafficData,
+  getTrafficData,
+  updateTrafficData,
+  deleteTrafficData,
+} = require('../controllers/trafficData');
 
-router.get('/traffic', ctrl.getTraffic);
-router.post('/add-traffic', ctrl.addTraffic);
-router.post('/reorder-traffic', ctrl.reorderTraffic);
+router.post('/add-traffic', addTrafficData);
+
+router.get('/get-all-traffic', getTrafficData);
+
+router.put('/update-traffic', updateTrafficData);
+
+router.delete('/delete-traffic', deleteTrafficData);
 
 module.exports = router;

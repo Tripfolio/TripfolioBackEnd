@@ -12,6 +12,7 @@ async function addPlace(req, res) {
     arrivalMinute,
     placeOrder,
   } = req.body;
+  
   if (!itineraryId || typeof name !== "string" || !name.trim()) {
     return res
       .status(400)
@@ -27,8 +28,8 @@ async function addPlace(req, res) {
       arrivalHour,
       arrivalMinute,
       placeOrder,
-    });
-    res.json({ success: true });
+    }).returning({ id: itineraryPlaces.id });
+    res.json({ success: true, placeId: inserted[0].id });
   } catch (err) {
     res.status(500).json({ success: false, message: "伺服器錯誤" });
   }
@@ -79,26 +80,6 @@ async function getPlaces(req, res) {
   }
 };
 
-async function updateTransportMode(req, res) {
-  const { itineraryId, selectedTransportMode } = req.body;
-
-  if (!itineraryId || !selectedTransportMode) {
-    return res.status(400).json({ success: false, message: '缺少必要參數' });
-  }
-
-  try {
-    await db
-      .update(itinerary)
-      .set({ selectedTransportMode })
-      .where(eq(itinerary.id, Number(itineraryId)));
-
-    res.json({ success: true });
-  } catch (err) {
-    console.error('更新交通方式失敗:', err);
-    res.status(500).json({ success: false, message: '伺服器錯誤' });
-  }
-}
-
 async function updateOrder(req, res) {
   const { places } = req.body;
 
@@ -116,5 +97,5 @@ async function updateOrder(req, res) {
   }
 }
 
-module.exports = { addPlace, deletePlace, getPlaces, updateOrder, updateTransportMode };
+module.exports = { addPlace, deletePlace, getPlaces, updateOrder };
 

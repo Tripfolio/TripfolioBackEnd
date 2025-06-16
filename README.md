@@ -46,3 +46,22 @@
 | 周子筠 | [yumi-chou](https://github.com/yumi-chou)           | 通勤方式與時間功能   | 路線與通勤時間 |
 | 許家瑜 | [Ninahsuuuuu](https://github.com/Ninahsuuuuu)       | 行程總覽建立         |                | 資料變更     |
 | 劉暄   | [pearl-liu-1203](https://github.com/pearl-liu-1203) | 行程頁面編輯         |                | 登入         |
+
+
+
+{
+  "itineraryId": 1,
+  "newPlaceId": "ChIJgUbEo8cfqokR5lP9_Wh_DaM",
+  "prevPlaceId": "ChIJ3S-JXmauEmsRUcIaWtf4MzE",
+  "fromAddress": "29 King St, Sydney NSW 2000, Australia",
+  "toAddress": "Bennelong Point, Sydney NSW 2000, Australia"
+}
+
+http://localhost:3000/api/traffic/select-mode
+
+{
+  "itineraryId": 1,
+  "fromPlaceId": "2",
+  "toPlaceId": "3",
+  "transportMode": "walking"
+}

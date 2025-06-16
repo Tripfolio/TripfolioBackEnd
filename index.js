@@ -5,9 +5,9 @@ require("dotenv").config();
 const app = express();
 const arriveItinerary = require("./src/routes/arriveItinerary");
 const authRoutes = require("./src/routes/authRoutes"); 
-const protectedRoutes = require("./src/routes/protectedRoutes"); 
-const memberRoutes = require('./src/routes/memberRoutes');
-const userRoutes = require('./src/routes/userRoutes');
+const protectedRoutes = require("./src/routes/protectedRoutes");
+const profileRoutes = require('./src/routes/profileRoutes');//用途改個人資料
+const userRoutes = require('./src/routes/userRoutes');//用途註冊登入密碼
 const itineraryRouter = require('./src/routes/itinerary');
 const emailPreferencesRoute = require('./src/routes/emailPreferencesRoute'); 
 const travelSchedulesRoutes = require('./src/routes/scheduleRoutes');
@@ -23,7 +23,7 @@ app.use(
 app.use(express.json());
 app.use('/api', authRoutes); 
 app.use('/api', protectedRoutes); 
-app.use('/api/members', memberRoutes);
+app.use('/api/profile', profileRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/itinerary', itineraryRouter);
 app.use("/uploads", express.static("uploads"));

@@ -1,4 +1,4 @@
-const db = require("../config/db");
+const { db } = require("../config/db");
 const { users } = require("./signUpSchema");
 const { eq } = require("drizzle-orm");
 const findByEmail = async (email) => {

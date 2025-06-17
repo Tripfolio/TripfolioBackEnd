@@ -18,6 +18,8 @@ router.post(
   createSchedule,
 );
 router.get("/", authenticateToken, getSchedules);
+router.post("/", authenticateToken, uploadCover.single("cover"), createSchedule);
+router.get("/user", authenticateToken, getSchedules);
 router.delete("/:id", authenticateToken, deleteSchedule);
 router.get("/member/:memberId", getSchedulesByMemberId);
 

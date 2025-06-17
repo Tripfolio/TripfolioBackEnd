@@ -34,7 +34,7 @@ app.use("/api/email-preferences", emailPreferencesRoute);
 app.use("/api/travelSchedule", travelSchedulesRoutes);
 app.use("/api", communityRoutes);
 app.use("/api/itineraryTime", arriveItinerary);
-app.use("/api/community", commentRoutes);
+app.use("/api/fakepost", commentRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

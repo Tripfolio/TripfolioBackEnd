@@ -1,5 +1,6 @@
 const { db } = require("../config/db");
 const { trafficData } = require('../models/trafficData');
+const { eq } = require('drizzle-orm');
 
 // 新增一筆交通資料
 async function addTrafficData(req, res) {
@@ -22,39 +23,66 @@ async function addTrafficData(req, res) {
 // 查詢某行程下所有交通資料
 async function getTrafficData(req, res) {
   try {
-    const { itineraryId } = req.params;
-    const result = await db.select().from(trafficData).where({ itineraryId: Number(itineraryId) });
-    res.json(result);
+    const { itineraryId } = req.query;
+
+    if (!itineraryId || isNaN(Number(itineraryId))) {
+      return res.status(400).json({ success: false, message: "缺少或無效的 itineraryId" });
+    }
+
+    const result = await db
+      .select()
+      .from(trafficData)
+      .where(eq(trafficData.itineraryId, Number(itineraryId)));  
+
+    res.json({ success: true, data: result });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("getTrafficData error:", err);
+    res.status(500).json({ success: false, message: err.message });
   }
 }
+
 
 // 更新交通資料
 async function updateTrafficData(req, res) {
   try {
-    const { id } = req.params;
+    const { id } = req.query;
     const { transportMode, duration, distance } = req.body;
-    const [result] = await db.update(trafficData)
+
+    if (!id || isNaN(Number(id))) {
+      return res.status(400).json({ success: false, message: '缺少或無效的 id' });
+    }
+
+    const [result] = await db
+      .update(trafficData)
       .set({ transportMode, duration, distance })
-      .where({ id: Number(id) })
+      .where(eq(trafficData.id, Number(id))) 
       .returning();
-    res.json(result);
+
+    res.json({ success: true, data: result });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('updateTrafficData error:', err);
+    res.status(500).json({ success: false, error: err.message });
   }
 }
+
 
 // 刪除交通資料
 async function deleteTrafficData(req, res) {
   try {
-    const { id } = req.params;
-    await db.delete(trafficData).where({ id: Number(id) });
+    const { id } = req.query;
+
+    if (!id || isNaN(Number(id))) {
+      return res.status(400).json({ success: false, message: "缺少或無效的 id" });
+    }
+
+    await db.delete(trafficData).where(eq(trafficData.id, Number(id)));
     res.status(204).send();
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("deleteTrafficData error:", err);
+    res.status(500).json({ success: false, error: err.message });
   }
 }
+
 
 module.exports = {
   addTrafficData,

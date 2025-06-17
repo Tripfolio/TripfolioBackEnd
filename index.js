@@ -3,7 +3,6 @@ const cors = require("cors");
 const dotenv = require('dotenv');
 dotenv.config(); 
 const app = express();
-const PORT = process.env.PORT;
 
 const arriveItinerary = require("./src/routes/arriveItinerary");
 const authRoutes = require("./src/routes/authRoutes"); 
@@ -36,6 +35,7 @@ app.use("/api/email-preferences", emailPreferencesRoute);
 app.use("/api/travelSchedule", travelSchedulesRoutes);
 app.use('/api', communityRoutes);
 
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });

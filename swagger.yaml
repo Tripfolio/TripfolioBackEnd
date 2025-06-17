@@ -5,7 +5,7 @@ info:
   description: |
     Tripfolio 後端 API 文件，使用者登入、會員資料、行程管理、社群發文等。
 servers:
-  - url: https://tripfoliobackend-may.onrender.com
+  - url: http://localhost:3000/
     description: dev
 
 components:

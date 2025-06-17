@@ -15,6 +15,7 @@ const communityRoutes = require("./src/routes/communityRoutes");
 const loginRouter = require("./src/routes/loginRoutes");
 const arriveItinerary = require("./src/routes/arriveItinerary");
 const commentRoutes = require("./src/routes/commentsRoutes");
+const favoritesRoutes = require("./src/routes/favoritesRoute");
 app.use(
   cors({
     origin: process.env.VITE_API_URL,
@@ -35,6 +36,7 @@ app.use("/api/travelSchedule", travelSchedulesRoutes);
 app.use("/api", communityRoutes);
 app.use("/api/itineraryTime", arriveItinerary);
 app.use("/api/fakepost", commentRoutes);
+app.use("/api/favorites", favoritesRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

@@ -28,5 +28,5 @@ app.use('/api/travelSchedule', scheduleRoutes);
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Server is now running and listening on port ${PORT}`);
+  console.log(`Server running at http://localhost:${PORT}`);
 });

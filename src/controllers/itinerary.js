@@ -11,6 +11,8 @@ async function addPlace(req, res) {
     arrivalHour,
     arrivalMinute,
     placeOrder,
+    lat,   
+    lng,
   } = req.body;
   
   if (!itineraryId || typeof name !== "string" || !name.trim()) {
@@ -20,7 +22,7 @@ async function addPlace(req, res) {
   }
 
   try {
-    await db.insert(itineraryPlaces).values({
+    const inserted = await db.insert(itineraryPlaces).values({
       itineraryId,
       name,
       address,
@@ -28,6 +30,8 @@ async function addPlace(req, res) {
       arrivalHour,
       arrivalMinute,
       placeOrder,
+      lat,   
+      lng,
     }).returning({ id: itineraryPlaces.id });
     res.json({ success: true, placeId: inserted[0].id });
   } catch (err) {
@@ -36,24 +40,20 @@ async function addPlace(req, res) {
 }
 
 async function deletePlace(req, res) {
-  const { itineraryId, name } = req.query;
+  const { id } = req.query;
 
-  if (!itineraryId || !name) {
+  if (!id) {
     return res.status(400).json({ success: false, message: "缺少必要參數" });
   }
 
   try {
     await db
       .delete(itineraryPlaces)
-      .where(
-        and(
-          eq(itineraryPlaces.itineraryId, Number(itineraryId)),
-          eq(itineraryPlaces.name, name),
-        ),
-      );
+      .where(eq(itineraryPlaces.id, Number(id)));
 
     res.json({ success: true });
   } catch (error) {
+    console.error("刪除景點錯誤：", error);
     res.status(500).json({ success: false, message: "刪除失敗" });
   }
 }

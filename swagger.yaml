@@ -149,7 +149,7 @@ paths:
                     example: 伺服器錯誤
 
 # memberRoutes.js
-  /api/members/{id}:
+  /api/users/{id}:
     get:
       summary: 取得會員資料
       tags: [會員]
@@ -215,7 +215,7 @@ paths:
         '200':
           description: 修改成功
 
-  /api/members/{id}/password:
+  /api/users/{id}/password:
     put:
       summary: 修改密碼
       tags: [會員]
@@ -260,10 +260,10 @@ paths:
             schema:
               type: object
               required:
-                - memberId
+                - userId
                 - avatar
               properties:
-                memberId:
+                userId:
                   type: integer
                   example: 1
                 avatar:

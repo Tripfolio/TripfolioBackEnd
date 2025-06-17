@@ -35,7 +35,7 @@ const createSchedule = async (req, res) => {
       schedule: inserted[0],
     });
   } catch (err) {
-    console.error("建立行程失敗", err);
+    // eslint-disable-next-line no-empty
     res.status(500).json({
       message: "行程建立失敗",
       error: err.message,

@@ -9,9 +9,9 @@ const {
     updateUserPassword
 } = require('../controllers/profileController');
 
-router.get('/profile', authenticateToken, getProfile);
-router.put('/profile', authenticateToken, updateProfile);
-router.post('/profile/upload-avatar', authenticateToken, upload.single('avatar'), uploadAvatar);
+router.get('/', authenticateToken, getProfile);
+router.put('/', authenticateToken, updateProfile);
+router.post('/upload-avatar', authenticateToken, upload.single('avatar'), uploadAvatar);
 router.put('/users/password', authenticateToken, updateUserPassword);
 
 module.exports = router;

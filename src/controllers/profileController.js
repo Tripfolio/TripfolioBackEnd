@@ -6,7 +6,7 @@ const validatePassword = require('../utils/validatePassword');
 
 //抓取會員資料
 exports.getProfile = async (req, res) => {
-  const userId = +req.params.id;
+  const userId = req.user.id;
   const result = await db
     .select({
       id: users.id,
@@ -26,7 +26,7 @@ exports.getProfile = async (req, res) => {
 
 //會員資料修改
 exports.updateProfile = async (req, res) => {
-    const userId = +req.params.id;
+    const userId = req.user.id;
     const { name, gender, phone, birthday } = req.body;
 
     const existing = await db
@@ -61,7 +61,7 @@ exports.updateProfile = async (req, res) => {
 
 //大頭貼修改
 exports.uploadAvatar = async(req, res) => {
-    const userId = +req.body.memberId;
+    const userId = req.user.id;
     const fileUrl = req.file.location;
     await db.update(users)
         .set({ avatar: fileUrl })
@@ -71,7 +71,7 @@ exports.uploadAvatar = async(req, res) => {
 
 //密碼修改與驗證舊密碼
 exports.updateUserPassword = async(req, res) => {
-    const userId = +req.params.id;
+    const userId = req.user.id;
     const { oldPassword, newPassword } = req.body;
 
     const result = await db.select()

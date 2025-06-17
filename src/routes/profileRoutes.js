@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const upload = require("../middlewares/uploadAvatar");
+const { authenticateToken } = require("../middlewares/authMiddleware")
 const {
     getProfile,
     updateProfile,
@@ -8,9 +9,9 @@ const {
     updateUserPassword
 } = require('../controllers/profileController');
 
-router.get('/:id', getProfile);
-router.put('/:id', updateProfile);
-router.post('/upload-avatar', upload.single('avatar'), uploadAvatar);
-router.put('/:id/password', updateUserPassword);
+router.get('/profile', authenticateToken, getProfile);
+router.put('/profile', authenticateToken, updateProfile);
+router.post('/profile/upload-avatar', authenticateToken, upload.single('avatar'), uploadAvatar);
+router.put('/users/password', authenticateToken, updateUserPassword);
 
 module.exports = router;

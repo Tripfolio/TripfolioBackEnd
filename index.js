@@ -5,6 +5,12 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT;
 
+const YAML = require("yamljs");
+const swaggerUi = require("swagger-ui-express");
+
+const swaggerDocument = YAML.load("./swagger.yaml"); // 確保路徑正確
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 const authRoutes = require("./src/routes/authRoutes"); 
 const protectedRoutes = require("./src/routes/protectedRoutes"); 
 const memberRoutes = require('./src/routes/memberRoutes');

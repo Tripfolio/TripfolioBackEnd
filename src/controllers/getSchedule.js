@@ -1,15 +1,24 @@
 const { eq, desc } = require("drizzle-orm");
 const { db } = require("../config/db");
-const { travelSchedules } = require("../models/scheduleSchema");
+const { travelSchedules } = require("../models/scheduleSchema")
 
-//撈取會員資料庫行程
+//抓取會員資料庫行程
 const getSchedules = async (req, res) => {
   try {
-    const memberId = req.user.id;
+    const userId = req.user.id;
     const schedules = await db
-      .select()
+      .select({
+        id: travelSchedules.id,
+        userId: travelSchedules.userId,
+        title: travelSchedules.title,
+        startDate: travelSchedules.startDate,
+        endDate: travelSchedules.endDate,
+        description: travelSchedules.description,
+        coverURL: travelSchedules.coverURL,
+        createdAt: travelSchedules.createdAt,
+      })
       .from(travelSchedules)
-      .where(eq(travelSchedules.memberId, memberId))
+      .where(eq(travelSchedules.userId, userId))
       .orderBy(desc(travelSchedules.createdAt));
 
     res.json({ schedules });

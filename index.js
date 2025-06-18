@@ -15,6 +15,7 @@ const communityRoutes = require('./src/routes/communityRoutes');
 const loginRouter = require('./src/routes/loginRoutes');
 const arriveItinerary = require("./src/routes/arriveItinerary");
 
+
 app.use(
   cors({
     origin: process.env.VITE_API_URL,
@@ -34,6 +35,9 @@ app.use("/api/email-preferences", emailPreferencesRoute);
 app.use('/api/travelSchedule', travelSchedulesRoutes);
 app.use('/api', communityRoutes);
 app.use("/api/itineraryTime", arriveItinerary);
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', message: 'Backend is alive 🚀' });
+});
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

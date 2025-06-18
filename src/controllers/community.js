@@ -87,9 +87,34 @@ async function deleteCommunityPost(req, res) {
   }
 }
 
+//取得自己的貼文
+async function getMyCommunityPosts(req, res){
+  const memberId = req.user.id;
+
+  try {
+    const posts = await db
+      .select({
+        postId: communityPosts.id,
+        content: communityPosts.content,
+        coverURL: communityPosts.coverURL,
+        createdAt: communityPosts.createdAt,
+        scheduleTitle: travelSchedules.title,
+      })
+      .from(communityPosts)
+      .leftJoin(travelSchedules, eq(communityPosts.scheduleId, travelSchedules.id))
+      .where(eq(communityPosts.memberId, memberId))
+      .orderBy(communityPosts.createdAt.desc());
+    
+    res.json({ posts });
+  } catch (err) {
+    res.status(500).json({ message:'取得我的貼文失敗', error: err.message });
+  }
+}
+
 module.exports = {
   createCommunityPost,
   getAllCommunityPosts,
   updateCommunityPost,
   deleteCommunityPost,
+  getMyCommunityPosts,
 };

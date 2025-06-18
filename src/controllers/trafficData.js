@@ -1,6 +1,6 @@
 const { db } = require("../config/db");
 const { trafficData } = require('../models/trafficData');
-const { eq } = require('drizzle-orm');
+const { eq , and } = require('drizzle-orm');
 
 // 新增一筆交通資料
 async function addTrafficData(req, res) {
@@ -41,52 +41,34 @@ async function getTrafficData(req, res) {
   }
 }
 
-
-// 更新交通資料
-async function updateTrafficData(req, res) {
-  try {
-    const { id } = req.query;
-    const { transportMode, duration, distance } = req.body;
-
-    if (!id || isNaN(Number(id))) {
-      return res.status(400).json({ success: false, message: '缺少或無效的 id' });
-    }
-
-    const [result] = await db
-      .update(trafficData)
-      .set({ transportMode, duration, distance })
-      .where(eq(trafficData.id, Number(id))) 
-      .returning();
-
-    res.json({ success: true, data: result });
-  } catch (err) {
-    console.error('updateTrafficData error:', err);
-    res.status(500).json({ success: false, error: err.message });
-  }
-}
-
-
 // 刪除交通資料
 async function deleteTrafficData(req, res) {
   try {
-    const { id } = req.query;
+    const { itineraryId, fromPlaceId, toPlaceId } = req.query;
 
-    if (!id || isNaN(Number(id))) {
-      return res.status(400).json({ success: false, message: "缺少或無效的 id" });
+    if (!itineraryId || !fromPlaceId || !toPlaceId) {
+      return res.status(400).json({ error: "缺少必要參數" });
     }
 
-    await db.delete(trafficData).where(eq(trafficData.id, Number(id)));
-    res.status(204).send();
+    await db.delete(trafficData).where(
+      and(
+        eq(trafficData.itineraryId, Number(itineraryId)),
+        eq(trafficData.fromPlaceId, Number(fromPlaceId)),
+        eq(trafficData.toPlaceId, Number(toPlaceId))
+      )
+    );
+
+    res.json({ success: true });
   } catch (err) {
-    console.error("deleteTrafficData error:", err);
-    res.status(500).json({ success: false, error: err.message });
+    console.error('刪除交通資料錯誤：', err)
+    res.status(500).json({ error: err.message });
   }
 }
+
 
 
 module.exports = {
   addTrafficData,
   getTrafficData,
-  updateTrafficData,
   deleteTrafficData,
 };

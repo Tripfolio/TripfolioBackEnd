@@ -24,10 +24,10 @@ app.use(
 
 
 app.use(express.json());
-app.use('/api', authRoutes); 
+app.use('/api/signup', authRoutes); 
 app.use('/api', protectedRoutes); 
 app.use('/api/profile', profileRoutes);
-app.use('/api', loginRouter);
+app.use('/api/login', loginRouter);
 app.use('/api/itinerary', itineraryRouter);
 app.use("/uploads", express.static("uploads"));
 app.use("/api/itineraryTime", arriveItinerary);

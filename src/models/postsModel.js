@@ -1,24 +1,29 @@
 const db = require("../drizzle/db");
-const { posts } = require("./posts"); //需確認有貼文資料表
-const { users } = require("./users"); //需確認有使用者資料表
+const { communityPosts } = require("./post"); //需確認有貼文資料表
+const { users } = require("./signUpSchema");
 const { comments } = require("./comments"); //需確認有留言資料表
 const { favorites } = require("./favorites"); //需確認有收藏資料表
-const { eq, sql, count } = require("drizzle-orm");
+const { travelSchedules } = require("./scheduleschema");
+const { eq, sql } = require("drizzle-orm");
 
 async function getPaginatedPosts(page = 1, limit = 15) {
   const offset = (page - 1) * limit;
 
   const postData = await db
     .select({
-      id: posts.id,
-      title: posts.title,
-      imageUrl: posts.image_url,
-      createdAt: posts.created_at,
+      id: communityPosts.id,
+      title: travelSchedules.title,
+      imageUrl: communityPosts.coverURL,
+      createdAt: communityPosts.createdAt,
       authorName: users.name,
     })
-    .from(posts)
-    .leftJoin(users, eq(posts.user_id, users.id))
-    .orderBy(posts.created_at.desc())
+    .from(communityPosts)
+    .leftJoin(users, eq(communityPosts.memberId, users.id))
+    .leftJoin(
+      travelSchedules,
+      eq(communityPosts.scheduleId, travelSchedules.id),
+    )
+    .orderBy(communityPosts.createdAt.desc())
     .limit(limit)
     .offset(offset);
 
@@ -26,21 +31,21 @@ async function getPaginatedPosts(page = 1, limit = 15) {
 
   const commentCounts = await db
     .select({
-      postId: comments.post_id,
+      postId: comments.postId,
       count: sql`COUNT(*)`.as("count"),
     })
     .from(comments)
-    .where(sql`${comments.post_id} = ANY(${sql.array(postIds)})`)
-    .groupBy(comments.post_id);
+    .where(sql`${comments.postId} = ANY(${sql.array(postIds)})`)
+    .groupBy(comments.postId);
 
   const favoriteCounts = await db
     .select({
-      postId: favorites.post_id,
+      postId: favorites.postId,
       count: sql`COUNT(*)`.as("count"),
     })
     .from(favorites)
-    .where(sql`${favorites.post_id} = ANY(${sql.array(postIds)})`)
-    .groupBy(favorites.post_id);
+    .where(sql`${favorites.postId} = ANY(${sql.array(postIds)})`)
+    .groupBy(favorites.postId);
 
   const commentMap = Object.fromEntries(
     commentCounts.map((c) => [c.postId, Number(c.count)]),

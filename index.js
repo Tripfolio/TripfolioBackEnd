@@ -30,7 +30,7 @@ app.use("/api/itinerary", itineraryRouter);
 app.use("/api/email-preferences", emailPreferencesRoute);
 app.use("/api/travelSchedule", travelSchedulesRoutes);
 app.use("/api/itineraryTime", arriveItinerary);
-app.use("/api/posts", postsRoute);
+app.use("/api/allposts", postsRoute);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

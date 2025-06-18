@@ -1,40 +1,50 @@
 const { db } = require("../config/db");
-const comments = require("../models/commentsSchema");
-const members = require("../models/schema");
-const posts = require("../models/post");
+const { comments } = require("../models/commentsSchema");
+const { members } = require("../models/schema");
+const { posts } = require("../models/post");
 const { eq, desc } = require("drizzle-orm");
 
-// 取得特定貼文的所有留言（包含頭像）
+// 取得特定貼文的所有留言（簡化版）
 const getCommentsByPost = async (req, res) => {
   try {
     const { postId } = req.params;
+    const parsedPostId = parseInt(postId);
 
+    if (isNaN(parsedPostId)) {
+      return res.status(400).json({ error: "無效的貼文 ID" });
+    }
+
+    // console.log(`取得社群貼文 ${parsedPostId} 的留言`);
+
+    // 先用簡單查詢測試
     const postComments = await db
       .select({
         id: comments.id,
         content: comments.content,
         createdAt: comments.createdAt,
         postId: comments.postId,
-        // 使用者資訊
         memberId: comments.memberId,
-        userName: members.name,
-        userAvatar: members.avatar, // 頭像
+        // 暫時註解掉 join，先確保基本查詢正常
+        // userName: members.name,
+        // userAvatar: members.avatar,
       })
       .from(comments)
-      .leftJoin(members, eq(comments.memberId, members.id))
-      .where(eq(comments.postId, postId))
+      .where(eq(comments.postId, parsedPostId))
       .orderBy(desc(comments.createdAt));
 
-    // 為沒有頭像的使用者提供預設頭像
-    const commentsWithDefaultAvatar = postComments.map((comment) => ({
+    // console.log(`找到 ${postComments.length} 則留言`);
+
+    // 為每則留言加入預設使用者資訊
+    const commentsWithDefaults = postComments.map((comment) => ({
       ...comment,
-      userAvatar:
-        comment.userAvatar || "https://via.placeholder.com/40?text=User",
+      userName: "會員使用者", // 暫時的預設名稱
+      userAvatar: "https://picsum.photos/40/40?random=1",
     }));
 
-    res.json(commentsWithDefaultAvatar);
+    res.json(commentsWithDefaults);
   } catch (error) {
     console.error("取得留言失敗:", error);
+    console.error("錯誤堆疊:", error.stack);
     res.status(500).json({ error: "取得留言失敗" });
   }
 };
@@ -45,52 +55,36 @@ const addComment = async (req, res) => {
     const { postId } = req.params;
     const { content, memberId } = req.body;
 
+    const parsedPostId = parseInt(postId);
+
     if (!content || !content.trim()) {
       return res.status(400).json({ error: "留言內容不能為空" });
     }
 
-    // 檢查貼文是否存在
-    const postExists = await db
-      .select({ id: posts.id })
-      .from(posts)
-      .where(eq(posts.id, parseInt(postId)))
-      .limit(1);
+    // console.log(`新增留言到貼文 ${parsedPostId}`);
 
-    if (!postExists.length) {
-      return res.status(404).json({ error: "貼文不存在" });
-    }
-
+    // 直接新增留言，暫時跳過存在性檢查
     const [newComment] = await db
       .insert(comments)
       .values({
         content: content.trim(),
-        memberId,
-        postId: parseInt(postId),
+        memberId: memberId || 1, // 提供預設值
+        postId: parsedPostId,
         createdAt: new Date(),
       })
       .returning();
 
-    // 取得完整的留言資訊（包含使用者頭像）
-    const commentWithUser = await db
-      .select({
-        id: comments.id,
-        content: comments.content,
-        createdAt: comments.createdAt,
-        postId: comments.postId,
-        memberId: comments.memberId,
-        userName: members.name,
-        userAvatar: members.avatar,
-      })
-      .from(comments)
-      .leftJoin(members, eq(comments.memberId, members.id))
-      .where(eq(comments.id, newComment.id));
+    // console.log("新增留言成功:", newComment);
 
-    // 提供預設頭像
+    // 回傳簡化的結果
     const result = {
-      ...commentWithUser[0],
-      userAvatar:
-        commentWithUser[0].userAvatar ||
-        "https://via.placeholder.com/40?text=User",
+      id: newComment.id,
+      content: newComment.content,
+      createdAt: newComment.createdAt,
+      postId: newComment.postId,
+      memberId: newComment.memberId,
+      userName: "會員使用者",
+      userAvatar: "https://picsum.photos/40/40?random=1",
     };
 
     res.status(201).json(result);
@@ -100,7 +94,7 @@ const addComment = async (req, res) => {
   }
 };
 
-// 刪除留言
+//刪除留言;
 const deleteComment = async (req, res) => {
   try {
     const { commentId } = req.params;

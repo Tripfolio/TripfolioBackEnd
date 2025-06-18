@@ -36,7 +36,7 @@ app.use("/api/email-preferences", emailPreferencesRoute);
 app.use("/api/travelSchedule", travelSchedulesRoutes);
 app.use("/api", communityRoutes);
 app.use("/api/itineraryTime", arriveItinerary);
-app.use("/api/fakepost", commentRoutes);
+app.use("/api/post", commentRoutes);
 app.use("/api/favorites", favoritesRoutes);
 app.use("/api/allPosts", postsRoute);
 

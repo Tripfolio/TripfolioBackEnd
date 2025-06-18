@@ -6,12 +6,10 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Database and models
 const { db } = require('./src/config/db');
 const { travelSchedules } = require('./src/models/scheduleSchema');
 const { eq } = require('drizzle-orm');
 
-// Routes
 const authRoutes = require('./src/routes/authRoutes');
 const protectedRoutes = require('./src/routes/protectedRoutes');
 const memberRoutes = require('./src/routes/memberRoutes');

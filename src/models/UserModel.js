@@ -1,4 +1,4 @@
-const db = require("../config/db");
+const { db } = require("../config/db");
 const { users } = require("./signUpSchema");
 const { eq } = require("drizzle-orm");
 const findByEmail = async (email) => {
@@ -7,11 +7,14 @@ const findByEmail = async (email) => {
 };
 
 const createUser = async ({ email, password, phone }) => {
-  return await db.insert(users).values({
-    email,
-    password,
-    phone,
-  });
+  return await db
+    .insert(users)
+    .values({
+      email,
+      password,
+      phone,
+    })
+    .returning({ id: users.id });
 };
 
 module.exports = {

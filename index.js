@@ -14,6 +14,7 @@ const travelSchedulesRoutes = require("./src/routes/scheduleRoutes");
 const communityRoutes = require("./src/routes/communityRoutes");
 const loginRouter = require("./src/routes/loginRoutes");
 const arriveItinerary = require("./src/routes/arriveItinerary");
+const postsRoute = require("./src/routes/allPostRoutes");
 const commentRoutes = require("./src/routes/commentsRoutes");
 const favoritesRoutes = require("./src/routes/favoritesRoute");
 app.use(
@@ -37,6 +38,7 @@ app.use("/api", communityRoutes);
 app.use("/api/itineraryTime", arriveItinerary);
 app.use("/api/fakepost", commentRoutes);
 app.use("/api/favorites", favoritesRoutes);
+app.use("/api/allPosts", postsRoute);
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

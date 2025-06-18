@@ -12,7 +12,7 @@ const loginRouter = require('./src/routes/loginRoutes');
 const itineraryRouter = require('./src/routes/itinerary');
 const emailPreferencesRoute = require('./src/routes/emailPreferencesRoute'); 
 const travelSchedulesRoutes = require('./src/routes/scheduleRoutes');
-// const communityRoutes = require('./src/routes/communityRoutes');
+const communityRoutes = require('./src/routes/communityRoutes');
 const paymentRoute = require('./src/routes/paymentRoutes');
 
 app.use(
@@ -37,7 +37,7 @@ app.get('/api/health', (req, res) => {
 });
 app.use("/api/email-preferences", emailPreferencesRoute);
 app.use("/api/travelSchedule", travelSchedulesRoutes);
-// app.use('/api', communityRoutes);
+app.use('/api', communityRoutes);
 app.use('/api/payment', paymentRoute);
 
 

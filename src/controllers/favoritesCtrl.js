@@ -1,7 +1,7 @@
 const { db } = require("../config/db");
 const { favorites } = require("../models/favoritesSchema");
-const posts = require("../models/post");
-const members = require("../models/schema");
+const { communityPosts } = require("../models/post");
+const { members } = require("../models/schema");
 const { eq, and, desc } = require("drizzle-orm");
 
 // 新增收藏
@@ -11,9 +11,9 @@ const addFavorite = async (req, res) => {
 
     // 檢查貼文是否存在
     const postExists = await db
-      .select({ id: posts.id })
-      .from(posts)
-      .where(eq(posts.id, postId))
+      .select({ id: communityPosts.id })
+      .from(communityPosts)
+      .where(eq(communityPosts.id, postId))
       .limit(1);
 
     if (!postExists.length) {
@@ -90,19 +90,19 @@ const getFavorites = async (req, res) => {
         favoriteId: favorites.id,
         createdAt: favorites.createdAt,
         // 貼文資訊
-        postId: posts.id,
-        postTitle: posts.title,
-        postContent: posts.content,
-        postImageUrl: posts.imageUrl,
-        postLikes: posts.likes,
+        postId: communityPosts.id,
+        postTitle: communityPosts.title,
+        postContent: communityPosts.content,
+        postImageUrl: communityPosts.imageUrl,
+        postLikes: communityPosts.likes,
         // 作者資訊
-        authorId: posts.authorId,
+        authorId: communityPosts.authorId,
         authorName: members.name,
         authorAvatar: members.avatar,
       })
       .from(favorites)
-      .leftJoin(posts, eq(favorites.postId, posts.id))
-      .leftJoin(members, eq(posts.authorId, members.id))
+      .leftJoin(communityPosts, eq(favorites.postId, communityPosts.id))
+      .leftJoin(members, eq(communityPosts.authorId, members.id))
       .where(eq(favorites.memberId, parseInt(memberId)))
       .orderBy(desc(favorites.createdAt));
 

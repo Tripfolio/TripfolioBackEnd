@@ -1,5 +1,5 @@
 const { db } = require("../config/db");
-const favorites = require("../models/favoritesSchema");
+const { favorites } = require("../models/favoritesSchema");
 const posts = require("../models/post");
 const members = require("../models/schema");
 const { eq, and, desc } = require("drizzle-orm");
@@ -131,7 +131,7 @@ const checkFavorite = async (req, res) => {
 
     res.json({ isFavorited: favorite.length > 0 });
   } catch (error) {
-    console.error("檢查收藏狀態失敗:", error);
+    console.error("檢查收藏狀態失敗:", error.message);
     res.status(500).json({ error: "檢查收藏狀態失敗" });
   }
 };

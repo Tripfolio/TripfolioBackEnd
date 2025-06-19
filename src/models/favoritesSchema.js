@@ -20,4 +20,4 @@ const favorites = pgTable(
   }),
 );
 
-module.exports = favorites;
+module.exports = { favorites };

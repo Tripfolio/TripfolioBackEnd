@@ -2,11 +2,8 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
-
 const app = express();
-const tripSharesRoute = require("./src/routes/tripSharesRoute");
 const PORT = process.env.PORT || 3000;
-
 const { db } = require("./src/config/db");
 const { travelSchedules } = require("./src/models/scheduleSchema");
 const { eq } = require("drizzle-orm");
@@ -17,11 +14,11 @@ const memberRoutes = require("./src/routes/memberRoutes");
 const itineraryRouter = require("./src/routes/itinerary");
 const emailPreferencesRoute = require("./src/routes/emailPreferencesRoute");
 const travelSchedulesRoutes = require("./src/routes/scheduleRoutes");
-require("dotenv").config();
 const updateScheduleRoutes = require("./src/routes/updateScheduleRoutes");
 const communityRoutes = require("./src/routes/communityRoutes");
 const loginRouter = require("./src/routes/loginRoutes");
 const arriveItinerary = require("./src/routes/arriveItinerary");
+const tripSharesRoute = require("./src/routes/tripSharesRoute");
 
 app.use(
   cors({
@@ -33,7 +30,6 @@ app.use(
 
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
-
 app.use("/api", authRoutes);
 app.use("/api", protectedRoutes);
 app.use("/api", loginRouter);
@@ -44,6 +40,7 @@ app.use("/api/travelSchedule", travelSchedulesRoutes);
 app.use("/api/updateScheduleRoutes", updateScheduleRoutes);
 app.use("/api", communityRoutes);
 app.use("/api/itineraryTime", arriveItinerary);
+app.use("/api/tripShares", tripSharesRoute);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Backend is alive 🚀" });

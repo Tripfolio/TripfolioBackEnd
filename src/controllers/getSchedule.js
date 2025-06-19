@@ -23,7 +23,8 @@ const getSchedules = async (req, res) => {
 
     res.json({ schedules });
   } catch (err) {
-    res.status(500).json({ message: "取得行程失敗", error: err.message });
+    console.error('🔥 getSchedules 錯誤:', err);
+
   }
 };
 

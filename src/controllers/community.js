@@ -1,7 +1,7 @@
 const { db } = require('../config/db');
 const { communityPosts } = require('../models/post');
 const { travelSchedules } = require('../models/scheduleSchema');
-const { eq, and } = require('drizzle-orm');
+const { eq, and, desc } = require('drizzle-orm');
 
 async function createCommunityPost(req, res) {
   try {
@@ -103,7 +103,7 @@ async function getMyCommunityPosts(req, res){
       .from(communityPosts)
       .leftJoin(travelSchedules, eq(communityPosts.scheduleId, travelSchedules.id))
       .where(eq(communityPosts.memberId, memberId))
-      .orderBy(communityPosts.createdAt.desc());
+      .orderBy(desc(communityPosts.createdAt));
     
     res.json({ posts });
   } catch (err) {

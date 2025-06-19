@@ -1,8 +1,7 @@
 const express = require("express");
 const cors = require("cors");
-const dotenv = require('dotenv');
-dotenv.config(); 
 const app = express();
+require('dotenv').config();
 
 const arriveItinerary = require("./src/routes/arriveItinerary");
 const authRoutes = require("./src/routes/authRoutes"); 
@@ -14,6 +13,8 @@ const emailPreferencesRoute = require('./src/routes/emailPreferencesRoute');
 const travelSchedulesRoutes = require('./src/routes/scheduleRoutes');
 const communityRoutes = require('./src/routes/communityRoutes');
 const paymentRoute = require('./src/routes/paymentRoutes');
+const updateScheduleRoutes = require('./src/routes/updateScheduleRoutes');
+const tripSharesRoute = require("./src/routes/tripSharesRoute");
 
 app.use(
   cors({
@@ -25,20 +26,23 @@ app.use(
 
 
 app.use(express.json());
-app.use('/api', authRoutes); 
+app.use('/api/signup', authRoutes);
 app.use('/api', protectedRoutes); 
 app.use('/api/profile', profileRoutes);
-app.use('/api', loginRouter);
+app.use('/api/login', loginRouter);
 app.use('/api/itinerary', itineraryRouter);
-app.use("/uploads", express.static("uploads"));
+app.use('/api/travelSchedule', travelSchedulesRoutes);
+app.use('/api/updateScheduleRoutes', updateScheduleRoutes);
 app.use("/api/itineraryTime", arriveItinerary);
+app.use("/api/email-preferences", emailPreferencesRoute);
+app.use("/api/tripShares", tripSharesRoute);
+app.use('/api', communityRoutes);
+app.use('/api/payment', paymentRoute);
+app.use("/uploads", express.static("uploads"));
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Backend is alive 🚀' });
 });
-app.use("/api/email-preferences", emailPreferencesRoute);
-app.use("/api/travelSchedule", travelSchedulesRoutes);
-app.use('/api', communityRoutes);
-app.use('/api/payment', paymentRoute);
 
 
 const PORT = process.env.PORT || 3000;

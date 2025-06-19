@@ -1,13 +1,13 @@
 const { db } = require("../config/db");
-const { travelSchedules } = require("../models/scheduleschema");
-const { eq } = require("drizzle-orm");
+const { travelSchedules } = require("../models/scheduleSchema");
+const { eq, and } = require("drizzle-orm");
 
 //建立行程
 const createSchedule = async (req, res) => {
   try {
-    const memberId = req.user?.id;
+    const userId = req.user?.id;
 
-    if (!memberId) {
+    if (!userId) {
       return res.status(403).json({ message: "JWT無效或未登入" });
     }
 
@@ -21,7 +21,7 @@ const createSchedule = async (req, res) => {
     const inserted = await db
       .insert(travelSchedules)
       .values({
-        memberId: Number(memberId),
+        userId: Number(userId),
         title,
         startDate,
         endDate,
@@ -35,6 +35,7 @@ const createSchedule = async (req, res) => {
       schedule: inserted[0],
     });
   } catch (err) {
+    // eslint-disable-next-line no-empty
     res.status(500).json({
       message: "行程建立失敗",
       error: err.message,
@@ -44,14 +45,23 @@ const createSchedule = async (req, res) => {
 
 //刪除行程
 const deleteSchedule = async (req, res) => {
-  const memberId = req.user.id;
+  const userId = req.user.id;
   const scheduleId = Number(req.params.id);
 
   try {
     const deleted = await db
       .delete(travelSchedules)
-      .where(eq(travelSchedules.id, scheduleId));
+      .where(
+        and(
+          eq(travelSchedules.id, scheduleId),
+          eq(travelSchedules.userId, userId)
+        )
+      )
+      .returning();
 
+    if (deleted === 0) {
+      return res.status(404).json({ message: '找不到該行程'});
+    }
     res.json({ message: "刪除成功" });
   } catch (err) {
     res.status(500).json({ message: "刪除失敗", error: err.message });

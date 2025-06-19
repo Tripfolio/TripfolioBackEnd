@@ -39,18 +39,6 @@ app.get('/api/health', (req, res) => {
 	res.json({ status: 'ok', message: 'Backend is alive 🚀' });
 });
 
-app.use(express.json());
-app.use('/api/signup', authRoutes); 
-app.use('/api', protectedRoutes); 
-app.use('/api/profile', profileRoutes);
-app.use('/api/login', loginRouter);
-app.use('/api/itinerary', itineraryRouter);
-app.use("/uploads", express.static("uploads"));
-app.use("/api/itineraryTime", arriveItinerary);
-app.use("/api/email-preferences", emailPreferencesRoute);
-app.use("/api/travelSchedule", travelSchedulesRoutes);
-app.use('/api', communityRoutes);
-
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

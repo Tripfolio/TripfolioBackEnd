@@ -1,22 +1,23 @@
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv");
-dotenv.config();
 const app = express();
-const PORT = process.env.PORT;
+require("dotenv").config();
 
+const arriveItinerary = require("./src/routes/arriveItinerary");
 const authRoutes = require("./src/routes/authRoutes");
 const protectedRoutes = require("./src/routes/protectedRoutes");
-const memberRoutes = require("./src/routes/memberRoutes");
+const profileRoutes = require("./src/routes/profileRoutes");
+const loginRouter = require("./src/routes/loginRoutes");
 const itineraryRouter = require("./src/routes/itinerary");
 const emailPreferencesRoute = require("./src/routes/emailPreferencesRoute");
 const travelSchedulesRoutes = require("./src/routes/scheduleRoutes");
+const updateScheduleRoutes = require("./src/routes/updateScheduleRoutes");
 const communityRoutes = require("./src/routes/communityRoutes");
-const loginRouter = require("./src/routes/loginRoutes");
-const arriveItinerary = require("./src/routes/arriveItinerary");
+const tripSharesRoute = require("./src/routes/tripSharesRoute");
 const postsRoute = require("./src/routes/allPostRoutes");
 const commentRoutes = require("./src/routes/commentsRoutes");
 const favoritesRoutes = require("./src/routes/favoritesRoute");
+
 app.use(
   cors({
     origin: process.env.VITE_API_URL,
@@ -27,19 +28,27 @@ app.use(
 
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
-app.use("/api", authRoutes);
+app.use("/api/signup", authRoutes);
 app.use("/api", protectedRoutes);
-app.use("/api", loginRouter);
-app.use("/api/members", memberRoutes);
+app.use("/api/login", loginRouter);
+app.use("/api/profile", profileRoutes);
 app.use("/api/itinerary", itineraryRouter);
 app.use("/api/email-preferences", emailPreferencesRoute);
 app.use("/api/travelSchedule", travelSchedulesRoutes);
+app.use("/api/updateScheduleRoutes", updateScheduleRoutes);
 app.use("/api", communityRoutes);
 app.use("/api/itineraryTime", arriveItinerary);
+app.use("/api/tripShares", tripSharesRoute);
+app.use("/api", communityRoutes);
 app.use("/api/post", commentRoutes);
 app.use("/api/favorites", favoritesRoutes);
 app.use("/api/allPosts", postsRoute);
 
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", message: "Backend is alive " });
+});
+
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });

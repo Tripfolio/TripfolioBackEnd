@@ -59,12 +59,18 @@ const removeFavorite = async (req, res) => {
     const { postId } = req.params;
     const { memberId } = req.body;
 
+    const parsedPostId = +postId;
+
+    const parsedMemberId = parseInt(memberId);
+    console.log("parsedPostId:", parsedPostId, typeof parsedPostId);
+    console.log("parsedMemberId:", parsedMemberId, typeof parsedMemberId);
+
     const deletedFavorite = await db
       .delete(favorites)
       .where(
         and(
-          eq(favorites.memberId, memberId),
-          eq(favorites.postId, parseInt(postId)),
+          eq(favorites.memberId, parsedMemberId),
+          eq(favorites.postId, parsedPostId),
         ),
       )
       .returning();

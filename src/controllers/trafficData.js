@@ -5,18 +5,49 @@ const { eq , and } = require('drizzle-orm');
 // 新增一筆交通資料
 async function addTrafficData(req, res) {
   try {
-    const { itineraryId, fromPlaceId, toPlaceId, transportMode, duration, distance } = req.body;
-    const [result] = await db.insert(trafficData).values({
+    const {
       itineraryId,
       fromPlaceId,
       toPlaceId,
       transportMode,
       duration,
-      distance,
-    }).returning();
-    res.status(201).json(result);
+      distance
+    } = req.body;
+
+    const exists = await db
+      .select()
+      .from(trafficData)
+      .where(
+        and(
+          eq(trafficData.itineraryId, Number(itineraryId)),
+          eq(trafficData.fromPlaceId, Number(fromPlaceId)),
+          eq(trafficData.toPlaceId, Number(toPlaceId))
+        )
+      );
+
+    if (exists.length > 0) {
+      return res.status(200).json({
+        success: false,
+        message: '資料已存在'
+      });
+    }
+
+    const [result] = await db
+      .insert(trafficData)
+      .values({
+        itineraryId,
+        fromPlaceId,
+        toPlaceId,
+        transportMode,
+        duration,
+        distance
+      })
+      .returning();
+
+    res.status(201).json({ success: true, data: result });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('addTrafficData error:', err);
+    res.status(500).json({ success: false, message: err.message });
   }
 }
 
@@ -64,8 +95,6 @@ async function deleteTrafficData(req, res) {
     res.status(500).json({ error: err.message });
   }
 }
-
-
 
 module.exports = {
   addTrafficData,

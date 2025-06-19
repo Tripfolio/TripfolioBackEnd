@@ -6,7 +6,7 @@ const {
 } = require("../controllers/emailPreferencesCtrl");
 const { authenticateToken } = require("../middlewares/authMiddleware");
 
-router.get("/", authenticateToken, getPreferences);
-router.put("/", authenticateToken, updatePreferences);
+router.get("/get", authenticateToken, getPreferences);
+router.put("/update", authenticateToken, updatePreferences);
 
 module.exports = router;

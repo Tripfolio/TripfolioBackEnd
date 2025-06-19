@@ -1,14 +1,10 @@
 CREATE TABLE "email_preferences" (
-	"user_id" uuid PRIMARY KEY NOT NULL,
+	"user_id" integer PRIMARY KEY NOT NULL,
 	"on_register" boolean DEFAULT true NOT NULL,
 	"on_login" boolean DEFAULT true NOT NULL,
 	"on_loginfail" boolean DEFAULT true NOT NULL,
-	"on_verify" boolean DEFAULT true NOT NULL,
 	"on_comment" boolean DEFAULT true NOT NULL,
-	"on_like" boolean DEFAULT true NOT NULL,
-	"on_bookmark" boolean DEFAULT true NOT NULL,
-	"on_share" boolean DEFAULT true NOT NULL,
-	"on_customer_reply" boolean DEFAULT true NOT NULL
+	"on_bookmark" boolean DEFAULT true NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "itinerary_places" (
@@ -16,7 +12,28 @@ CREATE TABLE "itinerary_places" (
 	"itinerary_id" integer,
 	"name" text,
 	"address" text,
-	"photo" text
+	"photo" text,
+	"arrival_hour" integer,
+	"arrival_minute" integer,
+	"place_order" integer
+);
+--> statement-breakpoint
+CREATE TABLE "users" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"email" varchar(100) NOT NULL,
+	"password" varchar(255) NOT NULL,
+	"phone" varchar(20) NOT NULL,
+	"created_at" timestamp (2) DEFAULT now(),
+	CONSTRAINT "users_email_unique" UNIQUE("email")
+);
+--> statement-breakpoint
+CREATE TABLE "community_posts" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"member_id" integer NOT NULL,
+	"schedule_id" integer NOT NULL,
+	"cover_url" text,
+	"content" text,
+	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
 CREATE TABLE "schedules" (
@@ -41,11 +58,4 @@ CREATE TABLE "members" (
 	"avatar" text
 );
 --> statement-breakpoint
-CREATE TABLE "users" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"email" varchar(100) NOT NULL,
-	"password" varchar(255) NOT NULL,
-	"phone" varchar(20) NOT NULL,
-	"created_at" timestamp (2) DEFAULT now(),
-	CONSTRAINT "users_email_unique" UNIQUE("email")
-);
+ALTER TABLE "email_preferences" ADD CONSTRAINT "email_preferences_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;

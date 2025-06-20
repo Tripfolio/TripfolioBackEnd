@@ -1,9 +1,5 @@
 const { tripShares } = require("../models/tripShares");
-<<<<<<< HEAD
 const { travelSchedules } = require("../models/scheduleSchema");
-=======
-// const { trips } = require("../models/trips"); //需確認檔案存在
->>>>>>> d0c0adf4b7ec8be473a7b5354b1b2776fde91a6d
 const { db } = require("../config/db");
 const { eq } = require("drizzle-orm");
 

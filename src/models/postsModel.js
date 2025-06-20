@@ -2,7 +2,7 @@
 const { users } = require("./signUpSchema");
 // const { comments } = require("./comments"); //需確認有留言資料表
 // const { favorites } = require("./favorites"); //需確認有收藏資料表
-const { travelSchedules } = require("./scheduleschema");
+const { travelSchedules } = require("./scheduleSchema");
 const { eq, sql } = require("drizzle-orm");
 
 async function getPaginatedPosts(page = 1, limit = 15) {

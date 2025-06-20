@@ -1,6 +1,6 @@
 const { db } = require('../config/db');
 const { communityPosts } = require('../models/post');
-const { travelSchedules } = require('../models/scheduleschema');
+const { travelSchedules } = require('../models/scheduleSchema');
 const { eq, and } = require('drizzle-orm');
 
 async function createCommunityPost(req, res) {

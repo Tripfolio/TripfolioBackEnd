@@ -16,7 +16,7 @@ components:
       bearerFormat: JWT
 
 paths:
-  # authRoutes.js
+
   /api/signup:
     post:
       summary: 使用者註冊
@@ -81,7 +81,6 @@ paths:
                       type: string
                     example: ["伺服器錯誤，請稍後再試"]
 
-  # loginRoutes.js
   /api/login:
     post:
       summary: 使用者登入
@@ -147,8 +146,7 @@ paths:
                     type: string
                     example: 伺服器錯誤
 
-  # memberRoutes.js
-  /api/members/{id}:
+  /api/users/{id}:
     get:
       summary: 取得會員資料
       tags: [會員]
@@ -214,7 +212,7 @@ paths:
         "200":
           description: 修改成功
 
-  /api/members/{id}/password:
+  /api/users/{id}/password:
     put:
       summary: 修改密碼
       tags: [會員]
@@ -259,10 +257,10 @@ paths:
             schema:
               type: object
               required:
-                - memberId
+                - userId
                 - avatar
               properties:
-                memberId:
+                userId:
                   type: integer
                   example: 1
                 avatar:
@@ -284,7 +282,6 @@ paths:
                     type: string
                     example: https://example.com/avatar.jpg
 
-  # emailPreferencesRoute.js
   /api/email-preferences:
     get:
       summary: 取得使用者 Email 通知偏好
@@ -380,7 +377,6 @@ paths:
         "500":
           description: 伺服器錯誤
 
-  # scheduleRoutes.js
   /api/travelSchedule:
     post:
       summary: 建立新行程
@@ -472,7 +468,6 @@ paths:
         "500":
           description: 刪除失敗
 
-  # itinerary.js
   /api/itinerary/add-place:
     post:
       summary: 新增行程地點
@@ -613,7 +608,6 @@ paths:
         "500":
           description: 更新順序失敗
 
-  # arriveItinerary
   /api/itineraryTime/places/{id}:
     put:
       summary: 更新行程地點抵達時間
@@ -684,7 +678,7 @@ paths:
                     example: 伺服器錯誤
 
   # communityRoutes.js
-  /api/community-posts:
+  /api/community/community-posts:
     post:
       summary: 發布社群貼文
       description: 需登入與圖片上傳（multipart/form-data）
@@ -745,7 +739,7 @@ paths:
                         scheduleTitle:
                           type: string
 
-  /api/community-posts/{id}:
+  /api/community/community-posts/{id}:
     put:
       summary: 編輯貼文
       tags: [社群貼文]

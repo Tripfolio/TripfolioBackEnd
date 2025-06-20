@@ -1,7 +1,7 @@
 const { db } = require("../config/db");
 const { favorites } = require("../models/favoritesSchema");
 const { communityPosts } = require("../models/post");
-const { members } = require("../models/schema");
+const { users } = require("../models/signUpSchema");
 const { eq, and, desc } = require("drizzle-orm");
 
 // 新增收藏
@@ -103,12 +103,12 @@ const getFavorites = async (req, res) => {
         postLikes: communityPosts.likes,
         // 作者資訊
         authorId: communityPosts.authorId,
-        authorName: members.name,
-        authorAvatar: members.avatar,
+        authorName: users.name,
+        authorAvatar: users.avatar,
       })
       .from(favorites)
       .leftJoin(communityPosts, eq(favorites.postId, communityPosts.id))
-      .leftJoin(members, eq(communityPosts.authorId, members.id))
+      .leftJoin(users, eq(communityPosts.authorId, users.id))
       .where(eq(favorites.memberId, parseInt(memberId)))
       .orderBy(desc(favorites.createdAt));
 

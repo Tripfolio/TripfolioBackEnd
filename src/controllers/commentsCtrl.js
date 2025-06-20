@@ -1,6 +1,6 @@
 const { db } = require("../config/db");
 const { comments } = require("../models/commentsSchema");
-const { members } = require("../models/schema");
+const { users } = require("../models/signUpSchema");
 const { posts } = require("../models/post");
 const { eq, desc } = require("drizzle-orm");
 
@@ -25,8 +25,8 @@ const getCommentsByPost = async (req, res) => {
         postId: comments.postId,
         memberId: comments.memberId,
         // 暫時註解掉 join，先確保基本查詢正常
-        // userName: members.name,
-        // userAvatar: members.avatar,
+        // userName: users.name,
+        // userAvatar: users.avatar,
       })
       .from(comments)
       .where(eq(comments.postId, parsedPostId))

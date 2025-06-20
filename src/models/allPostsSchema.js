@@ -1,6 +1,6 @@
 const db = require("../config/db");
 const { posts } = require("./post"); //需確認有貼文資料表
-const { users } = require("./schema"); //需確認有使用者資料表
+const { users } = require("./signUpSchema"); //需確認有使用者資料表
 const { comments } = require("./commentsSchema"); //需確認有留言資料表
 const { favorites } = require("./favoritesSchema"); //需確認有收藏資料表
 const { eq, sql, count } = require("drizzle-orm");

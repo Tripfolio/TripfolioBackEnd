@@ -10,7 +10,7 @@ const {
 
 const travelSchedules = pgTable("schedules", {
   id: serial("id").primaryKey(),
-  memberId: integer("member_id").notNull(),
+  userId: integer("user_id").notNull(),
   title: varchar("title", { length: 20 }).notNull(),
   startDate: date("start_date").notNull(),
   endDate: date("end_date").notNull(),

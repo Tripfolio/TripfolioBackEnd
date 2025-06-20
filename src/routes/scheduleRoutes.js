@@ -15,7 +15,7 @@ router.post(
   uploadCover.single("cover"),
   createSchedule,
 );
-router.get("/", authenticateToken, getSchedules);
+router.get("/user", authenticateToken, getSchedules);
 router.delete("/:id", authenticateToken, deleteSchedule);
 
 module.exports = router;

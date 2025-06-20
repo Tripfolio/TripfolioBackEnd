@@ -19,15 +19,14 @@ const transporter = nodemailer.createTransport({
 
 async function sendEmail(to, subject, html) {
   try {
-    const info = await transporter.sendMail({
+    await transporter.sendMail({
       from: `"Tripfolio 通知中心" <${process.env.EMAIL_ACCOUNT}>`,
       to,
       subject,
       html,
     });
-    console.log("✅ Email sent:", info.messageId);
   } catch (error) {
-    console.error("❌ Email send failed:", error.message);
+    return { success: false, message: "郵件發送失敗", error };
   }
 }
 

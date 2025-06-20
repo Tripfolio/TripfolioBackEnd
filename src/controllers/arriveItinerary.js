@@ -1,6 +1,6 @@
 const { db } = require("../config/db.js");
 const { eq } = require("drizzle-orm");
-const { itineraryPlaces } = require("../models/itinerary"); // ← 修正這一行
+const { itineraryPlaces } = require("../models/itinerary");
 
 async function updateArriveTime(req, res) {
   const placeId = Number(req.params.id);
@@ -18,7 +18,6 @@ async function updateArriveTime(req, res) {
 
     res.json({ success: true });
   } catch (err) {
-    console.error("❌ 更新時間失敗:", err.stack);
     res.status(500).json({ success: false, message: "伺服器錯誤" });
   }
 }

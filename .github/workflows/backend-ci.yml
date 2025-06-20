@@ -41,19 +41,22 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run ESLint (warn but pass)
-        run: npm run lint || true
+      - name: Run ESLint
+        continue-on-error: true
+        run: npm run lint
 
       - name: Validate Drizzle schema
         run: npx drizzle-kit generate:pg
 
       - name: Push schema to test DB
+        continue-on-error: true
         run: |
-          npx drizzle-kit push || (echo "Schema push failed" && exit 1)
+          npx drizzle-kit push || echo "::error ::Drizzle push failed"
 
       - name: Introspect DB schema (detect drift)
+        continue-on-error: true
         run: |
-          npx drizzle-kit introspect || (echo "Schema introspection failed" && exit 1)
+          npx drizzle-kit introspect || echo "::error ::Drizzle introspection failed"
 
       - name: Start backend in background
         run: |

@@ -14,4 +14,8 @@ const uploadPostImage = multer({
     },
   }),
 });
+<<<<<<< HEAD
 module.exports = uploadPostImage;
+=======
+module.exports = uploadPostImage;
+>>>>>>> d0c0adf4b7ec8be473a7b5354b1b2776fde91a6d

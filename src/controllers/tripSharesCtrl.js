@@ -3,7 +3,6 @@ const { travelSchedules } = require("../models/scheduleSchema");
 const { users } = require("../models/signUpSchema");
 const { db } = require("../config/db");
 const { v4: uuidv4 } = require("uuid");
-const { eq } = require("drizzle-orm");
 
 const shareTrip = async (req, res) => {
   const { tripId } = req.params;

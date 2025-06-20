@@ -6,20 +6,23 @@ const {
   timestamp,
 } = require("drizzle-orm/pg-core");
 const { relations } = require("drizzle-orm");
-// const { users } = require("./users"); //需有users.js提供使用者的id
-// const { trips } = require("./trips"); //需有trips.js提供行程的id
+const { users } = require("./signUpSchema");
+const { travelSchedules } = require("./scheduleSchema");
 
 const tripShares = pgTable("trip_shares", {
   id: serial("id").primaryKey(),
 
-  tripId: uuid("trip_id").notNull(),
-  // .references(() => trips.id, { onDelete: "cascade" }),   //需有trips.js提供行程的id
+  tripId: uuid("trip_id")
+    .notNull()
+    .references(() => travelSchedules.id, { onDelete: "cascade" }),
 
-  sharedWithUserId: uuid("shared_with_user_id").notNull(),
-  // .references(() => users.id, { onDelete: "cascade" }),   //需有users.js提供使用者的id
+  sharedWithUserId: uuid("shared_with_user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
 
-  sharedByUserId: uuid("shared_by_user_id").notNull(),
-  // .references(() => users.id, { onDelete: "cascade" }),  //需有users.js提供使用者的id
+  sharedByUserId: uuid("shared_by_user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
 
   permission: text("permission").notNull(),
   token: text("token").notNull().unique(),
@@ -32,9 +35,9 @@ const tripSharesRelations = relations(tripShares, ({ one }) => ({
     fields: [tripShares.sharedWithUserId],
     references: [users.id],
   }),
-  trip: one(trips, {
+  trip: one(travelSchedules, {
     fields: [tripShares.tripId],
-    references: [trips.id],
+    references: [travelSchedules.id],
   }),
 }));
 

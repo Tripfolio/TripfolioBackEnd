@@ -12,7 +12,7 @@ const itineraryRouter = require('./src/routes/itinerary');
 const emailPreferencesRoute = require('./src/routes/emailPreferencesRoute');
 const travelSchedulesRoutes = require('./src/routes/scheduleRoutes');
 const updateScheduleRoutes = require('./src/routes/updateScheduleRoutes');
-const communityRoutes = require('./src/routes/communityRoutes');
+// const communityRoutes = require('./src/routes/communityRoutes');
 const tripSharesRoute = require("./src/routes/tripSharesRoute");
 
 app.use(
@@ -33,7 +33,7 @@ app.use('/api/itinerary', itineraryRouter);
 app.use('/api/email-preferences', emailPreferencesRoute);
 app.use('/api/travelSchedule', travelSchedulesRoutes);
 app.use('/api/updateScheduleRoutes', updateScheduleRoutes);
-app.use('/api', communityRoutes);
+// app.use('/api', communityRoutes);
 app.use('/api/itineraryTime', arriveItinerary);
 app.use("/api/tripShares", tripSharesRoute);
 

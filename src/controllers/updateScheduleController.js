@@ -146,7 +146,7 @@ const getTravelScheduleById = async (req, res) => {
       .select()
       .from(travelSchedules)
       .where(eq(travelSchedules.id, Number(id)))
-      .where(eq(travelSchedules.memberId, memberId))
+      .where(eq(travelSchedules.userId, memberId))
       .limit(1);
 
     if (!schedule || schedule.length === 0) {

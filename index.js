@@ -21,11 +21,11 @@ const updateScheduleRoutes = require('./src/routes/updateScheduleRoutes');
 const tripSharesRoute = require("./src/routes/tripSharesRoute");
 
 app.use(
-  cors({
-    origin: process.env.VITE_API_URL,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    credentials: true,
-  })
+	cors({
+		origin: ['http://localhost:5173', 'https://maytripfoliodev.netlify.app','https://portfolioo-devv.netlify.app','https://tripfolioo.netlify.app/'],
+		methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+		credentials: true,
+	})
 );
 
 
@@ -46,7 +46,7 @@ app.use("/api/tripShares", tripSharesRoute);
 app.use('/api/payment', paymentRoute);
 
 app.get('/api/health', (req, res) => {
-	res.json({ status: 'ok', message: 'Backend is alive' });
+  res.json({ status: 'ok', message: 'Backend is alive 🚀' });
 });
 
 

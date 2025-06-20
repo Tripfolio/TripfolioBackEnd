@@ -74,7 +74,6 @@ async function getPlaces(req, res) {
 
     res.json({ success: true, places });
   } catch (err) {
-
     res.status(500).json({ success: false, message: "伺服器錯誤" });
   }
 }
@@ -114,4 +113,10 @@ async function updateArriveTime(req, res) {
     res.status(500).json({ success: false, message: "伺服器錯誤" });
   }
 }
-module.exports = { addPlace, deletePlace, getPlaces, updateOrder, updateArriveTime };
+module.exports = {
+  addPlace,
+  deletePlace,
+  getPlaces,
+  updateOrder,
+  updateArriveTime,
+};

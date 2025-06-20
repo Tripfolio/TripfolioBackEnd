@@ -7,5 +7,4 @@ const users = pgTable("users", {
   created_at: timestamp("created_at", { precision: 2 }).defaultNow(),
 });
 
-
 module.exports = { users };

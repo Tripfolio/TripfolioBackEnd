@@ -6,7 +6,7 @@ require("dotenv").config();
 async function login(req, res) {
   const { email, password } = req.body;
 
-  const errors = []; 
+  const errors = [];
 
   if (!email) {
     errors.push("電子郵件不可為空");

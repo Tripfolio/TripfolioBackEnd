@@ -1,5 +1,5 @@
 const { tripShares } = require("../models/tripShares");
-// const { trips } = require("../models/trips"); //需確認檔案存在
+const { trips } = require("../models/trips"); //需確認檔案存在
 const { db } = require("../config/db");
 const { eq } = require("drizzle-orm");
 

@@ -9,12 +9,7 @@ const uploadCover = require("../middlewares/uploadCover");
 const { authenticateToken } = require("../middlewares/authMiddleware");
 const { getSchedules } = require("../controllers/getSchedule");
 
-router.post(
-  "/",
-  authenticateToken,
-  uploadCover.single("cover"),
-  createSchedule,
-);
+router.post("/", authenticateToken, uploadCover.single("cover"), createSchedule);
 router.get("/user", authenticateToken, getSchedules);
 router.delete("/:id", authenticateToken, deleteSchedule);
 

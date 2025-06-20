@@ -1,6 +1,6 @@
 const { db } = require("../config/db.js");
 const { eq } = require("drizzle-orm");
-const { itineraryPlaces } = require("../models/itinerary");
+const { itineraryPlaces } = require("../models/itinerary"); 
 
 async function updateArriveTime(req, res) {
   const placeId = Number(req.params.id);

@@ -39,7 +39,7 @@
 
 | 組員   | GitHub                                              | 功能：行程           | 功能：地圖     | 功能：會員   |
 | ------ | --------------------------------------------------- | -------------------- | -------------- | ------------ |
-| 陳品均 | [LeoChen517](https://github.com/LeoChen517)         | 行程共享權限功能     |                | 郵件通知功能 |
+| 陳品均 | [LeoChen517](https://github.com/LeoChen517)         | 行程共享權限功能        |                | 郵件通知功能 |
 | 張哲豪 | [kiwiisfish](https://github.com/kiwiisfish)         | 預算估算功能         | 依類別篩選     |              |
 | 蘇怡瑄 | [mmaysu](https://github.com/mmaysu)                 | 加入景點功能         | 關鍵字搜尋     |              |
 | 林芳綺 | [yanamint](https://github.com/yanamint)             | 串接 google calender |                | 註冊         |

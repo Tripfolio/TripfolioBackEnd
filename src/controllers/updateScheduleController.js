@@ -31,10 +31,7 @@ const updateSchedule = async (req, res) => {
       finalCoverURL = req.file.location;
 
       if (existingSchedule.coverURL) {
-        if (
-          existingSchedule.coverURL.includes("s3.amazonaws.com") ||
-          existingSchedule.coverURL.includes(process.env.AWS_S3_BUCKET_NAME)
-        ) {
+        if (existingSchedule.coverURL.includes('s3.amazonaws.com') || existingSchedule.coverURL.includes(process.env.AWS_S3_BUCKET_NAME)) {
           const url = new URL(existingSchedule.coverURL);
           const oldKey = url.pathname.substring(1);
 
@@ -74,6 +71,7 @@ const updateSchedule = async (req, res) => {
       message: "行程更新成功",
       updatedSchedule: updatedSchedule,
     });
+
   } catch (err) {
     res.status(500).json({
       message: "更新行程失敗",
@@ -87,7 +85,7 @@ const addDayToSchedule = async (req, res) => {
   const userId = req.user?.id;
 
   if (!userId) {
-    return res.status(403).json({ message: "JWT無效或未登入" });
+    return res.status(403).json({ message: 'JWT無效或未登入' });
   }
 
   try {
@@ -98,17 +96,15 @@ const addDayToSchedule = async (req, res) => {
       .limit(1);
 
     if (!existingSchedules || existingSchedules.length === 0) {
-      return res.status(404).json({ message: "行程未找到或無權限操作" });
+      return res.status(404).json({ message: '行程未找到或無權限操作' });
     }
 
     const existingSchedule = existingSchedules[0];
 
-    let currentEndDate = existingSchedule.endDate
-      ? new Date(existingSchedule.endDate)
-      : new Date();
+    let currentEndDate = existingSchedule.endDate ? new Date(existingSchedule.endDate) : new Date();
     currentEndDate.setDate(currentEndDate.getDate() + 1);
 
-    const newEndDateString = currentEndDate.toISOString().split("T")[0];
+    const newEndDateString = currentEndDate.toISOString().split('T')[0];
 
     const [updatedSchedule] = await db
       .update(travelSchedules)
@@ -120,7 +116,7 @@ const addDayToSchedule = async (req, res) => {
       .returning();
 
     if (!updatedSchedule) {
-      return res.status(500).json({ message: "更新行程失敗" });
+      return res.status(500).json({ message: '更新行程失敗' });
     }
 
     res.status(200).json({
@@ -131,8 +127,9 @@ const addDayToSchedule = async (req, res) => {
       coverURL: updatedSchedule.coverURL,
       description: updatedSchedule.description,
     });
+
   } catch (error) {
-    res.status(500).json({ message: "伺服器內部錯誤", error: error.message });
+    res.status(500).json({ message: '伺服器內部錯誤', error: error.message });
   }
 };
 

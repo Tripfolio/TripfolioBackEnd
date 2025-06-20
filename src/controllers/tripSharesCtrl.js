@@ -1,8 +1,9 @@
 const { tripShares } = require("../models/tripShares");
-// const { trips } = require("../models/trips"); //需確認有該檔案(行程資料)
-// const { users } = require("../models/users"); //需確認有該檔案(會員資料)
+const { trips } = require("../models/trips"); //需確認有該檔案(行程資料)
+const { users } = require("../models/users"); //需確認有該檔案(會員資料)
 const { db } = require("../config/db");
 const { v4: uuidv4 } = require("uuid");
+const { eq } = require("drizzle-orm");
 
 const shareTrip = async (req, res) => {
   const { tripId } = req.params;

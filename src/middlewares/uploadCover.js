@@ -5,14 +5,14 @@ const path = require("path");
 
 //圖片上傳s3
 const uploadCover = multer({
-    storage: multerS3({
-        s3: s3,
-        bucket: process.env.AWS_COVER_S3_BUCKET,
-        contentType: multerS3.AUTO_CONTENT_TYPE,
-        key: (req, file, cb) => {
-            const filename = `cover-${Date.now()}${path.extname(file.originalname)}`;
-            cb(null, filename);
-        },
-    })
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.AWS_COVER_S3_BUCKET,
+    contentType: multerS3.AUTO_CONTENT_TYPE,
+    key: (req, file, cb) => {
+      const filename = `cover-${Date.now()}${path.extname(file.originalname)}`;
+      cb(null, filename);
+    },
+  }),
 });
 module.exports = uploadCover;

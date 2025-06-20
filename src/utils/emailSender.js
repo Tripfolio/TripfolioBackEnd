@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport({
 
 async function sendEmail(to, subject, html) {
   try {
-    const info = await transporter.sendMail({
+    await transporter.sendMail({
       from: `"Tripfolio 通知中心" <${process.env.EMAIL_ACCOUNT}>`,
       to,
       subject,

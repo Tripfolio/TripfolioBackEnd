@@ -16,19 +16,6 @@
     "no-empty-function": ["warn", { "allow": ["arrowFunctions"] }],
     "require-await": "warn",
     "no-throw-literal": "error",
-    "default-case": "error",
-
-    // 排版
-    "comma-dangle": "off",
-    "semi": "off",
-    "quotes": "off",
-    "indent": "off",
-    "space-before-function-paren": "off",
-    "object-curly-spacing": "off",
-    "key-spacing": "off",
-    "spaced-comment": "off",
-    "keyword-spacing": "off",
-    "curly": "off",
-    "no-multiple-empty-lines": "off"
+    "default-case": "error"
   }
 }

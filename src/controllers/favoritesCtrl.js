@@ -58,8 +58,6 @@ const removeFavorite = async (req, res) => {
     const parsedPostId = +postId;
 
     const parsedMemberId = memberId;
-    // console.log("parsedPostId:", parsedPostId, typeof parsedPostId);
-    // console.log("parsedMemberId:", parsedMemberId, typeof parsedMemberId);
 
     const deletedFavorite = await db
       .delete(favorites)

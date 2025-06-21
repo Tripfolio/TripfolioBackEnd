@@ -54,13 +54,13 @@ const deleteSchedule = async (req, res) => {
       .where(
         and(
           eq(travelSchedules.id, scheduleId),
-          eq(travelSchedules.userId, userId)
-        )
+          eq(travelSchedules.userId, userId),
+        ),
       )
       .returning();
 
     if (deleted === 0) {
-      return res.status(404).json({ message: '找不到該行程'});
+      return res.status(404).json({ message: "找不到該行程" });
     }
     res.json({ message: "刪除成功" });
   } catch (err) {

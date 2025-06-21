@@ -36,7 +36,7 @@ const shareTrip = async (req, res) => {
 
   res.status(201).json({
     message: "分享成功",
-    shareLink: `${process.env.SHARE_BASE_URL}/GetInvite/${token}`,
+    shareLink: `shareTrip/GetInvite/${token}`,
   });
 };
 

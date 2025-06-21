@@ -1,8 +1,8 @@
-const db = require("../drizzle/db");
-const { communityPosts } = require("./post"); //需確認有貼文資料表
+const { db } = require("../config/db");
+const { communityPosts } = require("./post");
 const { users } = require("./signUpSchema");
-const { comments } = require("./comments"); //需確認有留言資料表
-const { favorites } = require("./favorites"); //需確認有收藏資料表
+// const { comments } = require("./commentsSchema");
+// const { favorites } = require("./favoritesSchema");
 const { travelSchedules } = require("./scheduleschema");
 const { eq, sql } = require("drizzle-orm");
 

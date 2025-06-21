@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { authenticateToken } = require("../middlewares/authMiddleware.js");
 const {
   addComment,
   deleteComment,
@@ -10,6 +11,6 @@ router.get("/:postId/comments", getCommentsByPost);
 
 router.post("/:postId/comments", addComment);
 
-router.delete("/:postId/comments/:commentId", deleteComment);
+router.delete("/:postId/comments/:commentId", authenticateToken, deleteComment);
 
 module.exports = router;

@@ -21,7 +21,6 @@ async function login(req, res) {
 
   try {
     const user = await UserModel.findByEmail(email);
-
     if (!user) {
       errors.push("此帳號不存在");
       return res.status(401).json({ errors });

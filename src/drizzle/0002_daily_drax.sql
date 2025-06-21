@@ -1,1 +1,0 @@
-ALTER TABLE "itinerary_places" DROP COLUMN "order";

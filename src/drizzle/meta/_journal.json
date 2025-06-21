@@ -12,10 +12,6 @@
     {
       "idx": 1,
       "version": "7",
-<<<<<<< HEAD
-      "when": 1750268338231,
-      "tag": "0001_lowly_talos",
-=======
       "when": 1749480434853,
       "tag": "0001_icy_silver_sable",
       "breakpoints": true
@@ -39,7 +35,6 @@
       "version": "7",
       "when": 1749783759284,
       "tag": "0004_heavy_ben_urich",
-
       "breakpoints": true
     },
     {
@@ -54,7 +49,6 @@
       "version": "7",
       "when": 1749827802899,
       "tag": "0006_post",
->>>>>>> 7eb4b021d1f7ed84028f9b2f917af981f827bb84
       "breakpoints": true
     }
   ]

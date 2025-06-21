@@ -4,12 +4,10 @@ const { communityPosts } = require("../models/post");
 const { users } = require("../models/signUpSchema");
 const { eq, and, desc } = require("drizzle-orm");
 
-// 新增收藏
 const addFavorite = async (req, res) => {
   try {
     const { postId, memberId } = req.body;
 
-    // 檢查貼文是否存在
     const postExists = await db
       .select({ id: communityPosts.id })
       .from(communityPosts)
@@ -20,7 +18,6 @@ const addFavorite = async (req, res) => {
       return res.status(404).json({ error: "貼文不存在" });
     }
 
-    // 檢查是否已經收藏
     const existingFavorite = await db
       .select()
       .from(favorites)
@@ -33,7 +30,6 @@ const addFavorite = async (req, res) => {
       return res.status(400).json({ error: "已經收藏過此貼文" });
     }
 
-    // 新增收藏
     const [newFavorite] = await db
       .insert(favorites)
       .values({
@@ -61,9 +57,9 @@ const removeFavorite = async (req, res) => {
 
     const parsedPostId = +postId;
 
-    const parsedMemberId = parseInt(memberId);
-    console.log("parsedPostId:", parsedPostId, typeof parsedPostId);
-    console.log("parsedMemberId:", parsedMemberId, typeof parsedMemberId);
+    const parsedMemberId = memberId;
+    // console.log("parsedPostId:", parsedPostId, typeof parsedPostId);
+    // console.log("parsedMemberId:", parsedMemberId, typeof parsedMemberId);
 
     const deletedFavorite = await db
       .delete(favorites)
@@ -86,7 +82,6 @@ const removeFavorite = async (req, res) => {
   }
 };
 
-// 取得使用者收藏列表
 const getFavorites = async (req, res) => {
   try {
     const { memberId } = req.params;
@@ -109,7 +104,7 @@ const getFavorites = async (req, res) => {
       .from(favorites)
       .leftJoin(communityPosts, eq(favorites.postId, communityPosts.id))
       .leftJoin(users, eq(communityPosts.authorId, users.id))
-      .where(eq(favorites.memberId, parseInt(memberId)))
+      .where(eq(favorites.memberId, memberId))
       .orderBy(desc(favorites.createdAt));
 
     res.json(userFavorites);
@@ -119,7 +114,6 @@ const getFavorites = async (req, res) => {
   }
 };
 
-// 檢查是否已收藏
 const checkFavorite = async (req, res) => {
   try {
     const { postId, memberId } = req.params;
@@ -129,7 +123,7 @@ const checkFavorite = async (req, res) => {
       .from(favorites)
       .where(
         and(
-          eq(favorites.memberId, parseInt(memberId)),
+          eq(favorites.memberId, memberId),
           eq(favorites.postId, parseInt(postId)),
         ),
       )

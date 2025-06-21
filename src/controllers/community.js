@@ -1,6 +1,7 @@
 const { db } = require("../config/db");
 const { communityPosts } = require("../models/post");
 const { travelSchedules } = require("../models/scheduleSchema");
+const { users } = require("../models/signUpSchema");
 const { eq, and } = require("drizzle-orm");
 
 async function createCommunityPost(req, res) {
@@ -34,11 +35,17 @@ async function getAllCommunityPosts(req, res) {
         coverURL: communityPosts.coverURL,
         createdAt: communityPosts.createdAt,
         scheduleTitle: travelSchedules.title,
+        authorName: users.name,
+        authorAvatar: users.avatar,
       })
       .from(communityPosts)
       .leftJoin(
         travelSchedules,
         eq(communityPosts.scheduleId, travelSchedules.id),
+      )
+      .leftJoin(
+        users,
+        eq(communityPosts.memberId, users.id), // 這裡多加一個 join
       )
       .orderBy(communityPosts.createdAt);
     res.json({ posts });

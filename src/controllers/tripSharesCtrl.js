@@ -1,6 +1,6 @@
 const { tripShares } = require("../models/tripShares");
-const { trips } = require("../models/trips"); //需確認有該檔案(行程資料)
-const { users } = require("../models/users"); //需確認有該檔案(會員資料)
+const { travelSchedules } = require("../models/scheduleSchema");
+const { users } = require("../models/signUpSchema");
 const { db } = require("../config/db");
 const { v4: uuidv4 } = require("uuid");
 const { eq } = require("drizzle-orm");
@@ -10,8 +10,8 @@ const shareTrip = async (req, res) => {
   const { permission } = req.body;
   const userId = req.user.id;
 
-  const trip = await db.query.trips.findFirst({
-    where: (trips, { eq }) => eq(trips.id, tripId),
+  const trip = await db.query.travelSchedules.findFirst({
+    where: (travelSchedules, { eq }) => eq(travelSchedules.id, tripId),
   });
 
   if (!trip) {
@@ -46,8 +46,8 @@ const getTripShareList = async (req, res) => {
   const currentUserId = req.user?.id;
 
   try {
-    const trip = await db.query.trips.findFirst({
-      where: (trips, { eq }) => eq(trips.id, tripId),
+    const trip = await db.query.travelSchedules.findFirst({
+      where: (travelSchedules, { eq }) => eq(travelSchedules.id, tripId),
     });
 
     if (!trip) {
@@ -155,8 +155,8 @@ const getInviteInfo = async (req, res) => {
     const { tripId, permission, sharedWithUserId } = share;
 
     // 取得 trip 資料
-    const trip = await db.query.trips.findFirst({
-      where: (trips, { eq }) => eq(trips.id, tripId),
+    const trip = await db.query.travelSchedules.findFirst({
+      where: (travelSchedules, { eq }) => eq(travelSchedules.id, tripId),
     });
 
     if (!trip) {
@@ -215,6 +215,28 @@ const acceptShare = async (req, res) => {
   }
 };
 
+const getMySharedTrips = async (req, res) => {
+  const userId = req.user?.id;
+
+  try {
+    const shared = await db.query.tripShares.findMany({
+      where: (tripShares, { eq }) => eq(tripShares.sharedWithUserId, userId),
+      with: {
+        trip: true,
+      },
+    });
+
+    const trips = shared
+      .map((share) => share.trip)
+      .filter((trip) => trip !== null);
+
+    res.json(trips);
+  } catch (err) {
+    console.error("getMySharedTrips error:", err);
+    res.status(500).json({ message: "伺服器錯誤" });
+  }
+};
+
 module.exports = {
   shareTrip,
   getTripShareList,
@@ -222,4 +244,5 @@ module.exports = {
   cancelShare,
   getInviteInfo,
   acceptShare,
+  getMySharedTrips,
 };

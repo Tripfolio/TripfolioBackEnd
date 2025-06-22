@@ -7,6 +7,7 @@ const {
   cancelShare,
   getInviteInfo,
   acceptShare,
+  getMySharedTrips,
 } = require("../controllers/tripSharesCtrl");
 const { verifyShareToken } = require("../middlewares/shareMiddleware");
 const { authenticateToken } = require("../middlewares/authMiddleware");
@@ -27,5 +28,6 @@ router.post(
   verifyShareToken("viewer"),
   acceptShare,
 );
+router.get("/my-shared", authenticateToken, getMySharedTrips);
 
 module.exports = router;

@@ -1,5 +1,5 @@
 const { pgTable, serial, text, integer, doublePrecision } = require('drizzle-orm/pg-core');
-const { travelSchedules } = require('../models/scheduleschema'); 
+const { travelSchedules } = require('../models/scheduleSchema'); 
 
 const itineraryPlaces = pgTable('itinerary_places', {
   id: serial('id').primaryKey(),

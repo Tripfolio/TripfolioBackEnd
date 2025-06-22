@@ -12,9 +12,10 @@ const {
   LINEPAY_AMOUNT,
   FRONTEND_URL,
   JWT_SECRET,
+  LINEPAY_RETURN_HOST,
 } = process.env;
 
-const baseURL = "https://sandbox-api-pay.line.me";
+const baseURL = import.meta.env.LINEPAY_BASE_URL;
 
 exports.linePayConfirm = async (req, res) => {
   try {
@@ -45,8 +46,8 @@ exports.linePayConfirm = async (req, res) => {
         },
       ],
       redirectUrls: {
-        confirmUrl: `${process.env.LINEPAY_RETURN_HOST}/api/payment/confirm-callback?orderId=${orderId}&userId=${userId}`,
-        cancelUrl: `${process.env.FRONTEND_URL}/payment-cancel`,
+        confirmUrl: `${LINEPAY_RETURN_HOST}/api/payment/confirm-callback?orderId=${orderId}&userId=${userId}`,
+        cancelUrl: `${FRONTEND_URL}/payment-cancel`,
       },
     };
 
@@ -125,11 +126,33 @@ exports.linePayConfirmCallback = async (req, res) => {
         .set({ isPremium: true })
         .where(eq(users.id, parseInt(userId)));
 
-      return res.redirect(`${process.env.FRONTEND_URL}/payment-success`);
+      return res.redirect(`${FRONTEND_URL}/payment-success`);
     } else {
-      return res.redirect(`${process.env.FRONTEND_URL}/payment-fail`);
+      return res.redirect(`${FRONTEND_URL}/payment-fail`);
     }
   } catch (err) {
-    return res.redirect(`${process.env.FRONTEND_URL}/payment-fail`);
+    return res.redirect(`${FRONTEND_URL}/payment-fail`);
+  }
+};
+
+exports.checkPremiumStatus = async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.split(" ")[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const userId = decoded.id;
+
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId));
+
+    if (!user) {
+      return res.status(404).json({ isPremium: false, message: "找不到使用者" });
+    }
+
+    res.json({ isPremium: user.isPremium });
+  } catch (err) {
+    res.status(500).json({ isPremium: false, message: "檢查會員狀態失敗" });
   }
 };

@@ -26,10 +26,6 @@ async function isPreferenceEnabled(userId, field) {
       .where(eq(emailPreferences.userId, userId));
     return !!pref[0]?.[field];
   } catch (err) {
-    console.error(
-      `Error fetching preference for user ${userId} and field ${field}:`,
-      err,
-    );
     return false;
   }
 }
@@ -43,7 +39,7 @@ async function notifyRegister(userId) {
     if (!email) return;
     await sendEmail(email, "註冊成功通知", `<p>歡迎加入 Tripfolio！</p>`);
   } catch (err) {
-    console.error(`Error notifying registration for user ${userId}:`, err);
+    return { success: false, error: "郵件發送失敗，請稍後再試。" };
   }
 }
 
@@ -54,7 +50,7 @@ async function notifyLogin(userId) {
     if (!email) return;
     await sendEmail(email, "登入成功通知", `<p>您已成功登入 Tripfolio！</p>`);
   } catch (err) {
-    console.error(`Error notifying login for user ${userId}:`, err);
+    return { success: false, error: "郵件發送失敗，請稍後再試。" };
   }
 }
 
@@ -69,7 +65,7 @@ async function notifyLoginfail(userId) {
       `<p>⚠️ 偵測到異常登入失敗，請確認是否為本人操作。</p>`,
     );
   } catch (err) {
-    console.error(`Error notifying login failure for user ${userId}:`, err);
+    return { success: false, error: "郵件發送失敗，請稍後再試。" };
   }
 }
 
@@ -84,7 +80,7 @@ async function notifyCommented(userId, commentContent) {
       `<p>留言內容：${commentContent}</p>`,
     );
   } catch (err) {
-    console.error(`Error notifying comment for user ${userId}:`, err);
+    return { success: false, error: "郵件發送失敗，請稍後再試。" };
   }
 }
 
@@ -99,7 +95,7 @@ async function notifyBookmarked(userId, bookmarkerName) {
       `<p>${bookmarkerName} 收藏了您的貼文。</p>`,
     );
   } catch (err) {
-    console.error(`Error notifying bookmark for user ${userId}:`, err);
+    return { success: false, error: "郵件發送失敗，請稍後再試。" };
   }
 }
 

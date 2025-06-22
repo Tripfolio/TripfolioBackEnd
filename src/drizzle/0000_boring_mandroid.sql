@@ -1,3 +1,10 @@
+CREATE TABLE "comments" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"member_id" integer,
+	"content" text NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "email_preferences" (
 	"user_id" integer PRIMARY KEY NOT NULL,
 	"on_register" boolean DEFAULT true NOT NULL,
@@ -58,4 +65,8 @@ CREATE TABLE "members" (
 	"avatar" text
 );
 --> statement-breakpoint
+<<<<<<<< HEAD:src/drizzle/0000_wandering_doctor_spectrum.sql
 ALTER TABLE "email_preferences" ADD CONSTRAINT "email_preferences_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;
+========
+ALTER TABLE "comments" ADD CONSTRAINT "comments_member_id_members_id_fk" FOREIGN KEY ("member_id") REFERENCES "public"."members"("id") ON DELETE no action ON UPDATE no action;
+>>>>>>>> dev:src/drizzle/0000_boring_mandroid.sql

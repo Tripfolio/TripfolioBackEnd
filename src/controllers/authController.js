@@ -6,12 +6,16 @@ const { db } = require("../config/db");
 
 const registerUser = async (req, res) => {
   try {
-    const { email, password, phone } = req.body;
-
+    const { name, email, password } = req.body;
     const errors = [];
 
-    if (!email || !password || !phone) {
+    if (!email || !password || !name) {
       errors.push("請填寫所有欄位");
+    }
+
+    const nameRegex = /^(?!.*[\p{Emoji}])[\s\S]{1,10}$/u;
+    if (name && !nameRegex.test(name)) {
+      errors.push("名字格式錯誤，請輸入10個字以內，不能包含表情符號");
     }
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -27,11 +31,6 @@ const registerUser = async (req, res) => {
       errors.push("密碼不可與信箱相同");
     }
 
-    const phoneRegex = /^09\d{8}$/;
-    if (phone && !phoneRegex.test(phone)) {
-      errors.push("手機號碼格式錯誤");
-    }
-
     if (email) {
       const existingUser = await UserModel.findByEmail(email);
       if (existingUser) {
@@ -45,11 +44,10 @@ const registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    //  建立新使用者
     const insertResult = await UserModel.createUser({
+      name,
       email,
       password: hashedPassword,
-      phone,
     });
 
     if (!insertResult || insertResult.length === 0) {

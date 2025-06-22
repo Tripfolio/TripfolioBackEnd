@@ -1,6 +1,6 @@
 {
-  "id": "72c85b7d-98f1-4264-840d-da2a163d99c8",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "535f384a-0074-4147-8504-cf4ac27fa418",
+  "prevId": "72c85b7d-98f1-4264-840d-da2a163d99c8",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -12,6 +12,12 @@
           "name": "id",
           "type": "serial",
           "primaryKey": true,
+          "notNull": true
+        },
+        "post_id": {
+          "name": "post_id",
+          "type": "integer",
+          "primaryKey": false,
           "notNull": true
         },
         "member_id": {
@@ -40,8 +46,12 @@
           "name": "comments_member_id_members_id_fk",
           "tableFrom": "comments",
           "tableTo": "members",
-          "columnsFrom": ["member_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "member_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -58,7 +68,7 @@
       "columns": {
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
@@ -83,8 +93,22 @@
           "notNull": true,
           "default": true
         },
+        "on_verify": {
+          "name": "on_verify",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
         "on_comment": {
           "name": "on_comment",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "on_like": {
+          "name": "on_like",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
@@ -96,22 +120,73 @@
           "primaryKey": false,
           "notNull": true,
           "default": true
+        },
+        "on_share": {
+          "name": "on_share",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "on_customer_reply": {
+          "name": "on_customer_reply",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "email_preferences_user_id_users_id_fk": {
-          "name": "email_preferences_user_id_users_id_fk",
-          "tableFrom": "email_preferences",
-          "tableTo": "users",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.favorites": {
+      "name": "favorites",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "post_id": {
+          "name": "post_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "favorites_member_id_post_id_unique": {
+          "name": "favorites_member_id_post_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "member_id",
+            "post_id"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -396,68 +471,6 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.trip_shares": {
-      "name": "trip_shares",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "trip_id": {
-          "name": "trip_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "shared_with_user_id": {
-          "name": "shared_with_user_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "shared_by_user_id": {
-          "name": "shared_by_user_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "permission": {
-          "name": "permission",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "token": {
-          "name": "token",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_time": {
-          "name": "created_time",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "trip_shares_token_unique": {
-          "name": "trip_shares_token_unique",
-          "nullsNotDistinct": false,
-          "columns": ["token"]
-        }
-      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false

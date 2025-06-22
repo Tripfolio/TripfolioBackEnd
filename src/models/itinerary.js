@@ -9,6 +9,7 @@ const itineraryPlaces = pgTable("itinerary_places", {
   arrivalHour: integer("arrival_hour"),
   arrivalMinute: integer("arrival_minute"),
   placeOrder: integer("place_order"),
+  date: text("date").notNull(),
 });
 
 module.exports = {

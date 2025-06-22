@@ -5,6 +5,8 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT;
 
+const { initializePassport } = require("./src/middlewares/passport");
+
 const authRoutes = require("./src/routes/authRoutes");
 const protectedRoutes = require("./src/routes/protectedRoutes");
 const memberRoutes = require("./src/routes/memberRoutes");
@@ -27,9 +29,10 @@ app.use(
 
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
-app.use("/api", authRoutes);
+initializePassport(app);
+app.use("/api/signup", authRoutes);
 app.use("/api", protectedRoutes);
-app.use("/api", loginRouter);
+app.use("/api/login", loginRouter);
 app.use("/api/members", memberRoutes);
 app.use("/api/itinerary", itineraryRouter);
 app.use("/api/email-preferences", emailPreferencesRoute);

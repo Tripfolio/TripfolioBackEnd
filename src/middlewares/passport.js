@@ -1,8 +1,9 @@
 require("dotenv").config();
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const UserModel = require("../models/UserModel");
 
-const { GOOGLE_CLIENT_SECRET, GOOGLE_CLIENT_ID } = process.env;
+const { GOOGLE_CLIENT_SECRET, GOOGLE_CLIENT_ID, JWT_SECRET, VITE_API_URL } = process.env;
 
 passport.use(
   new GoogleStrategy(
@@ -11,19 +12,46 @@ passport.use(
       clientSecret: GOOGLE_CLIENT_SECRET,
       callbackURL: "/auth/google/callback",
     },
-    (accessToken, refreshToken, profile, done) => {
-      // 這裡可以查資料庫或自訂用戶邏輯
-      done(null, profile);
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const { id: googleId, emails, displayName } = profile;
+        const email = emails && emails.length > 0 ? emails[0].value : null;
+
+        if (!email) {
+          return done(new Error("Google 帳戶沒有提供 Email 地址。"), null);
+        }
+
+        const user = await UserModel.findOrCreateGoogleUser({
+          googleId,
+          email,
+          name: displayName,
+        });
+
+        done(null, user);
+      } catch (err) {
+        done(err, null);
+      }
     },
   ),
 );
 
-// 序列化與反序列化（必要）
 passport.serializeUser((user, done) => {
-  done(null, user);
+  done(null, user.id);
 });
-passport.deserializeUser((obj, done) => {
-  done(null, obj);
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await UserModel.findById(id);
+    done(null, user);
+  } catch (err) {
+    done(err, null);
+  }
 });
 
-module.exports = passport;
+const initializePassport = (app) => {
+  app.use(passport.initialize());
+};
+
+module.exports = {
+  passport,
+  initializePassport,
+};

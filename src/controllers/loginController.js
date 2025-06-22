@@ -6,16 +6,31 @@ require("dotenv").config();
 async function login(req, res) {
   const { email, password } = req.body;
 
+  const errors = [];
+
+  if (!email) {
+    errors.push("電子郵件不可為空");
+  }
+  if (!password) {
+    errors.push("密碼不可為空");
+  }
+
+  if (errors.length > 0) {
+    return res.status(400).json({ errors });
+  }
+
   try {
     const user = await UserModel.findByEmail(email);
 
     if (!user) {
-      return res.status(401).json({ message: "此帳號不存在" });
+      errors.push("此帳號不存在");
+      return res.status(401).json({ errors });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      return res.status(401).json({ message: "密碼錯誤" });
+      errors.push("密碼錯誤");
+      return res.status(401).json({ errors });
     }
 
     const token = jwt.sign(
@@ -30,10 +45,11 @@ async function login(req, res) {
       user: {
         id: user.id,
         email: user.email,
+        name: user.name,
       },
     });
   } catch (err) {
-    return res.status(500).json({ message: "伺服器錯誤" });
+    return res.status(500).json({ errors: ["伺服器錯誤，請稍後再試"] });
   }
 }
 

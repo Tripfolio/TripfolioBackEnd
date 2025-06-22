@@ -12,7 +12,6 @@ async function getUserEmail(userId) {
       .where(users.id.eq(userId));
     return result[0]?.email || null;
   } catch (err) {
-    console.error(`Error fetching email for user ${userId}:`, err);
     return null;
   }
 }
@@ -26,10 +25,6 @@ async function isPreferenceEnabled(userId, field) {
       .where(emailPreferences.userId.eq(userId));
     return !!pref[0]?.[field];
   } catch (err) {
-    console.error(
-      `Error fetching preference for user ${userId} and field ${field}:`,
-      err,
-    );
     return false;
   }
 }
@@ -43,7 +38,7 @@ async function notifyRegister(userId) {
     if (!email) return;
     await sendEmail(email, "註冊成功通知", `<p>歡迎加入 Tripfolio！</p>`);
   } catch (err) {
-    console.error(`Error notifying registration for user ${userId}:`, err);
+    return { success: false, error: "郵件發送失敗，請稍後再試。" };
   }
 }
 
@@ -54,7 +49,7 @@ async function notifyLogin(userId) {
     if (!email) return;
     await sendEmail(email, "登入成功通知", `<p>您已成功登入 Tripfolio！</p>`);
   } catch (err) {
-    console.error(`Error notifying login for user ${userId}:`, err);
+    return { success: false, error: "郵件發送失敗，請稍後再試。" };
   }
 }
 
@@ -69,7 +64,7 @@ async function notifyLoginfail(userId) {
       `<p>⚠️ 偵測到異常登入失敗，請確認是否為本人操作。</p>`,
     );
   } catch (err) {
-    console.error(`Error notifying login failure for user ${userId}:`, err);
+    return { success: false, error: "郵件發送失敗，請稍後再試。" };
   }
 }
 
@@ -84,7 +79,7 @@ async function notifyVerify(userId) {
       `<p>請盡快完成信箱驗證以保障帳號安全。</p>`,
     );
   } catch (err) {
-    console.error(`Error notifying verification for user ${userId}:`, err);
+    return { success: false, error: "郵件發送失敗，請稍後再試。" };
   }
 }
 
@@ -99,7 +94,7 @@ async function notifyCommented(userId, commentContent) {
       `<p>留言內容：${commentContent}</p>`,
     );
   } catch (err) {
-    console.error(`Error notifying comment for user ${userId}:`, err);
+    return { success: false, error: "郵件發送失敗，請稍後再試。" };
   }
 }
 
@@ -114,7 +109,7 @@ async function notifyLiked(userId, likerName) {
       `<p>${likerName} 按讚了您的貼文！</p>`,
     );
   } catch (err) {
-    console.error(`Error notifying like for user ${userId}:`, err);
+    return { success: false, error: "郵件發送失敗，請稍後再試。" };
   }
 }
 
@@ -129,7 +124,7 @@ async function notifyBookmarked(userId, bookmarkerName) {
       `<p>${bookmarkerName} 收藏了您的貼文。</p>`,
     );
   } catch (err) {
-    console.error(`Error notifying bookmark for user ${userId}:`, err);
+    return { success: false, error: "郵件發送失敗，請稍後再試。" };
   }
 }
 
@@ -144,7 +139,7 @@ async function notifyShared(userId, sharerName) {
       `<p>${sharerName} 分享了您的貼文。</p>`,
     );
   } catch (err) {
-    console.error(`Error notifying share for user ${userId}:`, err);
+    return { success: false, error: "郵件發送失敗，請稍後再試。" };
   }
 }
 
@@ -159,7 +154,7 @@ async function notifyCustomerReplied(userId, replyContent) {
       `<p>客服回覆內容：${replyContent}</p>`,
     );
   } catch (err) {
-    console.error(`Error notifying customer reply for user ${userId}:`, err);
+    return { success: false, error: "郵件發送失敗，請稍後再試。" };
   }
 }
 

@@ -1,5 +1,5 @@
 const { pgTable, serial, integer, varchar } = require('drizzle-orm/pg-core');
-const { travelSchedules } = require('../models/scheduleschema'); 
+const { travelSchedules } = require('../models/scheduleSchema'); 
 
 const trafficData = pgTable("traffic_data", {
   id: serial('id').primaryKey(),

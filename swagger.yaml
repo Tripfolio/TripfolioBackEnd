@@ -8,6 +8,16 @@ servers:
   - url: http://localhost:3000/
     description: dev
 
+tags:
+  - name: 使用者驗證
+  - name: 會員
+  - name: 通知設定
+  - name: 行程
+  - name: 行程細節
+  - name: 行程時間
+  - name: 社群貼文
+  - name: 付款
+
 components:
   securitySchemes:
     bearerAuth:
@@ -677,7 +687,6 @@ paths:
                     type: string
                     example: 伺服器錯誤
 
-  # communityRoutes.js
   /api/community/community-posts:
     post:
       summary: 發布社群貼文
@@ -792,3 +801,107 @@ paths:
           description: 刪除成功
         "500":
           description: 刪除失敗
+
+  /api/payment/client_token:
+    get:
+      summary: 產生 Braintree Client Token
+      tags: [付款]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: 成功產生 Client Token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJ2ZXJzaW9uIjoxLCJ0b2tlbiI6IkV5...
+        "401":
+          description: 未登入或權限驗證失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 未提供登入權限
+        "500":
+          description: 產生失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 產生 Client Token 失敗
+                  error:
+                    type: string
+                    example: 錯誤訊息
+
+  /api/payment/confirm:
+    post:
+      summary: 確認付款並升級為付費會員
+      tags: [付款]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - paymentMethodNonce
+              properties:
+                paymentMethodNonce:
+                  type: string
+                  example: fake-valid-nonce
+                  description: 由 Braintree Drop-in UI 回傳的 nonce
+      responses:
+        "200":
+          description: 付款成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 付款成功，您已經升級為付費會員
+                  transaction:
+                    type: object
+                    description: Braintree 回傳的交易結果
+        "401":
+          description: 未登入或權限驗證失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 未提供登入權限
+        "500":
+          description: 付款失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 付款失敗
+                  error:
+                    type: string
+                    example: 錯誤訊息

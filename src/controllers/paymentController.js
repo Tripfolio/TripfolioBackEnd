@@ -13,7 +13,7 @@ const gateway = new braintree.BraintreeGateway({
 const generateClientToken = async (req, res) => {
   try {
     const result = await gateway.clientToken.generate({});
-    res.json({ token: result.clientToken });
+    res.json({ token: result.clientToken, amount: "30.0" });
   } catch (err) {
     res
       .status(500)
@@ -27,13 +27,12 @@ const confirmPayment = async (req, res) => {
 
   try {
     const result = await gateway.transaction.sale({
-      amount: "1.0",
+      amount: "30.0",
       paymentMethodNonce: nonce,
       options: { submitForSettlement: true },
     });
 
     if (result.success) {
-
       if (userId) {
         await db
           .update(users)
@@ -47,13 +46,15 @@ const confirmPayment = async (req, res) => {
         transaction: result.transaction,
       });
     } else {
-      res.status(500).json({ 
-        success: false, 
-        message: result.message 
-    });
+      res.status(500).json({
+        success: false,
+        message: result.message,
+      });
     }
   } catch (err) {
-    res.status(500).json({ success: false, message: "付款失敗", error: err.message });
+    res
+      .status(500)
+      .json({ success: false, message: "付款失敗", error: err.message });
   }
 };
 

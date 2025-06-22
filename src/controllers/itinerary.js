@@ -11,24 +11,31 @@ async function addPlace(req, res) {
     arrivalHour,
     arrivalMinute,
     placeOrder,
+    date,
   } = req.body;
-  if (!itineraryId || typeof name !== "string" || !name.trim()) {
+  if (!itineraryId || typeof name !== "string" || !name.trim() || !date) {
     return res
       .status(400)
       .json({ success: false, message: "缺少必要參數或參數錯誤" });
   }
 
   try {
-    await db.insert(itineraryPlaces).values({
-      itineraryId,
-      name,
-      address,
-      photo,
-      arrivalHour,
-      arrivalMinute,
-      placeOrder,
-    });
-    res.json({ success: true });
+    const inserted = await db
+      .insert(itineraryPlaces)
+      .values({
+        itineraryId,
+        name,
+        address,
+        photo,
+        arrivalHour,
+        arrivalMinute,
+        placeOrder,
+        date,
+    })
+    .returning();
+    const newPlace = inserted[0];
+
+    res.json({ success: true, place: newPlace });
   } catch (err) {
     res.status(500).json({ success: false, message: "伺服器錯誤" });
   }
@@ -58,7 +65,7 @@ async function deletePlace(req, res) {
 }
 
 async function getPlaces(req, res) {
-  const { itineraryId } = req.query;
+  const { itineraryId, date } = req.query;
 
   if (!itineraryId) {
     return res
@@ -67,6 +74,11 @@ async function getPlaces(req, res) {
   }
 
   try {
+    const conditions = [eq(itineraryPlaces.itineraryId, Number(itineraryId))];
+    if (date) {
+      conditions.push(eq(itineraryPlaces.date, date));
+    }
+
     const places = await db
       .select()
       .from(itineraryPlaces)

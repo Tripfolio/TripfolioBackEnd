@@ -8,6 +8,7 @@ const {
 const uploadCover = require("../middlewares/uploadCover");
 const { authenticateToken } = require("../middlewares/authMiddleware");
 const { getSchedules } = require("../controllers/getSchedule");
+const { getTravelScheduleById, updateSchedule } = require("../controllers/updateScheduleController");
 
 router.post(
   "/",
@@ -17,5 +18,18 @@ router.post(
 );
 router.get("/user", authenticateToken, getSchedules);
 router.delete("/:id", authenticateToken, deleteSchedule);
+router.get('/:id', authenticateToken, getTravelScheduleById);
+router.patch(
+  '/:id', 
+  authenticateToken, 
+  uploadCover.single("cover"), 
+  updateSchedule
+);
+router.put(
+  '/:id',
+  authenticateToken,
+  uploadCover.single("cover"),
+  updateSchedule
+);
 
 module.exports = router;

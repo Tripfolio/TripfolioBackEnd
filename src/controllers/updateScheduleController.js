@@ -33,13 +33,13 @@ const updateSchedule = async (req, res) => {
       if (existingSchedule.coverURL) {
         if (
           existingSchedule.coverURL.includes("s3.amazonaws.com") ||
-          existingSchedule.coverURL.includes(process.env.AWS_S3_BUCKET_NAME)
+          existingSchedule.coverURL.includes(process.env.AWS_COVER_S3_BUCKET)
         ) {
           const url = new URL(existingSchedule.coverURL);
           const oldKey = url.pathname.substring(1);
 
           const params = {
-            Bucket: process.env.AWS_S3_BUCKET,
+            Bucket: process.env.AWS_COVER_S3_BUCKET,
             Key: oldKey,
           };
           try {
@@ -149,7 +149,7 @@ const getTravelScheduleById = async (req, res) => {
       .select()
       .from(travelSchedules)
       .where(eq(travelSchedules.id, Number(id)))
-      .where(eq(travelSchedules.memberId, memberId))
+      .where(eq(travelSchedules.userId, memberId))
       .limit(1);
 
     if (!schedule || schedule.length === 0) {

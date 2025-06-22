@@ -15,7 +15,7 @@ router.post(
   uploadPostImage.single("cover"),
   createCommunityPost,
 );
-router.get("/community-posts", getAllCommunityPosts);
+router.get("/", getAllCommunityPosts);
 router.put(
   "/community-posts/:id",
   authenticateToken,

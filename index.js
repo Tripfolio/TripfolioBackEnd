@@ -20,13 +20,13 @@ app.use(cors({
 }));
 
 app.use(express.json());
-// app.use('/uploads', express.static('uploads')); 
-// app.use('/api', authRoutes); 
-// app.use('/api', protectedRoutes); 
-// app.use('/api/members', memberRoutes);
+app.use('/uploads', express.static('uploads')); 
+app.use('/api', authRoutes); 
+app.use('/api', protectedRoutes); 
+app.use('/api/members', memberRoutes);
 app.use('/api/itinerary', itineraryRouter);
-// app.use("/api/email-preferences", emailPreferencesRoute);
-// app.use("/api/travelSchedule", travelSchedulesRoutes);
+app.use("/api/email-preferences", emailPreferencesRoute);
+app.use("/api/travelSchedule", travelSchedulesRoutes);
 app.use("/api/itineraryTime", arriveItinerary);
 app.use("/api/traffic", trafficRoutes);
 

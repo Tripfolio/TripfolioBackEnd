@@ -1,8 +1,11 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { confirmPayment } = require('../controllers/paymentController');
-const { authenticateToken } = require('../middlewares/authMiddleware');
+const {
+  linePayConfirm,
+  linePayConfirmCallback,
+} = require("../controllers/paymentController");
 
-router.post('/confirm', authenticateToken, confirmPayment);
+router.post("/confirm", linePayConfirm);
+router.get("/confirm-callback", linePayConfirmCallback);
 
 module.exports = router;

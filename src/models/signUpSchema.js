@@ -4,7 +4,7 @@ const users = pgTable("users", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 10 }).notNull(),
   email: varchar("email", { length: 100 }).notNull().unique(),
-  password: varchar("password", { length: 255 }).notNull(),
+  password: varchar("password", { length: 255 }),
   gender: varchar('gender', { length: 10 }),
   phone: varchar('phone', { length: 20 }),
   birthday: date('birthday'),

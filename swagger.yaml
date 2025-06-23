@@ -26,7 +26,6 @@ components:
       bearerFormat: JWT
 
 paths:
-
   /api/signup:
     post:
       summary: 使用者註冊

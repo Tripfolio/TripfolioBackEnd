@@ -75,7 +75,7 @@ CREATE TABLE "schedules" (
 --> statement-breakpoint
 CREATE TABLE "trip_shares" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"trip_id" integer NOT NULL,
+	"trip_id" uuid NOT NULL,
 	"shared_with_user_id" integer NOT NULL,
 	"shared_by_user_id" integer NOT NULL,
 	"permission" text NOT NULL,

@@ -98,7 +98,7 @@ exports.updateUserPassword = async (req, res) => {
   res.json({ message: "密碼更新成功" });
 };
 
-exports.isPremiun = async (req, res) => {
+exports.isPremium = async (req, res) => {
   const userId = req.user?.id;
   if (!userId) return res.status(403).json({ message: "尚未登入" });
 

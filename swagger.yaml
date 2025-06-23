@@ -1,0 +1,906 @@
+openapi: 3.0.0
+info:
+  title: Tripfolio API 文件
+  version: 1.0.0
+  description: |
+    Tripfolio 後端 API 文件，使用者登入、會員資料、行程管理、社群發文等。
+servers:
+  - url: http://localhost:3000/
+    description: dev
+
+tags:
+  - name: 使用者驗證
+  - name: 會員
+  - name: 通知設定
+  - name: 行程
+  - name: 行程細節
+  - name: 行程時間
+  - name: 社群貼文
+  - name: 付款
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+paths:
+  /api/signup:
+    post:
+      summary: 使用者註冊
+      description: 提供 Email、密碼與手機號碼以建立新帳號
+      tags:
+        - 使用者驗證
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - phone
+              properties:
+                email:
+                  type: string
+                  example: user@example.com
+                password:
+                  type: string
+                  example: abc12345
+                  description: 密碼須至少8字，英數混合，且不可與信箱相同
+                phone:
+                  type: string
+                  example: 0912345678
+                  description: 台灣手機號碼格式
+      responses:
+        "201":
+          description: 註冊成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 註冊成功，請重新登入
+        "400":
+          description: 資料驗證失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                    example: ["Email 格式錯誤", "密碼須至少8字 + 英數混合"]
+        "500":
+          description: 伺服器錯誤
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                    example: ["伺服器錯誤，請稍後再試"]
+
+  /api/login:
+    post:
+      summary: 使用者登入
+      tags: [使用者驗證]
+      description: 驗證帳號密碼並回傳 JWT Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  example: user@example.com
+                password:
+                  type: string
+                  example: abc12345
+      responses:
+        "200":
+          description: 登入成功，回傳使用者資訊與 JWT Token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 登入成功
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6...
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      email:
+                        type: string
+                        example: user@example.com
+        "401":
+          description: 帳號或密碼錯誤
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 此帳號不存在 或 密碼錯誤
+        "500":
+          description: 伺服器錯誤
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 伺服器錯誤
+
+  /api/users/{id}:
+    get:
+      summary: 取得會員資料
+      tags: [會員]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: 會員 ID
+      responses:
+        "200":
+          description: 成功取得會員資料
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  gender:
+                    type: string
+                  phone:
+                    type: string
+                  email:
+                    type: string
+                  birthday:
+                    type: string
+                  avatar:
+                    type: string
+        "404":
+          description: 找不到會員
+
+    put:
+      summary: 修改會員基本資料
+      tags: [會員]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                gender:
+                  type: string
+                phone:
+                  type: string
+                email:
+                  type: string
+                birthday:
+                  type: string
+      responses:
+        "200":
+          description: 修改成功
+
+  /api/users/{id}/password:
+    put:
+      summary: 修改密碼
+      tags: [會員]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - oldPassword
+                - newPassword
+              properties:
+                oldPassword:
+                  type: string
+                  example: 12345678
+                newPassword:
+                  type: string
+                  example: Newpass123
+      responses:
+        "200":
+          description: 密碼更新成功
+        "400":
+          description: 驗證錯誤或格式錯誤
+        "404":
+          description: 找不到會員
+
+  /api/upload-avatar:
+    post:
+      summary: 上傳會員大頭貼
+      tags: [會員]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - userId
+                - avatar
+              properties:
+                userId:
+                  type: integer
+                  example: 1
+                avatar:
+                  type: string
+                  format: binary
+                  description: 上傳的圖片檔案
+      responses:
+        "200":
+          description: 上傳成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 上傳成功
+                  path:
+                    type: string
+                    example: https://example.com/avatar.jpg
+
+  /api/email-preferences:
+    get:
+      summary: 取得使用者 Email 通知偏好
+      tags: [通知設定]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: 成功取得使用者偏好
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  onRegister:
+                    type: boolean
+                  onLogin:
+                    type: boolean
+                  onLoginfail:
+                    type: boolean
+                  onVerify:
+                    type: boolean
+                  onComment:
+                    type: boolean
+                  onLike:
+                    type: boolean
+                  onBookmark:
+                    type: boolean
+                  onShare:
+                    type: boolean
+                  onCustomerReply:
+                    type: boolean
+        "404":
+          description: 找不到偏好設定
+        "500":
+          description: 伺服器錯誤
+
+    put:
+      summary: 更新使用者 Email 通知偏好
+      tags: [通知設定]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                preferences:
+                  type: object
+                  required:
+                    - onRegister
+                    - onLogin
+                    - onLoginfail
+                    - onVerify
+                    - onComment
+                    - onLike
+                    - onBookmark
+                    - onShare
+                    - onCustomerReply
+                  properties:
+                    onRegister:
+                      type: boolean
+                      example: true
+                    onLogin:
+                      type: boolean
+                      example: true
+                    onLoginfail:
+                      type: boolean
+                      example: true
+                    onVerify:
+                      type: boolean
+                      example: false
+                    onComment:
+                      type: boolean
+                      example: true
+                    onLike:
+                      type: boolean
+                      example: false
+                    onBookmark:
+                      type: boolean
+                      example: true
+                    onShare:
+                      type: boolean
+                      example: false
+                    onCustomerReply:
+                      type: boolean
+                      example: true
+      responses:
+        "200":
+          description: 偏好設定已更新
+        "500":
+          description: 伺服器錯誤
+
+  /api/travelSchedule:
+    post:
+      summary: 建立新行程
+      tags: [行程]
+      description: 使用者需登入並上傳封面圖（cover）
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - title
+                - startDate
+                - endDate
+              properties:
+                title:
+                  type: string
+                  example: 日本畢業旅行
+                startDate:
+                  type: string
+                  format: date
+                  example: "2025-07-01"
+                endDate:
+                  type: string
+                  format: date
+                  example: "2025-07-07"
+                description:
+                  type: string
+                  example: 一起去日本玩七天六夜！
+                cover:
+                  type: string
+                  format: binary
+                  description: 行程封面圖
+      responses:
+        "201":
+          description: 行程建立成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 行程建立成功
+                  schedule:
+                    type: object
+        "403":
+          description: JWT 無效或未登入
+        "500":
+          description: 建立失敗
+
+  /api/travelSchedule/user:
+    get:
+      summary: 取得使用者所有行程
+      tags: [行程]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: 成功取得行程
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        "500":
+          description: 查詢失敗
+
+  /api/travelSchedule/{id}:
+    delete:
+      summary: 刪除指定行程
+      tags: [行程]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: 行程 ID
+      responses:
+        "200":
+          description: 刪除成功
+        "500":
+          description: 刪除失敗
+
+  /api/itinerary/add-place:
+    post:
+      summary: 新增行程地點
+      tags: [行程細節]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - itineraryId
+                - name
+              properties:
+                itineraryId:
+                  type: integer
+                  example: 1
+                name:
+                  type: string
+                  example: 阿里山日出
+                address:
+                  type: string
+                  example: 嘉義縣阿里山
+                photo:
+                  type: string
+                  example: https://example.com/photo.jpg
+                arrivalHour:
+                  type: integer
+                  example: 5
+                arrivalMinute:
+                  type: integer
+                  example: 30
+                placeOrder:
+                  type: integer
+                  example: 1
+      responses:
+        "200":
+          description: 地點新增成功
+        "400":
+          description: 缺少必要參數
+        "500":
+          description: 伺服器錯誤
+
+  /api/itinerary/place:
+    delete:
+      summary: 刪除指定地點
+      tags: [行程細節]
+      parameters:
+        - in: query
+          name: itineraryId
+          required: true
+          schema:
+            type: integer
+          description: 行程 ID
+        - in: query
+          name: name
+          required: true
+          schema:
+            type: string
+          description: 要刪除的地點名稱
+      responses:
+        "200":
+          description: 地點刪除成功
+        "400":
+          description: 缺少參數
+        "500":
+          description: 刪除失敗
+
+  /api/itinerary/places:
+    get:
+      summary: 取得某行程的所有地點
+      tags: [行程細節]
+      parameters:
+        - in: query
+          name: itineraryId
+          required: true
+          schema:
+            type: integer
+          description: 行程 ID
+      responses:
+        "200":
+          description: 成功取得地點清單
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  places:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        arrivalHour:
+                          type: integer
+                        arrivalMinute:
+                          type: integer
+                        placeOrder:
+                          type: integer
+        "400":
+          description: 缺少 itineraryId
+        "500":
+          description: 查詢錯誤
+
+  /api/itinerary/places/reorder:
+    put:
+      summary: 更新地點順序
+      tags: [行程細節]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                places:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - id
+                      - placeOrder
+                    properties:
+                      id:
+                        type: integer
+                        example: 2
+                      placeOrder:
+                        type: integer
+                        example: 1
+      responses:
+        "200":
+          description: 更新成功
+        "500":
+          description: 更新順序失敗
+
+  /api/itineraryTime/places/{id}:
+    put:
+      summary: 更新行程地點抵達時間
+      description: 根據地點 ID 更新該行程地點的抵達時間（小時與分鐘）
+      tags:
+        - 行程時間
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: 要更新的行程地點 ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - arrivalHour
+                - arrivalMinute
+              properties:
+                arrivalHour:
+                  type: integer
+                  example: 14
+                  description: 抵達小時（0–23）
+                arrivalMinute:
+                  type: integer
+                  example: 30
+                  description: 抵達分鐘（0–59）
+      responses:
+        "200":
+          description: 成功更新抵達時間
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        "400":
+          description: 缺少必要參數
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 缺少必要參數
+        "500":
+          description: 伺服器錯誤
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 伺服器錯誤
+
+  /api/community/community-posts:
+    post:
+      summary: 發布社群貼文
+      description: 需登入與圖片上傳（multipart/form-data）
+      tags: [社群貼文]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - scheduleId
+                - content
+              properties:
+                scheduleId:
+                  type: integer
+                  example: 1
+                content:
+                  type: string
+                  example: 今天天氣真好，來去日月潭！
+                cover:
+                  type: string
+                  format: binary
+                  description: 貼文主圖（上傳檔案）
+      responses:
+        "201":
+          description: 貼文成功
+        "500":
+          description: 建立貼文失敗
+
+    get:
+      summary: 取得所有社群貼文
+      tags: [社群貼文]
+      responses:
+        "200":
+          description: 成功取得貼文
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        postId:
+                          type: integer
+                        content:
+                          type: string
+                        coverURL:
+                          type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+                        scheduleTitle:
+                          type: string
+
+  /api/community/community-posts/{id}:
+    put:
+      summary: 編輯貼文
+      tags: [社群貼文]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: 貼文 ID
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  example: 修改後的貼文內容
+                cover:
+                  type: string
+                  format: binary
+                  description: （選填）更新封面圖
+                coverURL:
+                  type: string
+                  example: https://cdn.com/oldimage.jpg
+      responses:
+        "200":
+          description: 更新成功
+        "404":
+          description: 找不到貼文
+
+    delete:
+      summary: 刪除貼文
+      tags: [社群貼文]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: 貼文 ID
+      responses:
+        "200":
+          description: 刪除成功
+        "500":
+          description: 刪除失敗
+
+  /api/payment/client_token:
+    get:
+      summary: 產生 Braintree Client Token
+      tags: [付款]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: 成功產生 Client Token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJ2ZXJzaW9uIjoxLCJ0b2tlbiI6IkV5...
+        "401":
+          description: 未登入或權限驗證失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 未提供登入權限
+        "500":
+          description: 產生失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 產生 Client Token 失敗
+                  error:
+                    type: string
+                    example: 錯誤訊息
+
+  /api/payment/confirm:
+    post:
+      summary: 確認付款並升級為付費會員
+      tags: [付款]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - paymentMethodNonce
+              properties:
+                paymentMethodNonce:
+                  type: string
+                  example: fake-valid-nonce
+                  description: 由 Braintree Drop-in UI 回傳的 nonce
+      responses:
+        "200":
+          description: 付款成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 付款成功，您已經升級為付費會員
+                  transaction:
+                    type: object
+                    description: Braintree 回傳的交易結果
+        "401":
+          description: 未登入或權限驗證失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 未提供登入權限
+        "500":
+          description: 付款失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 付款失敗
+                  error:
+                    type: string
+                    example: 錯誤訊息

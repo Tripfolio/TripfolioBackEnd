@@ -1,6 +1,6 @@
-const db = require("../config/db");
-const { users } = require("./signUpSchema");
-const { eq } = require("drizzle-orm");
+const { db } = require('../config/db');
+const { users } = require('./signUpSchema');
+const { eq } = require('drizzle-orm');
 
 const findByEmail = async (email) => {
   const usersData = await db.select().from(users).where(eq(users.email, email));

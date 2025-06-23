@@ -21,7 +21,6 @@ async function login(req, res) {
 
   try {
     const user = await UserModel.findByEmail(email);
-
     if (!user) {
       errors.push("此帳號不存在");
       return res.status(401).json({ errors });
@@ -49,6 +48,7 @@ async function login(req, res) {
       },
     });
   } catch (err) {
+    console.error("登入時發生伺服器錯誤:", err);
     return res.status(500).json({ errors: ["伺服器錯誤，請稍後再試"] });
   }
 }

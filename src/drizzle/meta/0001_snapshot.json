@@ -1,9 +1,67 @@
 {
-  "id": "2e414d15-6609-4024-ad35-cffdab64bf8e",
-  "prevId": "d5010df3-2bf6-46eb-9043-c262692cd87b",
+  "id": "535f384a-0074-4147-8504-cf4ac27fa418",
+  "prevId": "72c85b7d-98f1-4264-840d-da2a163d99c8",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.comments": {
+      "name": "comments",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "post_id": {
+          "name": "post_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "comments_member_id_members_id_fk": {
+          "name": "comments_member_id_members_id_fk",
+          "tableFrom": "comments",
+          "tableTo": "members",
+          "columnsFrom": [
+            "member_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.email_preferences": {
       "name": "email_preferences",
       "schema": "",
@@ -86,6 +144,53 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.favorites": {
+      "name": "favorites",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "post_id": {
+          "name": "post_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "favorites_member_id_post_id_unique": {
+          "name": "favorites_member_id_post_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "member_id",
+            "post_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.itinerary_places": {
       "name": "itinerary_places",
       "schema": "",
@@ -117,6 +222,24 @@
         "photo": {
           "name": "photo",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "arrival_hour": {
+          "name": "arrival_hour",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "arrival_minute": {
+          "name": "arrival_minute",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "place_order": {
+          "name": "place_order",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         }
@@ -172,9 +295,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -283,24 +404,6 @@
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
-        },
-        "arrival_hour": {
-          "name": "arrival_hour",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "arrival_minute": {
-          "name": "arrival_minute",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "order": {
-          "name": "order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {},

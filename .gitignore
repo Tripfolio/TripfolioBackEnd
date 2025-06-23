@@ -5,7 +5,7 @@ npm-debug.log*
 .DS_Store
 
 #忽略測試用JWT產生器
-getToken.js
+generate-token.js
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*

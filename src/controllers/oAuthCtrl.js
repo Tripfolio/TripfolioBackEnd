@@ -1,13 +1,13 @@
-const passport = require("passport");
-const jwt = require("jsonwebtoken");
-const UserModel = require("../models/UserModel");
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
+const UserModel = require('../models/UserModel');
 
-const googleAuth = passport.authenticate("google", {
-  scope: ["profile", "email"],
+const googleAuth = passport.authenticate('google', {
+  scope: ['profile', 'email'],
 });
 
 const googleAuthCallback = async (req, res, next) => {
-  passport.authenticate("google", { failureRedirect: "/login", session: false }, async (err, user, info) => {
+  passport.authenticate('google', { failureRedirect: '/login', session: false }, async (err, user, info) => {
     if (err) {
       return res.redirect(`${process.env.VITE_API_URL}/login?error=auth_failed`);
     }
@@ -33,7 +33,7 @@ const googleAuthCallback = async (req, res, next) => {
       const token = jwt.sign(
         { id: foundUser.id, email: foundUser.email },
         process.env.JWT_SECRET,
-        { expiresIn: "30d" }
+        { expiresIn: '30d' }
       );
 
       return res.redirect(`${process.env.VITE_API_URL}/?token=${token}`);

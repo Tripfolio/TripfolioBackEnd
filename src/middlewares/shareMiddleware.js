@@ -1,5 +1,5 @@
 const { tripShares } = require("../models/tripShares");
-// const { trips } = require("../models/trips"); //需確認檔案存在
+const { travelSchedules } = require("../models/scheduleSchema");
 const { db } = require("../config/db");
 const { eq } = require("drizzle-orm");
 
@@ -31,8 +31,8 @@ function verifyShareToken(requiredPermission) {
       // 查詢對應的 trip（為了驗證主揪）
       const tripRows = await db
         .select()
-        .from(trips)
-        .where(eq(trips.id, sharedTrip.tripId))
+        .from(travelSchedules)
+        .where(eq(travelSchedules.id, sharedTrip.tripId))
         .limit(1);
 
       const trip = tripRows[0];

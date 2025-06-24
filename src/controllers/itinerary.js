@@ -1,6 +1,6 @@
 const { db } = require("../config/db");
 const { itineraryPlaces } = require("../models/itinerary");
-const { and, eq } = require("drizzle-orm");
+const { eq } = require("drizzle-orm");
 
 async function addPlace(req, res) {
   const {
@@ -13,16 +13,19 @@ async function addPlace(req, res) {
     placeOrder,
     lat,   
     lng,
+    date,
   } = req.body;
   
-  if (!itineraryId || typeof name !== "string" || !name.trim()) {
+  if (!itineraryId || typeof name !== "string" || !name.trim() || !date) {
     return res
       .status(400)
       .json({ success: false, message: "缺少必要參數或參數錯誤" });
   }
 
   try {
-    const inserted = await db.insert(itineraryPlaces).values({
+  const inserted = await db
+    .insert(itineraryPlaces)
+    .values({
       itineraryId,
       name,
       address,
@@ -30,13 +33,16 @@ async function addPlace(req, res) {
       arrivalHour,
       arrivalMinute,
       placeOrder,
-      lat,   
+      lat,      // ← 保留經緯度
       lng,
-    }).returning({ id: itineraryPlaces.id });
-    res.json({ success: true, placeId: inserted[0].id });
-  } catch (err) {
-    res.status(500).json({ success: false, message: "伺服器錯誤" });
-  }
+      date,
+    })
+    .returning();
+      const newPlace = inserted[0];
+      res.json({ success: true, place: newPlace });
+    } catch (err) {
+      res.status(500).json({ success: false, message: "伺服器錯誤" });
+    }
 }
 
 async function deletePlace(req, res) {
@@ -59,7 +65,7 @@ async function deletePlace(req, res) {
 }
 
 async function getPlaces(req, res) {
-  const { itineraryId } = req.query;
+  const { itineraryId, date } = req.query;
 
   if (!itineraryId) {
     return res
@@ -68,6 +74,11 @@ async function getPlaces(req, res) {
   }
 
   try {
+    const conditions = [eq(itineraryPlaces.itineraryId, Number(itineraryId))];
+    if (date) {
+      conditions.push(eq(itineraryPlaces.date, date));
+    }
+
     const places = await db
       .select()
       .from(itineraryPlaces)

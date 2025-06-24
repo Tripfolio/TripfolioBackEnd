@@ -36,32 +36,12 @@
    請在專案根目錄建立 .env 檔案，並依照 .env.template 的格式填寫對應的環境變數。
 
 ## 組員與分工：
-
-| 組員   | GitHub                                              | 功能：行程           | 功能：地圖     | 功能：會員   |
-| ------ | --------------------------------------------------- | -------------------- | -------------- | ------------ |
-| 陳品均 | [LeoChen517](https://github.com/LeoChen517)         | 行程共享權限功能     |                | 郵件通知功能 |
-| 張哲豪 | [kiwiisfish](https://github.com/kiwiisfish)         | 預算估算功能         | 依類別篩選     |              |
-| 蘇怡瑄 | [mmaysu](https://github.com/mmaysu)                 | 加入景點功能         | 關鍵字搜尋     |              |
-| 林芳綺 | [yanamint](https://github.com/yanamint)             | 串接 google calender |                | 註冊         |
-| 周子筠 | [yumi-chou](https://github.com/yumi-chou)           | 通勤方式與時間功能   | 路線與通勤時間 |
-| 許家瑜 | [Ninahsuuuuu](https://github.com/Ninahsuuuuu)       | 行程總覽建立         |                | 資料變更     |
-| 劉暄   | [pearl-liu-1203](https://github.com/pearl-liu-1203) | 行程頁面編輯         |                | 登入         |
-
-
-
-{
-  "itineraryId": 1,
-  "newPlaceId": "ChIJgUbEo8cfqokR5lP9_Wh_DaM",
-  "prevPlaceId": "ChIJ3S-JXmauEmsRUcIaWtf4MzE",
-  "fromAddress": "29 King St, Sydney NSW 2000, Australia",
-  "toAddress": "Bennelong Point, Sydney NSW 2000, Australia"
-}
-
-http://localhost:3000/api/traffic/select-mode
-
-{
-  "itineraryId": 1,
-  "fromPlaceId": "2",
-  "toPlaceId": "3",
-  "transportMode": "walking"
-}
+| 組員 | GitHub | 地圖 | 行程 | 社群 |會員 |其他|
+| --- | ---    | --- | --- |  --- |--- |--- |
+| 陳品均 |[LeoChen517](https://github.com/LeoChen517)  | | 行程共享<br>權限設定 |社群主頁 |郵件通知<br>設定 ||
+| 張哲豪 |[kiwiisfish](https://github.com/kiwiisfish)  | 類別篩選<br>定位 | 時間與排序 |按讚、留言 ||設計規劃|
+| 蘇怡瑄 |[mmaysu](https://github.com/mmaysu)  | 關鍵字搜尋 | 加入景點 | 建立貼文||部署|
+| 林芳綺 |[yanamint](https://github.com/yanamint)  || 加入<br>google calender|||切版|
+| 周子筠 |[yumi-chou](https://github.com/yumi-chou) | 地區篩選 | 交通方式<br>通勤時間 || |切版<br>設計規劃|
+| 許家瑜 |[Ninahsuuuuu](https://github.com/Ninahsuuuuu)|| 行程總覽 |個人頁面| 資料變更 ||
+| 劉暄  | [pearl-liu-1203](https://github.com/pearl-liu-1203)|  | 行程頁面編輯 || 登入、註冊  ||

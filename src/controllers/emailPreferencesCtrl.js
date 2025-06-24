@@ -7,7 +7,6 @@ async function getPreferences(req, res) {
   try {
     const result = await db
       .select({
-        onRegister: emailPreferences.onRegister,
         onLogin: emailPreferences.onLogin,
         onLoginfail: emailPreferences.onLoginfail,
         onComment: emailPreferences.onComment,
@@ -31,7 +30,6 @@ async function updatePreferences(req, res) {
     await db
       .update(emailPreferences)
       .set({
-        onRegister: prefs.onRegister,
         onLogin: prefs.onLogin,
         onLoginfail: prefs.onLoginfail,
         onComment: prefs.onComment,

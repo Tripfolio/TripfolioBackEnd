@@ -1,5 +1,6 @@
 const { db } = require("../config/db");
 const { users } = require("../models/signUpSchema");
+const { travelSchedules } = require("../models/scheduleSchema");
 const { eq } = require("drizzle-orm");
 const bcrypt = require("bcrypt");
 const validatePassword = require("../utils/validatePassword");
@@ -95,4 +96,29 @@ exports.updateUserPassword = async (req, res) => {
     .set({ password: hashedPassword })
     .where(eq(users.id, userId));
   res.json({ message: "密碼更新成功" });
+};
+
+exports.isPremium = async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) return res.status(403).json({ message: "尚未登入" });
+
+  try {
+    const user = await db.select().from(users).where(eq(users.id, userId));
+    const isPremium = user[0]?.isPremium;
+
+    const scheduleCounts = await db
+      .select()
+      .from(travelSchedules)
+      .where(eq(travelSchedules.userId, userId));
+
+    const requiresPayment = !isPremium && scheduleCounts.length >= 1;
+
+    res.status(200).json({
+      requiresPayment,
+      isPremium,
+      scheduleCount: scheduleCounts.length,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "查詢失敗", error: err.message });
+  }
 };

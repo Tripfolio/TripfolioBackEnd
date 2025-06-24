@@ -1,28 +1,26 @@
-const { db } = require("../config/db");
-const { travelSchedules } = require("../models/scheduleSchema");
-const { eq, and } = require("drizzle-orm");
-const { users } = require("../models/signUpSchema");
+const { db } = require('../config/db');
+const { schedules } = require('../models/scheduleSchema');
+const { eq, and } = require('drizzle-orm');
+const { users } = require('../models/usersSchema');
+const HTTP = require('../constants/httpStatus');
 
 const createSchedule = async (req, res) => {
   try {
     const userId = req.user?.id;
     if (!userId) {
-      return res.status(403).json({ message: "JWT無效或未登入" });
+      return res.status(HTTP.FORBIDDEN).json({ message: 'JWT無效或未登入' });
     }
 
     const user = await db.select().from(users).where(eq(users.id, userId));
     const isPremium = user[0]?.isPremium;
 
-    const scheduleCounts = await db
-      .select()
-      .from(travelSchedules)
-      .where(eq(travelSchedules.userId, userId));
+    const scheduleCounts = await db.select().from(schedules).where(eq(schedules.userId, userId));
 
     const requiresPayment = !isPremium && scheduleCounts.length >= 1;
 
     if (requiresPayment) {
-      return res.status(402).json({
-        message: "需升級會員或付費才能新增更多行程",
+      return res.status(HTTP.PAYMENT_REQUIRED).json({
+        message: '需升級會員或付費才能新增更多行程',
       });
     }
 
@@ -30,7 +28,7 @@ const createSchedule = async (req, res) => {
     const coverURL = req.file?.location || null;
 
     const inserted = await db
-      .insert(travelSchedules)
+      .insert(schedules)
       .values({
         userId: Number(userId),
         title,
@@ -41,13 +39,13 @@ const createSchedule = async (req, res) => {
       })
       .returning();
 
-    res.status(201).json({
-      message: "行程建立成功",
+    return res.status(HTTP.CREATED).json({
+      message: '行程建立成功',
       schedule: inserted[0],
     });
   } catch (err) {
-    res.status(500).json({
-      message: "行程建立失敗",
+    return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
+      message: '行程建立失敗',
       error: err.message,
     });
   }
@@ -59,21 +57,20 @@ const deleteSchedule = async (req, res) => {
 
   try {
     const deleted = await db
-      .delete(travelSchedules)
-      .where(
-        and(
-          eq(travelSchedules.id, scheduleId),
-          eq(travelSchedules.userId, userId),
-        ),
-      )
+      .delete(schedules)
+      .where(and(eq(schedules.id, scheduleId), eq(schedules.userId, userId)))
       .returning();
 
-    if (deleted === 0) {
-      return res.status(404).json({ message: "找不到該行程" });
+    if (!deleted || deleted.length === 0) {
+      return res.status(HTTP.NOT_FOUND).json({ message: '找不到該行程' });
     }
-    res.json({ message: "刪除成功" });
+
+    return res.json({ message: '刪除成功' });
   } catch (err) {
-    res.status(500).json({ message: "刪除失敗", error: err.message });
+    return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
+      message: '刪除失敗',
+      error: err.message,
+    });
   }
 };
 

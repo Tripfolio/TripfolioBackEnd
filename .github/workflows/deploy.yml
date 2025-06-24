@@ -26,9 +26,9 @@ jobs:
           RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys)
           STATUS=$(echo "$RESPONSE" | jq -r '.[0].status')
           DEPLOY_ID=$(echo "$RESPONSE" | jq -r '.[0].id')
-      
+
           echo "Latest deploy status: $STATUS"
-      
+
           if [ "$STATUS" = "live" ]; then
             curl -H "Content-Type: application/json" \
                  -X POST \

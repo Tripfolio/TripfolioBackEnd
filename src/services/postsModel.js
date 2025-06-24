@@ -1,28 +1,26 @@
-// const { communityPosts } = require("./post"); //需確認有貼文資料表
-const { users } = require("./signUpSchema");
-// const { comments } = require("./comments"); //需確認有留言資料表
-// const { favorites } = require("./favorites"); //需確認有收藏資料表
-const { travelSchedules } = require("./scheduleSchema");
-const { eq, sql } = require("drizzle-orm");
+const { db } = require('../config/db');
+const { posts } = require('../models/postsSchema');
+const { users } = require('../models/usersSchema');
+const { comments } = require('../models/commentsSchema');
+const { favorites } = require('../models/favoritesSchema');
+const { schedules } = require('../models/scheduleSchema');
+const { eq, sql } = require('drizzle-orm');
 
 async function getPaginatedPosts(page = 1, limit = 15) {
   const offset = (page - 1) * limit;
 
   const postData = await db
     .select({
-      id: communityPosts.id,
-      title: travelSchedules.title,
-      imageUrl: communityPosts.coverURL,
-      createdAt: communityPosts.createdAt,
+      id: posts.id,
+      title: schedules.title,
+      imageUrl: posts.coverURL,
+      createdAt: posts.createdAt,
       authorName: users.name,
     })
-    .from(communityPosts)
-    .leftJoin(users, eq(communityPosts.memberId, users.id))
-    .leftJoin(
-      travelSchedules,
-      eq(communityPosts.scheduleId, travelSchedules.id),
-    )
-    .orderBy(communityPosts.createdAt.desc())
+    .from(posts)
+    .leftJoin(users, eq(posts.memberId, users.id))
+    .leftJoin(schedules, eq(posts.scheduleId, schedules.id))
+    .orderBy(posts.createdAt.desc())
     .limit(limit)
     .offset(offset);
 
@@ -31,7 +29,7 @@ async function getPaginatedPosts(page = 1, limit = 15) {
   const commentCounts = await db
     .select({
       postId: comments.postId,
-      count: sql`COUNT(*)`.as("count"),
+      count: sql`COUNT(*)`.as('count'),
     })
     .from(comments)
     .where(sql`${comments.postId} = ANY(${sql.array(postIds)})`)
@@ -40,7 +38,7 @@ async function getPaginatedPosts(page = 1, limit = 15) {
   const favoriteCounts = await db
     .select({
       postId: favorites.postId,
-      count: sql`COUNT(*)`.as("count"),
+      count: sql`COUNT(*)`.as('count'),
     })
     .from(favorites)
     .where(sql`${favorites.postId} = ANY(${sql.array(postIds)})`)
@@ -64,4 +62,4 @@ async function getPaginatedPosts(page = 1, limit = 15) {
 
 module.exports = {
   getPaginatedPosts,
-};
+}; 

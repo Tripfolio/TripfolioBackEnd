@@ -1,5 +1,5 @@
 {
-  "id": "72c85b7d-98f1-4264-840d-da2a163d99c8",
+  "id": "dd61e64c-e68c-472e-92b1-dc13ee4f3c5b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -14,6 +14,12 @@
           "primaryKey": true,
           "notNull": true
         },
+        "post_id": {
+          "name": "post_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
         "member_id": {
           "name": "member_id",
           "type": "integer",
@@ -22,7 +28,7 @@
         },
         "content": {
           "name": "content",
-          "type": "text",
+          "type": "varchar(200)",
           "primaryKey": false,
           "notNull": true
         },
@@ -36,10 +42,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "comments_member_id_members_id_fk": {
-          "name": "comments_member_id_members_id_fk",
+        "comments_member_id_users_id_fk": {
+          "name": "comments_member_id_users_id_fk",
           "tableFrom": "comments",
-          "tableTo": "members",
+          "tableTo": "users",
           "columnsFrom": [
             "member_id"
           ],
@@ -56,13 +62,13 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.email_preferences": {
-      "name": "email_preferences",
+    "public.emails": {
+      "name": "emails",
       "schema": "",
       "columns": {
         "user_id": {
           "name": "user_id",
-          "type": "uuid",
+          "type": "integer",
           "primaryKey": true,
           "notNull": true
         },
@@ -87,22 +93,8 @@
           "notNull": true,
           "default": true
         },
-        "on_verify": {
-          "name": "on_verify",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": true
-        },
         "on_comment": {
           "name": "on_comment",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": true
-        },
-        "on_like": {
-          "name": "on_like",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
@@ -114,32 +106,32 @@
           "primaryKey": false,
           "notNull": true,
           "default": true
-        },
-        "on_share": {
-          "name": "on_share",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": true
-        },
-        "on_customer_reply": {
-          "name": "on_customer_reply",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": true
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "emails_user_id_users_id_fk": {
+          "name": "emails_user_id_users_id_fk",
+          "tableFrom": "emails",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.itinerary_places": {
-      "name": "itinerary_places",
+    "public.favorites": {
+      "name": "favorites",
       "schema": "",
       "columns": {
         "id": {
@@ -148,88 +140,21 @@
           "primaryKey": true,
           "notNull": true
         },
-        "itinerary_id": {
-          "name": "itinerary_id",
+        "member_id": {
+          "name": "member_id",
           "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "address": {
-          "name": "address",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "photo": {
-          "name": "photo",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "arrival_hour": {
-          "name": "arrival_hour",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "arrival_minute": {
-          "name": "arrival_minute",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "place_order": {
-          "name": "place_order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.users": {
-      "name": "users",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "email": {
-          "name": "email",
-          "type": "varchar(100)",
           "primaryKey": false,
           "notNull": true
         },
-        "password": {
-          "name": "password",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "phone": {
-          "name": "phone",
-          "type": "varchar(20)",
+        "post_id": {
+          "name": "post_id",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp (2)",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
@@ -239,11 +164,12 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "users_email_unique": {
-          "name": "users_email_unique",
+        "favorites_member_id_post_id_unique": {
+          "name": "favorites_member_id_post_id_unique",
           "nullsNotDistinct": false,
           "columns": [
-            "email"
+            "member_id",
+            "post_id"
           ]
         }
       },
@@ -251,8 +177,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.community_posts": {
-      "name": "community_posts",
+    "public.posts": {
+      "name": "posts",
       "schema": "",
       "columns": {
         "id": {
@@ -275,13 +201,13 @@
         },
         "cover_url": {
           "name": "cover_url",
-          "type": "text",
+          "type": "varchar(2048)",
           "primaryKey": false,
           "notNull": false
         },
         "content": {
           "name": "content",
-          "type": "text",
+          "type": "varchar(500)",
           "primaryKey": false,
           "notNull": false
         },
@@ -289,8 +215,75 @@
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.schedule_places": {
+      "name": "schedule_places",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "schedule_id": {
+          "name": "schedule_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "photo": {
+          "name": "photo",
+          "type": "varchar(2048)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "arrival_hour": {
+          "name": "arrival_hour",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "arrival_minute": {
+          "name": "arrival_minute",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "place_order": {
+          "name": "place_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date": {
+          "name": "date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
@@ -311,8 +304,8 @@
           "primaryKey": true,
           "notNull": true
         },
-        "member_id": {
-          "name": "member_id",
+        "user_id": {
+          "name": "user_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -337,13 +330,13 @@
         },
         "description": {
           "name": "description",
-          "type": "text",
+          "type": "varchar(500)",
           "primaryKey": false,
           "notNull": false
         },
         "cover_url": {
           "name": "cover_url",
-          "type": "text",
+          "type": "varchar(2048)",
           "primaryKey": false,
           "notNull": false
         },
@@ -363,8 +356,112 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.members": {
-      "name": "members",
+    "public.trip_shares": {
+      "name": "trip_shares",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "trip_id": {
+          "name": "trip_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "shared_with_user_id": {
+          "name": "shared_with_user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "shared_by_user_id": {
+          "name": "shared_by_user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "permission": {
+          "name": "permission",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "name": "token",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "trip_shares_trip_id_schedules_id_fk": {
+          "name": "trip_shares_trip_id_schedules_id_fk",
+          "tableFrom": "trip_shares",
+          "tableTo": "schedules",
+          "columnsFrom": [
+            "trip_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "trip_shares_shared_with_user_id_users_id_fk": {
+          "name": "trip_shares_shared_with_user_id_users_id_fk",
+          "tableFrom": "trip_shares",
+          "tableTo": "users",
+          "columnsFrom": [
+            "shared_with_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "trip_shares_shared_by_user_id_users_id_fk": {
+          "name": "trip_shares_shared_by_user_id_users_id_fk",
+          "tableFrom": "trip_shares",
+          "tableTo": "users",
+          "columnsFrom": [
+            "shared_by_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "trip_shares_token_unique": {
+          "name": "trip_shares_token_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "token"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
       "schema": "",
       "columns": {
         "id": {
@@ -375,9 +472,21 @@
         },
         "name": {
           "name": "name",
-          "type": "varchar(50)",
+          "type": "varchar(10)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
         },
         "gender": {
           "name": "gender",
@@ -391,82 +500,28 @@
           "primaryKey": false,
           "notNull": false
         },
-        "email": {
-          "name": "email",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": false
-        },
         "birthday": {
           "name": "birthday",
           "type": "date",
           "primaryKey": false,
           "notNull": false
         },
-        "password": {
-          "name": "password",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": false
-        },
         "avatar": {
           "name": "avatar",
-          "type": "text",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    }
-    "public.trip_shares": {
-      "name": "trip_shares",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
         },
-        "trip_id": {
-          "name": "trip_id",
-          "type": "uuid",
+        "is_premium": {
+          "name": "is_premium",
+          "type": "boolean",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false,
+          "default": false
         },
-        "shared_with_user_id": {
-          "name": "shared_with_user_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "shared_by_user_id": {
-          "name": "shared_by_user_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "permission": {
-          "name": "permission",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "token": {
-          "name": "token",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_time": {
-          "name": "created_time",
-          "type": "timestamp",
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (2)",
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
@@ -476,11 +531,11 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "trip_shares_token_unique": {
-          "name": "trip_shares_token_unique",
+        "users_email_unique": {
+          "name": "users_email_unique",
           "nullsNotDistinct": false,
           "columns": [
-            "token"
+            "email"
           ]
         }
       },

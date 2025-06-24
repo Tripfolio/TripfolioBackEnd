@@ -26,7 +26,6 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://maytripfoliodev.netlify.app",
       "https://portfolioo-devv.netlify.app",
       "https://tripfolioo.netlify.app",
     ],

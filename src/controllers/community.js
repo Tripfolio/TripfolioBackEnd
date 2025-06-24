@@ -1,17 +1,18 @@
-const { db } = require("../config/db");
-const { communityPosts } = require("../models/post");
-const { travelSchedules } = require("../models/scheduleSchema");
-const { users } = require("../models/signUpSchema");
+const { db } = require('../config/db');
+const { posts } = require('../models/postsSchema');
+const { schedules } = require('../models/scheduleSchema');
+const { users } = require('../models/usersSchema');
+const { eq, and } = require('drizzle-orm');
+const HTTP = require('../constants/httpStatus');
 
-const { eq, and } = require("drizzle-orm");
-
+// 建立社群貼文
 async function createCommunityPost(req, res) {
   try {
     const memberId = req.user.id;
     const { scheduleId, content } = req.body;
     const coverURL = req.file?.location || req.body.coverURL || null;
 
-    const result = await db.insert(communityPosts).values({
+    const result = await db.insert(posts).values({
       memberId,
       scheduleId: Number(scheduleId),
       content,
@@ -19,94 +20,105 @@ async function createCommunityPost(req, res) {
       createdAt: new Date(),
     });
 
-    res.status(201).json({ success: true, message: "社群貼文已建立", result });
+    return res.status(HTTP.CREATED).json({
+      success: true,
+      message: '社群貼文已建立',
+      result,
+    });
   } catch (err) {
-    res
-      .status(500)
-      .json({ success: false, message: "建立貼文失敗", error: err.message });
+    return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: '建立貼文失敗',
+      error: err.message,
+    });
   }
 }
 
+// 取得所有社群貼文
 async function getAllCommunityPosts(req, res) {
   try {
-    const posts = await db
+    const allPosts = await db
       .select({
-        postId: communityPosts.id,
-        content: communityPosts.content,
-        coverURL: communityPosts.coverURL,
-        createdAt: communityPosts.createdAt,
-        scheduleTitle: travelSchedules.title,
+        postId: posts.id,
+        content: posts.content,
+        coverURL: posts.coverURL,
+        createdAt: posts.createdAt,
+        scheduleTitle: schedules.title,
         authorName: users.name,
         authorAvatar: users.avatar,
       })
-      .from(communityPosts)
-      .leftJoin(
-        travelSchedules,
-        eq(communityPosts.scheduleId, travelSchedules.id),
-      )
-      .leftJoin(users, eq(communityPosts.memberId, users.id))
-      .orderBy(communityPosts.createdAt);
-    res.json({ posts });
+      .from(posts)
+      .leftJoin(schedules, eq(posts.scheduleId, schedules.id))
+      .leftJoin(users, eq(posts.memberId, users.id))
+      .orderBy(posts.createdAt);
+
+    return res.json({ posts: allPosts });
   } catch (err) {
-    res.status(500).json({ message: "取得貼文失敗", error: err.message });
+    return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
+      message: '取得貼文失敗',
+      error: err.message,
+    });
   }
 }
 
+// 更新社群貼文
 async function updateCommunityPost(req, res) {
   try {
     const postId = Number(req.params.id);
     const { content, coverURL } = req.body;
-    const [existingPost] = await db
-      .select()
-      .from(communityPosts)
-      .where(eq(communityPosts.id, postId));
+
+    const [existingPost] = await db.select().from(posts).where(eq(posts.id, postId));
     if (!existingPost) {
-      return res.status(404).json({ success: false, message: "找不到貼文" });
+      return res.status(HTTP.NOT_FOUND).json({
+        success: false,
+        message: '找不到貼文',
+      });
     }
 
-    let finalCoverURL = existingPost.coverURL;
-
-    if (req.file) {
-      finalCoverURL = req.file.location || `/uploads/${req.file.filename}`;
-    } else if (coverURL) {
-      finalCoverURL = coverURL;
-    }
+    const finalCoverURL = req.file?.location || coverURL || existingPost.coverURL;
 
     await db
-      .update(communityPosts)
+      .update(posts)
       .set({
         content,
         coverURL: finalCoverURL,
       })
-      .where(eq(communityPosts.id, postId));
+      .where(eq(posts.id, postId));
 
-    res.json({ success: true, message: "貼文已更新" });
+    return res.json({
+      success: true,
+      message: '貼文已更新',
+    });
   } catch (err) {
-    res
-      .status(500)
-      .json({ success: false, message: "更新失敗", error: err.message });
+    return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: '更新失敗',
+      error: err.message,
+    });
   }
 }
 
+// 刪除社群貼文
 async function deleteCommunityPost(req, res) {
   try {
     const memberId = req.user.id;
     const postId = Number(req.params.id);
 
     const result = await db
-      .delete(communityPosts)
-      .where(
-        and(
-          eq(communityPosts.id, postId),
-          eq(communityPosts.memberId, memberId),
-        ),
-      );
+      .delete(posts)
+      .where(and(eq(posts.id, postId), eq(posts.memberId, memberId)));
 
-    res.json({ success: true, message: "社群貼文已刪除", result });
+    return res.json({
+      success: true,
+      message: '社群貼文已刪除',
+      result,
+    });
   } catch (err) {
-    res
-      .status(500)
-      .json({ success: false, message: "刪除貼文失敗", error: err.message });
+    return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: '刪除貼文失敗',
+      error: err.message,
+    });
   }
 }
 

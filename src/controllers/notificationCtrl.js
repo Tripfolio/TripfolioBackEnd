@@ -1,7 +1,8 @@
 const { db } = require("../config/db");
 const { sendEmail } = require("../utils/emailSender");
 const { emailPreferences } = require("../models/emailPreferences");
-const { users } = require("../models/users"); //需擁有該檔案(使用者資料)
+const { users } = require("../models/signUpSchema");
+const { eq } = require("drizzle-orm");
 
 // 取得使用者 Email
 async function getUserEmail(userId) {
@@ -9,7 +10,7 @@ async function getUserEmail(userId) {
     const result = await db
       .select({ email: users.email })
       .from(users)
-      .where(users.id.eq(userId));
+      .where(eq(users.id, userId));
     return result[0]?.email || null;
   } catch (err) {
     return null;
@@ -22,7 +23,7 @@ async function isPreferenceEnabled(userId, field) {
     const pref = await db
       .select()
       .from(emailPreferences)
-      .where(emailPreferences.userId.eq(userId));
+      .where(eq(emailPreferences.userId, userId));
     return !!pref[0]?.[field];
   } catch (err) {
     return false;
@@ -68,21 +69,6 @@ async function notifyLoginfail(userId) {
   }
 }
 
-async function notifyVerify(userId) {
-  try {
-    if (!(await isPreferenceEnabled(userId, "onVerify"))) return;
-    const email = await getUserEmail(userId);
-    if (!email) return;
-    await sendEmail(
-      email,
-      "信箱驗證提醒",
-      `<p>請盡快完成信箱驗證以保障帳號安全。</p>`,
-    );
-  } catch (err) {
-    return { success: false, error: "郵件發送失敗，請稍後再試。" };
-  }
-}
-
 async function notifyCommented(userId, commentContent) {
   try {
     if (!(await isPreferenceEnabled(userId, "onComment"))) return;
@@ -92,21 +78,6 @@ async function notifyCommented(userId, commentContent) {
       email,
       "您的貼文有新留言",
       `<p>留言內容：${commentContent}</p>`,
-    );
-  } catch (err) {
-    return { success: false, error: "郵件發送失敗，請稍後再試。" };
-  }
-}
-
-async function notifyLiked(userId, likerName) {
-  try {
-    if (!(await isPreferenceEnabled(userId, "onLike"))) return;
-    const email = await getUserEmail(userId);
-    if (!email) return;
-    await sendEmail(
-      email,
-      "您的貼文被按讚",
-      `<p>${likerName} 按讚了您的貼文！</p>`,
     );
   } catch (err) {
     return { success: false, error: "郵件發送失敗，請稍後再試。" };
@@ -128,44 +99,12 @@ async function notifyBookmarked(userId, bookmarkerName) {
   }
 }
 
-async function notifyShared(userId, sharerName) {
-  try {
-    if (!(await isPreferenceEnabled(userId, "onShare"))) return;
-    const email = await getUserEmail(userId);
-    if (!email) return;
-    await sendEmail(
-      email,
-      "您的貼文被分享",
-      `<p>${sharerName} 分享了您的貼文。</p>`,
-    );
-  } catch (err) {
-    return { success: false, error: "郵件發送失敗，請稍後再試。" };
-  }
-}
-
-async function notifyCustomerReplied(userId, replyContent) {
-  try {
-    if (!(await isPreferenceEnabled(userId, "onCustomerReply"))) return;
-    const email = await getUserEmail(userId);
-    if (!email) return;
-    await sendEmail(
-      email,
-      "客服回覆通知",
-      `<p>客服回覆內容：${replyContent}</p>`,
-    );
-  } catch (err) {
-    return { success: false, error: "郵件發送失敗，請稍後再試。" };
-  }
-}
-
 module.exports = {
+  getUserEmail,
+  isPreferenceEnabled,
   notifyRegister,
   notifyLogin,
   notifyLoginfail,
-  notifyVerify,
   notifyCommented,
-  notifyLiked,
   notifyBookmarked,
-  notifyShared,
-  notifyCustomerReplied,
 };

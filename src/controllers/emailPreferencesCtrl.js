@@ -6,7 +6,12 @@ async function getPreferences(req, res) {
   const userId = req.user.id;
   try {
     const result = await db
-      .select()
+      .select({
+        onLogin: emailPreferences.onLogin,
+        onLoginfail: emailPreferences.onLoginfail,
+        onComment: emailPreferences.onComment,
+        onBookmark: emailPreferences.onBookmark,
+      })
       .from(emailPreferences)
       .where(eq(emailPreferences.userId, userId));
     if (result.length === 0) {
@@ -25,15 +30,10 @@ async function updatePreferences(req, res) {
     await db
       .update(emailPreferences)
       .set({
-        onRegister: prefs.onRegister,
         onLogin: prefs.onLogin,
         onLoginfail: prefs.onLoginfail,
-        onVerify: prefs.onVerify,
         onComment: prefs.onComment,
-        onLike: prefs.onLike,
         onBookmark: prefs.onBookmark,
-        onShare: prefs.onShare,
-        onCustomerReply: prefs.onCustomerReply,
       })
       .where(eq(emailPreferences.userId, userId));
     res.json({ message: "偏好設定已更新" });

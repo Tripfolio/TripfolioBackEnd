@@ -7,9 +7,12 @@ const {
   updateProfile,
   uploadAvatar,
   updateUserPassword,
+  isPremium,
 } = require("../controllers/profileController");
 
 router.get("/", authenticateToken, getProfile);
+router.get("/checkpremium", authenticateToken, isPremium);
+
 router.put("/", authenticateToken, updateProfile);
 router.post(
   "/upload-avatar",

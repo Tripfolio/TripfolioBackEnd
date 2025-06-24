@@ -1,7 +1,7 @@
 const {
   pgTable,
   serial,
-  text,
+  varchar,
   timestamp,
   integer,
 } = require("drizzle-orm/pg-core");
@@ -11,7 +11,7 @@ const comments = pgTable("comments", {
   id: serial("id").primaryKey(),
   postId: integer("post_id").notNull(),
   memberId: integer("member_id").references(() => users.id),
-  content: text("content").notNull(),
+  content: varchar("content").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

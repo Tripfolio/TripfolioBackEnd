@@ -4,14 +4,13 @@ const {
   integer,
   timestamp,
   unique,
-  varchar,
 } = require("drizzle-orm/pg-core");
 
 const favorites = pgTable(
   "favorites",
   {
     id: serial("id").primaryKey(),
-    memberId: varchar("member_id", { length: 50 }).notNull(),
+    memberId: integer("member_id").notNull(),
     postId: integer("post_id").notNull(),
     createdAt: timestamp("created_at").defaultNow(),
   },

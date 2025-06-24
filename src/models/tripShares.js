@@ -1,10 +1,9 @@
 const {
   pgTable,
-  uuid,
   serial,
-  text,
   integer,
   timestamp,
+  varchar,
 } = require("drizzle-orm/pg-core");
 const { relations } = require("drizzle-orm");
 const { users } = require("../models/signUpSchema");
@@ -25,8 +24,8 @@ const tripShares = pgTable("trip_shares", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
 
-  permission: text("permission").notNull(),
-  token: text("token").notNull().unique(),
+  permission: varchar("permission").notNull(),
+  token: varchar("token").notNull().unique(),
 
   createdTime: timestamp("created_time").defaultNow(),
 });

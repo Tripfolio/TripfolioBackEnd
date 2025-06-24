@@ -1,7 +1,6 @@
 const {
   pgTable,
   serial,
-  text,
   varchar,
   date,
   timestamp,
@@ -14,8 +13,8 @@ const travelSchedules = pgTable("schedules", {
   title: varchar("title", { length: 20 }).notNull(),
   startDate: date("start_date").notNull(),
   endDate: date("end_date").notNull(),
-  description: text("description"),
-  coverURL: text("cover_url"),
+  description: varchar("description"),
+  coverURL: varchar("cover_url"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

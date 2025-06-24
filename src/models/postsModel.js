@@ -1,3 +1,4 @@
+const { db } = require("../config/db");
 // const { communityPosts } = require("./post"); //需確認有貼文資料表
 const { users } = require("./signUpSchema");
 // const { comments } = require("./comments"); //需確認有留言資料表

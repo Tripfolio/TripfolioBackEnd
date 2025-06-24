@@ -15,7 +15,7 @@ const itineraryRouter = require("./src/routes/itinerary");
 const emailPreferencesRoute = require("./src/routes/emailPreferencesRoute");
 const travelSchedulesRoutes = require("./src/routes/scheduleRoutes");
 const communityRoutes = require("./src/routes/communityRoutes");
-const paymentRoute = require("./src/routes/paymentRoutes");
+const linePayRoutes = require("./src/routes/linePayRoutes");
 const updateScheduleRoutes = require("./src/routes/updateScheduleRoutes");
 const tripSharesRoute = require("./src/routes/tripSharesRoute");
 const loginRouter = require("./src/routes/loginRoutes");
@@ -61,7 +61,7 @@ app.use("/api/community", communityRoutes);
 app.use("/api/tripShares", tripSharesRoute);
 app.use("/api/allposts", postsRoute);
 
-app.use("/api/payment", paymentRoute);
+app.use("/api/linepay", linePayRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Backend is alive 🚀" });

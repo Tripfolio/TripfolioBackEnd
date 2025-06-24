@@ -13,13 +13,16 @@ const { travelSchedules: trips } = require("../models/scheduleSchema");
 const tripShares = pgTable("trip_shares", {
   id: serial("id").primaryKey(),
 
-  tripId: uuid("trip_id").notNull()
+  tripId: integer("trip_id")
+    .notNull()
     .references(() => trips.id, { onDelete: "cascade" }),
 
-  sharedWithUserId: integer("shared_with_user_id").notNull()
+  sharedWithUserId: integer("shared_with_user_id")
+    .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
 
-  sharedByUserId: integer("shared_by_user_id").notNull()
+  sharedByUserId: integer("shared_by_user_id")
+    .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
 
   permission: text("permission").notNull(),

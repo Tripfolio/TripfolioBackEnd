@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const UserModel = require("../models/UserModel");
+const { notifyLogin, notifyLoginfail } = require("./notificationCtrl");
 require("dotenv").config();
 
 async function login(req, res) {
@@ -28,6 +29,7 @@ async function login(req, res) {
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
+      await notifyLoginfail(user.id);
       errors.push("密碼錯誤");
       return res.status(401).json({ errors });
     }
@@ -37,7 +39,7 @@ async function login(req, res) {
       process.env.JWT_SECRET,
       { expiresIn: "30d" },
     );
-
+    await notifyLogin(user.id);
     return res.status(200).json({
       message: "登入成功",
       token,

@@ -46,12 +46,8 @@
           "name": "comments_member_id_users_id_fk",
           "tableFrom": "comments",
           "tableTo": "users",
-          "columnsFrom": [
-            "member_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["member_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -68,7 +64,7 @@
       "columns": {
         "user_id": {
           "name": "user_id",
-          "type": "uuid",
+          "type": "integer",
           "primaryKey": true,
           "notNull": true
         },
@@ -93,22 +89,8 @@
           "notNull": true,
           "default": true
         },
-        "on_verify": {
-          "name": "on_verify",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": true
-        },
         "on_comment": {
           "name": "on_comment",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": true
-        },
-        "on_like": {
-          "name": "on_like",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
@@ -120,24 +102,20 @@
           "primaryKey": false,
           "notNull": true,
           "default": true
-        },
-        "on_share": {
-          "name": "on_share",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": true
-        },
-        "on_customer_reply": {
-          "name": "on_customer_reply",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": true
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "email_preferences_user_id_users_id_fk": {
+          "name": "email_preferences_user_id_users_id_fk",
+          "tableFrom": "email_preferences",
+          "tableTo": "users",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -181,10 +159,7 @@
         "favorites_member_id_post_id_unique": {
           "name": "favorites_member_id_post_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "member_id",
-            "post_id"
-          ]
+          "columns": ["member_id", "post_id"]
         }
       },
       "policies": {},
@@ -332,9 +307,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -507,12 +480,8 @@
           "name": "trip_shares_trip_id_schedules_id_fk",
           "tableFrom": "trip_shares",
           "tableTo": "schedules",
-          "columnsFrom": [
-            "trip_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["trip_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -520,12 +489,8 @@
           "name": "trip_shares_shared_with_user_id_users_id_fk",
           "tableFrom": "trip_shares",
           "tableTo": "users",
-          "columnsFrom": [
-            "shared_with_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["shared_with_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -533,12 +498,8 @@
           "name": "trip_shares_shared_by_user_id_users_id_fk",
           "tableFrom": "trip_shares",
           "tableTo": "users",
-          "columnsFrom": [
-            "shared_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["shared_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -548,9 +509,7 @@
         "trip_shares_token_unique": {
           "name": "trip_shares_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},

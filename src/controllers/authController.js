@@ -1,5 +1,8 @@
 const bcrypt = require("bcrypt");
 const UserModel = require("../models/UserModel");
+const { emailPreferences } = require("../models/emailPreferences");
+const { notifyRegister } = require("./notificationCtrl");
+const { db } = require("../config/db");
 
 const registerUser = async (req, res) => {
   try {
@@ -41,15 +44,30 @@ const registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await UserModel.createUser({
+    const insertResult = await UserModel.createUser({
       name,
       email,
       password: hashedPassword,
     });
 
+    if (!insertResult || insertResult.length === 0) {
+      return res.status(500).json({ errors: ["建立使用者失敗"] });
+    }
+
+    //  取得剛新增的使用者 ID
+    const userId = insertResult[0]?.id;
+
+    if (!userId) {
+      return res.status(500).json({ errors: ["無法取得使用者 ID"] });
+    }
+    //  新增預設偏好設定
+    await db.insert(emailPreferences).values({ userId: userId });
+
+    //  寄出通知信（若偏好開啟）
+    await notifyRegister(userId);
+
     res.status(201).json({ message: "註冊成功，請重新登入" });
   } catch (err) {
-    console.error("寫入資料庫失敗:", err);
     res.status(500).json({ errors: ["伺服器錯誤，請稍後再試"] });
   }
 };

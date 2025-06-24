@@ -7,11 +7,14 @@ const findByEmail = async (email) => {
 };
 
 const createUser = async ({ name, email, password }) => {
-  return await db.insert(users).values({
-    name,
-    email,
-    password,
-  });
+  return await db
+    .insert(users)
+    .values({
+      name,
+      email,
+      password,
+    })
+    .returning({ id: users.id });
 };
 
 module.exports = {

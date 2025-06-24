@@ -9,7 +9,7 @@ const users = pgTable("users", {
   phone: varchar('phone', { length: 20 }),
   birthday: date('birthday'),
   avatar: text('avatar'),
-  isPremium: boolean("is_premium").default(false),
+  isPremium: boolean("isPremium").default(false),
   created_at: timestamp("created_at", { precision: 2 }).defaultNow(),
   google_id: varchar('google_id', { length: 255 }).unique(),
 });

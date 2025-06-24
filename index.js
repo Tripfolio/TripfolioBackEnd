@@ -28,7 +28,7 @@ app.use(
       "http://localhost:5173",
       "https://maytripfoliodev.netlify.app",
       "https://portfolioo-devv.netlify.app",
-      "https://tripfolioo.netlify.app/",
+      "https://tripfolioo.netlify.app",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,

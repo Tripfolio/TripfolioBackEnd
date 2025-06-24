@@ -1,9 +1,9 @@
-const nodemailer = require("nodemailer");
-const dotenv = require("dotenv");
+const nodemailer = require('nodemailer');
+const dotenv = require('dotenv');
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  service: 'gmail',
   auth: {
     user: process.env.EMAIL_ACCOUNT,
     pass: process.env.EMAIL_PASSWORD,
@@ -26,8 +26,9 @@ async function sendEmail(to, subject, html) {
       html,
     });
   } catch (error) {
-    return { success: false, message: "郵件發送失敗", error };
+    return { success: false, message: '郵件發送失敗', error };
   }
+  return null;
 }
 
 module.exports = { sendEmail };

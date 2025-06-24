@@ -1,25 +1,20 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const upload = require("../middlewares/uploadAvatar");
-const { authenticateToken } = require("../middlewares/authMiddleware");
+const upload = require('../middlewares/uploadToS3')('avatar');
+const { authenticateToken } = require('../middlewares/authMiddleware');
 const {
   getProfile,
   updateProfile,
   uploadAvatar,
   updateUserPassword,
   isPremium,
-} = require("../controllers/profileController");
+} = require('../controllers/profileController');
 
-router.get("/", authenticateToken, getProfile);
-router.get("/checkpremium", authenticateToken, isPremium);
+router.get('/', authenticateToken, getProfile);
+router.get('/checkpremium', authenticateToken, isPremium);
 
-router.put("/", authenticateToken, updateProfile);
-router.post(
-  "/upload-avatar",
-  authenticateToken,
-  upload.single("avatar"),
-  uploadAvatar,
-);
-router.put("/users/password", authenticateToken, updateUserPassword);
+router.put('/', authenticateToken, updateProfile);
+router.post('/upload-avatar', authenticateToken, upload.single('avatar'), uploadAvatar);
+router.put('/users/password', authenticateToken, updateUserPassword);
 
 module.exports = router;

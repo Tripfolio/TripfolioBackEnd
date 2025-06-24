@@ -1,43 +1,27 @@
-const { db } = require("../config/db");
-const { itineraryPlaces } = require("../models/itinerary");
-const { and, eq } = require("drizzle-orm");
+const { db } = require('../config/db');
+const { schedulePlaces } = require('../models/schedulePlacesSchema');
+const { and, eq } = require('drizzle-orm');
+const HTTP = require('../constants/httpStatus');
 
 async function addPlace(req, res) {
-  const {
-    itineraryId,
-    name,
-    address,
-    photo,
-    arrivalHour,
-    arrivalMinute,
-    placeOrder,
-    date,
-  } = req.body;
-  if (!itineraryId || typeof name !== "string" || !name.trim() || !date) {
-    return res
-      .status(400)
-      .json({ success: false, message: "缺少必要參數或參數錯誤" });
+  const { itineraryId, name, address, photo, arrivalHour, arrivalMinute, placeOrder, date } =
+    req.body;
+
+  if (!itineraryId || typeof name !== 'string' || !name.trim() || !date) {
+    return res.status(HTTP.BAD_REQUEST).json({ success: false, message: '缺少必要參數或參數錯誤' });
   }
 
   try {
-    const inserted = await db
-      .insert(itineraryPlaces)
-      .values({
-        itineraryId,
-        name,
-        address,
-        photo,
-        arrivalHour,
-        arrivalMinute,
-        placeOrder,
-        date,
-    })
-    .returning();
-    const newPlace = inserted[0];
+    const [newPlace] = await db
+      .insert(schedulePlaces)
+      .values({ itineraryId, name, address, photo, arrivalHour, arrivalMinute, placeOrder, date })
+      .returning();
 
-    res.json({ success: true, place: newPlace });
+    return res.json({ success: true, place: newPlace });
   } catch (err) {
-    res.status(500).json({ success: false, message: "伺服器錯誤" });
+    return res
+      .status(HTTP.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: '新增失敗', error: err.message });
   }
 }
 
@@ -45,22 +29,21 @@ async function deletePlace(req, res) {
   const { itineraryId, name } = req.query;
 
   if (!itineraryId || !name) {
-    return res.status(400).json({ success: false, message: "缺少必要參數" });
+    return res.status(HTTP.BAD_REQUEST).json({ success: false, message: '缺少必要參數' });
   }
 
   try {
     await db
-      .delete(itineraryPlaces)
+      .delete(schedulePlaces)
       .where(
-        and(
-          eq(itineraryPlaces.itineraryId, Number(itineraryId)),
-          eq(itineraryPlaces.name, name),
-        ),
+        and(eq(schedulePlaces.itineraryId, itineraryId), eq(schedulePlaces.name, name)),
       );
 
-    res.json({ success: true });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "刪除失敗" });
+    return res.json({ success: true });
+  } catch (err) {
+    return res
+      .status(HTTP.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: '刪除失敗', error: err.message });
   }
 }
 
@@ -68,25 +51,26 @@ async function getPlaces(req, res) {
   const { itineraryId, date } = req.query;
 
   if (!itineraryId) {
-    return res
-      .status(400)
-      .json({ success: false, message: "缺少 itineraryId" });
+    return res.status(HTTP.BAD_REQUEST).json({ success: false, message: '缺少 itineraryId' });
   }
 
   try {
-    const conditions = [eq(itineraryPlaces.itineraryId, Number(itineraryId))];
+    const conditions = [eq(schedulePlaces.itineraryId, Number(itineraryId))];
+
     if (date) {
-      conditions.push(eq(itineraryPlaces.date, date));
+      conditions.push(eq(schedulePlaces.date, date));
     }
 
     const places = await db
       .select()
-      .from(itineraryPlaces)
-      .where(eq(itineraryPlaces.itineraryId, Number(itineraryId)));
+      .from(schedulePlaces)
+      .where(and(...conditions));
 
-    res.json({ success: true, places });
+    return res.json({ success: true, places });
   } catch (err) {
-    res.status(500).json({ success: false, message: "伺服器錯誤" });
+    return res
+      .status(HTTP.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: '伺服器錯誤', error: err.message });
   }
 }
 
@@ -94,37 +78,40 @@ async function updateOrder(req, res) {
   const { places } = req.body;
 
   try {
-    for (const place of places) {
-      await db
-        .update(itineraryPlaces)
-        .set({ placeOrder: place.placeOrder }) // JS 層用駝峰式
-        .where(eq(itineraryPlaces.id, place.id));
+    for (const { id, placeOrder } of places) {
+      await db.update(schedulePlaces).set({ placeOrder }).where(eq(schedulePlaces.id, id));
     }
 
-    res.json({ success: true });
+    return res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ success: false, message: "更新順序失敗" });
+    return res
+      .status(HTTP.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: '更新順序失敗', error: err.message });
   }
 }
+
 async function updateArriveTime(req, res) {
   const placeId = Number(req.params.id);
   const { arrivalHour, arrivalMinute } = req.body;
 
   if (!placeId || arrivalHour === undefined || arrivalMinute === undefined) {
-    return res.status(400).json({ success: false, message: "缺少必要參數" });
+    return res.status(HTTP.BAD_REQUEST).json({ success: false, message: '缺少必要參數' });
   }
 
   try {
     await db
-      .update(itineraryPlaces)
+      .update(schedulePlaces)
       .set({ arrivalHour, arrivalMinute })
-      .where(eq(itineraryPlaces.id, placeId));
+      .where(eq(schedulePlaces.id, placeId));
 
-    res.json({ success: true });
+    return res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ success: false, message: "伺服器錯誤" });
+    return res
+      .status(HTTP.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: '更新抵達時間失敗', error: err.message });
   }
 }
+
 module.exports = {
   addPlace,
   deletePlace,

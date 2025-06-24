@@ -1,14 +1,15 @@
-const { db } = require("../config/db");
-const { travelSchedules } = require("../models/scheduleSchema");
-const { eq } = require("drizzle-orm");
-const s3 = require("../config/s3");
+const { db } = require('../config/db');
+const { schedules } = require('../models/scheduleSchema');
+const { eq } = require('drizzle-orm');
+const s3 = require('../config/s3');
+const HTTP = require('../constants/httpStatus');
 
 const updateSchedule = async (req, res) => {
   const memberId = req.user?.id;
   const scheduleId = Number(req.params.id);
 
   if (!memberId) {
-    return res.status(403).json({ message: "JWT無效或未登入" });
+    return res.status(HTTP.FORBIDDEN).json({ message: 'JWT無效或未登入' });
   }
 
   try {
@@ -16,12 +17,12 @@ const updateSchedule = async (req, res) => {
 
     const existingSchedules = await db
       .select()
-      .from(travelSchedules)
-      .where(eq(travelSchedules.id, scheduleId))
+      .from(schedules)
+      .where(eq(schedules.id, scheduleId))
       .limit(1);
 
     if (!existingSchedules || existingSchedules.length === 0) {
-      return res.status(404).json({ message: "找不到行程" });
+      return res.status(HTTP.NOT_FOUND).json({ message: '找不到行程' });
     }
 
     const existingSchedule = existingSchedules[0];
@@ -32,7 +33,7 @@ const updateSchedule = async (req, res) => {
 
       if (existingSchedule.coverURL) {
         if (
-          existingSchedule.coverURL.includes("s3.amazonaws.com") ||
+          existingSchedule.coverURL.includes('s3.amazonaws.com') ||
           existingSchedule.coverURL.includes(process.env.AWS_COVER_S3_BUCKET)
         ) {
           const url = new URL(existingSchedule.coverURL);
@@ -61,22 +62,22 @@ const updateSchedule = async (req, res) => {
     };
 
     const [updatedSchedule] = await db
-      .update(travelSchedules)
+      .update(schedules)
       .set(updateData)
-      .where(eq(travelSchedules.id, scheduleId))
+      .where(eq(schedules.id, scheduleId))
       .returning();
 
     if (!updatedSchedule) {
-      return res.status(404).json({ message: "更新失敗，找不到行程" });
+      return res.status(HTTP.NOT_FOUND).json({ message: '更新失敗，找不到行程' });
     }
 
-    res.json({
-      message: "行程更新成功",
-      updatedSchedule: updatedSchedule,
+    return res.json({
+      message: '行程更新成功',
+      updatedSchedule,
     });
   } catch (err) {
-    res.status(500).json({
-      message: "更新行程失敗",
+    return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
+      message: '更新行程失敗',
       error: err.message,
     });
   }
@@ -87,43 +88,40 @@ const addDayToSchedule = async (req, res) => {
   const userId = req.user?.id;
 
   if (!userId) {
-    return res.status(403).json({ message: "JWT無效或未登入" });
+    return res.status(HTTP.FORBIDDEN).json({ message: 'JWT無效或未登入' });
   }
 
   try {
     const existingSchedules = await db
       .select()
-      .from(travelSchedules)
-      .where(eq(travelSchedules.id, Number(id)))
+      .from(schedules)
+      .where(eq(schedules.id, Number(id)))
       .limit(1);
 
     if (!existingSchedules || existingSchedules.length === 0) {
-      return res.status(404).json({ message: "行程未找到或無權限操作" });
+      return res.status(HTTP.NOT_FOUND).json({ message: '行程未找到或無權限操作' });
     }
 
     const existingSchedule = existingSchedules[0];
-
-    let currentEndDate = existingSchedule.endDate
-      ? new Date(existingSchedule.endDate)
-      : new Date();
+    let currentEndDate = existingSchedule.endDate ? new Date(existingSchedule.endDate) : new Date();
     currentEndDate.setDate(currentEndDate.getDate() + 1);
 
-    const newEndDateString = currentEndDate.toISOString().split("T")[0];
+    const newEndDateString = currentEndDate.toISOString().split('T')[0];
 
     const [updatedSchedule] = await db
-      .update(travelSchedules)
+      .update(schedules)
       .set({
         endDate: newEndDateString,
         updatedAt: new Date().toISOString(),
       })
-      .where(eq(travelSchedules.id, Number(id)))
+      .where(eq(schedules.id, Number(id)))
       .returning();
 
     if (!updatedSchedule) {
-      return res.status(500).json({ message: "更新行程失敗" });
+      return res.status(HTTP.INTERNAL_SERVER_ERROR).json({ message: '更新行程失敗' });
     }
 
-    res.status(200).json({
+    return res.status(HTTP.OK).json({
       id: updatedSchedule.id,
       title: updatedSchedule.title,
       startDate: updatedSchedule.startDate,
@@ -132,7 +130,10 @@ const addDayToSchedule = async (req, res) => {
       description: updatedSchedule.description,
     });
   } catch (error) {
-    res.status(500).json({ message: "伺服器內部錯誤", error: error.message });
+    return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
+      message: '伺服器內部錯誤',
+      error: error.message,
+    });
   }
 };
 
@@ -141,24 +142,27 @@ const getTravelScheduleById = async (req, res) => {
   const memberId = req.user?.id;
 
   if (!memberId) {
-    return res.status(403).json({ message: "JWT無效或未登入" });
+    return res.status(HTTP.FORBIDDEN).json({ message: 'JWT無效或未登入' });
   }
 
   try {
     const schedule = await db
       .select()
-      .from(travelSchedules)
-      .where(eq(travelSchedules.id, Number(id)))
-      .where(eq(travelSchedules.userId, memberId))
+      .from(schedules)
+      .where(eq(schedules.id, Number(id)))
+      .where(eq(schedules.userId, memberId))
       .limit(1);
 
     if (!schedule || schedule.length === 0) {
-      return res.status(404).json({ message: "找不到行程或無權限" });
+      return res.status(HTTP.NOT_FOUND).json({ message: '找不到行程或無權限' });
     }
 
-    res.json(schedule[0]);
+    return res.json(schedule[0]);
   } catch (error) {
-    res.status(500).json({ message: "獲取單一行程失敗", error: error.message });
+    return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
+      message: '獲取單一行程失敗',
+      error: error.message,
+    });
   }
 };
 

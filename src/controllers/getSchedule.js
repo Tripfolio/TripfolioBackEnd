@@ -1,29 +1,30 @@
-const { eq, desc } = require("drizzle-orm");
-const { db } = require("../config/db");
-const { travelSchedules } = require("../models/scheduleSchema");
-
+const { eq, desc } = require('drizzle-orm');
+const { db } = require('../config/db');
+const { schedules } = require('../models/scheduleSchema');
+const HTTP = require('../constants/httpStatus');
 //抓取會員資料庫行程
 const getSchedules = async (req, res) => {
   try {
     const userId = req.user.id;
-    const schedules = await db
+    const scheduleList = await db
       .select({
-        id: travelSchedules.id,
-        userId: travelSchedules.userId,
-        title: travelSchedules.title,
-        startDate: travelSchedules.startDate,
-        endDate: travelSchedules.endDate,
-        description: travelSchedules.description,
-        coverURL: travelSchedules.coverURL,
-        createdAt: travelSchedules.createdAt,
+        id: schedules.id,
+        userId: schedules.userId,
+        title: schedules.title,
+        startDate: schedules.startDate,
+        endDate: schedules.endDate,
+        description: schedules.description,
+        coverURL: schedules.coverURL,
+        createdAt: schedules.createdAt,
       })
-      .from(travelSchedules)
-      .where(eq(travelSchedules.userId, userId))
-      .orderBy(desc(travelSchedules.createdAt));
+      .from(schedules)
+      .where(eq(schedules.userId, userId))
+      .orderBy(desc(schedules.createdAt));
 
-    res.json({ schedules });
+    res.json({ schedules: scheduleList });
   } catch (err) {
-    res.status(500).json({ message: "取得行程失敗", error: err.message });
+    console.log(err);
+    res.status(HTTP.INTERNAL_SERVER_ERROR).json({ message: '取得行程失敗', error: err.message });
   }
 };
 module.exports = { getSchedules };

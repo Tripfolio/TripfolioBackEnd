@@ -1,33 +1,33 @@
-const { db } = require("../config/db");
-const { favorites } = require("../models/favoritesSchema");
-const { communityPosts } = require("../models/post");
-const { users } = require("../models/signUpSchema");
-const { eq, and, desc } = require("drizzle-orm");
+const { db } = require('../config/db');
+const { favorites } = require('../models/favoritesSchema');
+const { posts } = require('../models/postsSchema');
+const { users } = require('../models/usersSchema');
+const { eq, and, desc } = require('drizzle-orm');
+const HTTP = require('../constants/httpStatus');
 
+// 新增收藏
 const addFavorite = async (req, res) => {
   try {
     const { postId, memberId } = req.body;
 
-    const postExists = await db
-      .select({ id: communityPosts.id })
-      .from(communityPosts)
-      .where(eq(communityPosts.id, postId))
+    const [postExists] = await db
+      .select({ id: posts.id })
+      .from(posts)
+      .where(eq(posts.id, postId))
       .limit(1);
 
-    if (!postExists.length) {
-      return res.status(404).json({ error: "貼文不存在" });
+    if (!postExists) {
+      return res.status(HTTP.NOT_FOUND).json({ error: '貼文不存在' });
     }
 
-    const existingFavorite = await db
+    const [existingFavorite] = await db
       .select()
       .from(favorites)
-      .where(
-        and(eq(favorites.memberId, memberId), eq(favorites.postId, postId)),
-      )
+      .where(and(eq(favorites.memberId, memberId), eq(favorites.postId, postId)))
       .limit(1);
 
-    if (existingFavorite.length > 0) {
-      return res.status(400).json({ error: "已經收藏過此貼文" });
+    if (existingFavorite) {
+      return res.status(HTTP.BAD_REQUEST).json({ error: '已經收藏過此貼文' });
     }
 
     const [newFavorite] = await db
@@ -39,47 +39,41 @@ const addFavorite = async (req, res) => {
       })
       .returning();
 
-    res.status(201).json({
-      message: "收藏成功",
+    return res.status(HTTP.CREATED).json({
+      message: '收藏成功',
       favorite: newFavorite,
     });
-  } catch (error) {
-    console.error("新增收藏失敗:", error);
-    res.status(500).json({ error: "新增收藏失敗" });
+  } catch (err) {
+    return res
+      .status(HTTP.INTERNAL_SERVER_ERROR)
+      .json({ error: '新增收藏失敗', details: err.message });
   }
 };
 
 // 移除收藏
 const removeFavorite = async (req, res) => {
   try {
-    const { postId } = req.params;
+    const postId = Number(req.params.postId);
     const { memberId } = req.body;
-
-    const parsedPostId = +postId;
-
-    const parsedMemberId = memberId;
 
     const deletedFavorite = await db
       .delete(favorites)
-      .where(
-        and(
-          eq(favorites.memberId, parsedMemberId),
-          eq(favorites.postId, parsedPostId),
-        ),
-      )
+      .where(and(eq(favorites.memberId, memberId), eq(favorites.postId, postId)))
       .returning();
 
     if (!deletedFavorite.length) {
-      return res.status(404).json({ error: "收藏記錄不存在" });
+      return res.status(HTTP.NOT_FOUND).json({ error: '收藏記錄不存在' });
     }
 
-    res.json({ message: "取消收藏成功" });
-  } catch (error) {
-    console.error("移除收藏失敗:", error);
-    res.status(500).json({ error: "移除收藏失敗" });
+    return res.json({ message: '取消收藏成功' });
+  } catch (err) {
+    return res
+      .status(HTTP.INTERNAL_SERVER_ERROR)
+      .json({ error: '移除收藏失敗', details: err.message });
   }
 };
 
+// 取得所有收藏
 const getFavorites = async (req, res) => {
   try {
     const { memberId } = req.params;
@@ -88,49 +82,46 @@ const getFavorites = async (req, res) => {
       .select({
         favoriteId: favorites.id,
         createdAt: favorites.createdAt,
-        // 貼文資訊
-        postId: communityPosts.id,
-        postTitle: communityPosts.title,
-        postContent: communityPosts.content,
-        postImageUrl: communityPosts.imageUrl,
-        postLikes: communityPosts.likes,
-        // 作者資訊
-        authorId: communityPosts.authorId,
+        postId: posts.id,
+        postTitle: posts.title,
+        postContent: posts.content,
+        postImageUrl: posts.imageUrl,
+        postLikes: posts.likes,
+        authorId: posts.authorId,
         authorName: users.name,
         authorAvatar: users.avatar,
       })
       .from(favorites)
-      .leftJoin(communityPosts, eq(favorites.postId, communityPosts.id))
-      .leftJoin(users, eq(communityPosts.authorId, users.id))
+      .leftJoin(posts, eq(favorites.postId, posts.id))
+      .leftJoin(users, eq(posts.authorId, users.id))
       .where(eq(favorites.memberId, memberId))
       .orderBy(desc(favorites.createdAt));
 
-    res.json(userFavorites);
-  } catch (error) {
-    console.error("取得收藏列表失敗:", error);
-    res.status(500).json({ error: "取得收藏列表失敗" });
+    return res.json(userFavorites);
+  } catch (err) {
+    return res
+      .status(HTTP.INTERNAL_SERVER_ERROR)
+      .json({ error: '取得收藏列表失敗', details: err.message });
   }
 };
 
+// 檢查是否已收藏
 const checkFavorite = async (req, res) => {
   try {
-    const { postId, memberId } = req.params;
+    const postId = Number(req.params.postId);
+    const { memberId } = req.params;
 
-    const favorite = await db
+    const [favorite] = await db
       .select()
       .from(favorites)
-      .where(
-        and(
-          eq(favorites.memberId, memberId),
-          eq(favorites.postId, parseInt(postId)),
-        ),
-      )
+      .where(and(eq(favorites.memberId, memberId), eq(favorites.postId, postId)))
       .limit(1);
 
-    res.json({ isFavorited: favorite.length > 0 });
-  } catch (error) {
-    console.error("檢查收藏狀態失敗:", error.message);
-    res.status(500).json({ error: "檢查收藏狀態失敗" });
+    return res.json({ isFavorited: !!favorite });
+  } catch (err) {
+    return res
+      .status(HTTP.INTERNAL_SERVER_ERROR)
+      .json({ error: '檢查收藏狀態失敗', details: err.message });
   }
 };
 

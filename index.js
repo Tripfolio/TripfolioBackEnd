@@ -9,8 +9,8 @@ const YAML = require("yamljs");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = YAML.load("./swagger.yaml");
 const authRoutes = require("./src/routes/authRoutes");
-const protectedRoutes = require("./src/routes/protectedRoutes");
 const profileRoutes = require("./src/routes/profileRoutes");
+const protectedRoutes = require("./src/routes/protectedRoutes");
 const itineraryRouter = require("./src/routes/itinerary");
 const emailPreferencesRoute = require("./src/routes/emailPreferencesRoute");
 const travelSchedulesRoutes = require("./src/routes/scheduleRoutes");
@@ -37,8 +37,8 @@ app.use(
 
 app.use(express.json());
 app.use("/api/signup", authRoutes);
-app.use("/api", protectedRoutes);
 app.use("/api/profile", profileRoutes);
+app.use("/api", protectedRoutes);
 app.use("/api/login", loginRouter);
 app.use("/uploads", express.static("uploads"));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));

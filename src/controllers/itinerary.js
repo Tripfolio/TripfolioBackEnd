@@ -50,6 +50,8 @@ async function deletePlace(req, res) {
 async function getPlaces(req, res) {
   const { itineraryId, date } = req.query;
 
+  console.log("收到參數：", { itineraryId, date });
+
   if (!itineraryId) {
     return res.status(HTTP.BAD_REQUEST).json({ success: false, message: '缺少 itineraryId' });
   }
@@ -58,8 +60,11 @@ async function getPlaces(req, res) {
     const conditions = [eq(schedulePlaces.itineraryId, Number(itineraryId))];
 
     if (date) {
-      conditions.push(eq(schedulePlaces.date, date));
+      // 保證是乾淨字串傳入，資料庫目前 text 型態這樣最穩
+      conditions.push(eq(schedulePlaces.date, String(date).trim()));
     }
+
+    console.log("查詢條件：", conditions);
 
     const places = await db
       .select()
@@ -68,11 +73,13 @@ async function getPlaces(req, res) {
 
     return res.json({ success: true, places });
   } catch (err) {
+    console.error("查詢失敗：", err);
     return res
       .status(HTTP.INTERNAL_SERVER_ERROR)
       .json({ success: false, message: '伺服器錯誤', error: err.message });
   }
 }
+ 
 
 async function updateOrder(req, res) {
   const { places } = req.body;

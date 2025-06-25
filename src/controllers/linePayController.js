@@ -2,7 +2,7 @@ const { generateSignature, uuidv4 } = require("../utils/linePayUtils")
 const axios = require("axios")
 const jwt = require("jsonwebtoken")
 const { db } = require("../config/db")
-const { users } = require("../models/signUpSchema")
+const { users } = require("../models/usersSchema")
 const { eq } = require("drizzle-orm")
 
 const {

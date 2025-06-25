@@ -8,6 +8,16 @@ servers:
   - url: http://localhost:3000/
     description: dev
 
+tags:
+  - name: 使用者驗證
+  - name: 會員
+  - name: 通知設定
+  - name: 行程
+  - name: 行程細節
+  - name: 行程時間
+  - name: 社群貼文
+  - name: 付款
+
 components:
   securitySchemes:
     bearerAuth:
@@ -16,7 +26,6 @@ components:
       bearerFormat: JWT
 
 paths:
-
   /api/signup:
     post:
       summary: 使用者註冊
@@ -46,7 +55,7 @@ paths:
                   example: 0912345678
                   description: 台灣手機號碼格式
       responses:
-        "201":
+        'HTTP.CREATED':
           description: 註冊成功
           content:
             application/json:
@@ -56,7 +65,7 @@ paths:
                   message:
                     type: string
                     example: 註冊成功，請重新登入
-        "400":
+        'HTTP.BAD_REQUEST':
           description: 資料驗證失敗
           content:
             application/json:
@@ -67,8 +76,8 @@ paths:
                     type: array
                     items:
                       type: string
-                    example: ["Email 格式錯誤", "密碼須至少8字 + 英數混合"]
-        "500":
+                    example: ['Email 格式錯誤', '密碼須至少8字 + 英數混合']
+        'HTTP.INTERNAL_SERVER_ERROR':
           description: 伺服器錯誤
           content:
             application/json:
@@ -79,7 +88,7 @@ paths:
                     type: array
                     items:
                       type: string
-                    example: ["伺服器錯誤，請稍後再試"]
+                    example: ['伺服器錯誤，請稍後再試']
 
   /api/login:
     post:
@@ -103,7 +112,7 @@ paths:
                   type: string
                   example: abc12345
       responses:
-        "200":
+        'HTTP.OK':
           description: 登入成功，回傳使用者資訊與 JWT Token
           content:
             application/json:
@@ -125,7 +134,7 @@ paths:
                       email:
                         type: string
                         example: user@example.com
-        "401":
+        'HTTP.UNAUTHORIZED':
           description: 帳號或密碼錯誤
           content:
             application/json:
@@ -135,7 +144,7 @@ paths:
                   message:
                     type: string
                     example: 此帳號不存在 或 密碼錯誤
-        "500":
+        'HTTP.INTERNAL_SERVER_ERROR':
           description: 伺服器錯誤
           content:
             application/json:
@@ -158,7 +167,7 @@ paths:
             type: integer
           description: 會員 ID
       responses:
-        "200":
+        'HTTP.OK':
           description: 成功取得會員資料
           content:
             application/json:
@@ -179,7 +188,7 @@ paths:
                     type: string
                   avatar:
                     type: string
-        "404":
+        'HTTP.NOT_FOUND':
           description: 找不到會員
 
     put:
@@ -209,7 +218,7 @@ paths:
                 birthday:
                   type: string
       responses:
-        "200":
+        'HTTP.OK':
           description: 修改成功
 
   /api/users/{id}/password:
@@ -239,11 +248,11 @@ paths:
                   type: string
                   example: Newpass123
       responses:
-        "200":
+        'HTTP.OK':
           description: 密碼更新成功
-        "400":
+        'HTTP.BAD_REQUEST':
           description: 驗證錯誤或格式錯誤
-        "404":
+        'HTTP.NOT_FOUND':
           description: 找不到會員
 
   /api/upload-avatar:
@@ -268,7 +277,7 @@ paths:
                   format: binary
                   description: 上傳的圖片檔案
       responses:
-        "200":
+        'HTTP.OK':
           description: 上傳成功
           content:
             application/json:
@@ -289,7 +298,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        'HTTP.OK':
           description: 成功取得使用者偏好
           content:
             application/json:
@@ -314,9 +323,9 @@ paths:
                     type: boolean
                   onCustomerReply:
                     type: boolean
-        "404":
+        'HTTP.NOT_FOUND':
           description: 找不到偏好設定
-        "500":
+        'HTTP.INTERNAL_SERVER_ERROR':
           description: 伺服器錯誤
 
     put:
@@ -372,9 +381,9 @@ paths:
                       type: boolean
                       example: true
       responses:
-        "200":
+        'HTTP.OK':
           description: 偏好設定已更新
-        "500":
+        'HTTP.INTERNAL_SERVER_ERROR':
           description: 伺服器錯誤
 
   /api/travelSchedule:
@@ -401,11 +410,11 @@ paths:
                 startDate:
                   type: string
                   format: date
-                  example: "2025-07-01"
+                  example: '2025-07-01'
                 endDate:
                   type: string
                   format: date
-                  example: "2025-07-07"
+                  example: '2025-07-07'
                 description:
                   type: string
                   example: 一起去日本玩七天六夜！
@@ -414,7 +423,7 @@ paths:
                   format: binary
                   description: 行程封面圖
       responses:
-        "201":
+        'HTTP.CREATED':
           description: 行程建立成功
           content:
             application/json:
@@ -426,9 +435,9 @@ paths:
                     example: 行程建立成功
                   schedule:
                     type: object
-        "403":
+        '403':
           description: JWT 無效或未登入
-        "500":
+        'HTTP.INTERNAL_SERVER_ERROR':
           description: 建立失敗
 
   /api/travelSchedule/user:
@@ -438,7 +447,7 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "200":
+        'HTTP.OK':
           description: 成功取得行程
           content:
             application/json:
@@ -446,7 +455,7 @@ paths:
                 type: array
                 items:
                   type: object
-        "500":
+        'HTTP.INTERNAL_SERVER_ERROR':
           description: 查詢失敗
 
   /api/travelSchedule/{id}:
@@ -463,9 +472,9 @@ paths:
             type: integer
           description: 行程 ID
       responses:
-        "200":
+        'HTTP.OK':
           description: 刪除成功
-        "500":
+        'HTTP.INTERNAL_SERVER_ERROR':
           description: 刪除失敗
 
   /api/itinerary/add-place:
@@ -504,11 +513,11 @@ paths:
                   type: integer
                   example: 1
       responses:
-        "200":
+        'HTTP.OK':
           description: 地點新增成功
-        "400":
+        'HTTP.BAD_REQUEST':
           description: 缺少必要參數
-        "500":
+        'HTTP.INTERNAL_SERVER_ERROR':
           description: 伺服器錯誤
 
   /api/itinerary/place:
@@ -529,11 +538,11 @@ paths:
             type: string
           description: 要刪除的地點名稱
       responses:
-        "200":
+        'HTTP.OK':
           description: 地點刪除成功
-        "400":
+        'HTTP.BAD_REQUEST':
           description: 缺少參數
-        "500":
+        'HTTP.INTERNAL_SERVER_ERROR':
           description: 刪除失敗
 
   /api/itinerary/places:
@@ -548,7 +557,7 @@ paths:
             type: integer
           description: 行程 ID
       responses:
-        "200":
+        'HTTP.OK':
           description: 成功取得地點清單
           content:
             application/json:
@@ -572,9 +581,9 @@ paths:
                           type: integer
                         placeOrder:
                           type: integer
-        "400":
+        'HTTP.BAD_REQUEST':
           description: 缺少 itineraryId
-        "500":
+        'HTTP.INTERNAL_SERVER_ERROR':
           description: 查詢錯誤
 
   /api/itinerary/places/reorder:
@@ -603,9 +612,9 @@ paths:
                         type: integer
                         example: 1
       responses:
-        "200":
+        'HTTP.OK':
           description: 更新成功
-        "500":
+        'HTTP.INTERNAL_SERVER_ERROR':
           description: 更新順序失敗
 
   /api/itineraryTime/places/{id}:
@@ -640,7 +649,7 @@ paths:
                   example: 30
                   description: 抵達分鐘（0–59）
       responses:
-        "200":
+        'HTTP.OK':
           description: 成功更新抵達時間
           content:
             application/json:
@@ -650,7 +659,7 @@ paths:
                   success:
                     type: boolean
                     example: true
-        "400":
+        'HTTP.BAD_REQUEST':
           description: 缺少必要參數
           content:
             application/json:
@@ -663,7 +672,7 @@ paths:
                   message:
                     type: string
                     example: 缺少必要參數
-        "500":
+        'HTTP.INTERNAL_SERVER_ERROR':
           description: 伺服器錯誤
           content:
             application/json:
@@ -677,7 +686,6 @@ paths:
                     type: string
                     example: 伺服器錯誤
 
-  # communityRoutes.js
   /api/community/community-posts:
     post:
       summary: 發布社群貼文
@@ -706,16 +714,16 @@ paths:
                   format: binary
                   description: 貼文主圖（上傳檔案）
       responses:
-        "201":
+        'HTTP.CREATED':
           description: 貼文成功
-        "500":
+        'HTTP.INTERNAL_SERVER_ERROR':
           description: 建立貼文失敗
 
     get:
       summary: 取得所有社群貼文
       tags: [社群貼文]
       responses:
-        "200":
+        'HTTP.OK':
           description: 成功取得貼文
           content:
             application/json:
@@ -770,9 +778,9 @@ paths:
                   type: string
                   example: https://cdn.com/oldimage.jpg
       responses:
-        "200":
+        'HTTP.OK':
           description: 更新成功
-        "404":
+        'HTTP.NOT_FOUND':
           description: 找不到貼文
 
     delete:
@@ -788,7 +796,111 @@ paths:
             type: integer
           description: 貼文 ID
       responses:
-        "200":
+        'HTTP.OK':
           description: 刪除成功
-        "500":
+        'HTTP.INTERNAL_SERVER_ERROR':
           description: 刪除失敗
+
+  /api/payment/client_token:
+    get:
+      summary: 產生 Braintree Client Token
+      tags: [付款]
+      security:
+        - bearerAuth: []
+      responses:
+        'HTTP.OK':
+          description: 成功產生 Client Token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJ2ZXJzaW9uIjoxLCJ0b2tlbiI6IkV5...
+        'HTTP.UNAUTHORIZED':
+          description: 未登入或權限驗證失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 未提供登入權限
+        'HTTP.INTERNAL_SERVER_ERROR':
+          description: 產生失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 產生 Client Token 失敗
+                  error:
+                    type: string
+                    example: 錯誤訊息
+
+  /api/payment/confirm:
+    post:
+      summary: 確認付款並升級為付費會員
+      tags: [付款]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - paymentMethodNonce
+              properties:
+                paymentMethodNonce:
+                  type: string
+                  example: fake-valid-nonce
+                  description: 由 Braintree Drop-in UI 回傳的 nonce
+      responses:
+        'HTTP.OK':
+          description: 付款成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 付款成功，您已經升級為付費會員
+                  transaction:
+                    type: object
+                    description: Braintree 回傳的交易結果
+        'HTTP.UNAUTHORIZED':
+          description: 未登入或權限驗證失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 未提供登入權限
+        'HTTP.INTERNAL_SERVER_ERROR':
+          description: 付款失敗
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 付款失敗
+                  error:
+                    type: string
+                    example: 錯誤訊息

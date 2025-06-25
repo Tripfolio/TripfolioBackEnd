@@ -1,75 +1,79 @@
-const bcrypt = require("bcrypt");
-const UserModel = require("../models/UserModel");
-const { emailPreferences } = require("../models/emailPreferences");
-const { notifyRegister } = require("./notificationCtrl");
-const { db } = require("../config/db");
+const bcrypt = require('bcrypt');
+const UserModel = require('../services/userModel');
+const { emails } = require('../models/emailsSchema');
+const { notifyRegister } = require('./notificationCtrl');
+const { db } = require('../config/db');
+const HTTP = require('../constants/httpStatus'); // 確保這個路徑是正確的
+const SALT_ROUNDS = 10;
 
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const errors = [];
 
+    console.log('收到註冊資料：', { name, email, password });
+
     if (!email || !password || !name) {
-      errors.push("請填寫所有欄位");
+      errors.push('請填寫所有欄位');
     }
 
     const nameRegex = /^(?!.*[\p{Emoji}])[\s\S]{1,10}$/u;
     if (name && !nameRegex.test(name)) {
-      errors.push("名字格式錯誤，請輸入10個字以內，不能包含表情符號");
+      errors.push('名字格式錯誤，請輸入10個字以內，不能包含表情符號');
     }
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (email && !emailRegex.test(email)) {
-      errors.push("Email 格式錯誤");
+      errors.push('Email 格式錯誤');
     }
 
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    const passwordRegex = /^.{4,}$/;
     if (password && !passwordRegex.test(password)) {
-      errors.push("密碼須至少8字 + 英數混合");
-    }
-    if (password === email) {
-      errors.push("密碼不可與信箱相同");
+      errors.push('密碼須至少4字');
     }
 
     if (email) {
       const existingUser = await UserModel.findByEmail(email);
+      console.log('existingUser:', existingUser);
       if (existingUser) {
-        errors.push("Email 已被註冊");
+        errors.push('Email 已被註冊');
       }
     }
 
     if (errors.length > 0) {
-      return res.status(400).json({ errors });
+      console.log('驗證錯誤：', errors);
+      return res.status(HTTP.BAD_REQUEST).json({ errors });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
     const insertResult = await UserModel.createUser({
       name,
       email,
       password: hashedPassword,
     });
+    console.log('insertResult:', insertResult);
 
     if (!insertResult || insertResult.length === 0) {
-      return res.status(500).json({ errors: ["建立使用者失敗"] });
+      return res.status(HTTP.INTERNAL_SERVER_ERROR).json({ errors: ['建立使用者失敗'] });
     }
 
-    //  取得剛新增的使用者 ID
     const userId = insertResult[0]?.id;
+    console.log('userId:', userId);
 
     if (!userId) {
-      return res.status(500).json({ errors: ["無法取得使用者 ID"] });
+      return res.status(HTTP.INTERNAL_SERVER_ERROR).json({ errors: ['無法取得使用者 ID'] });
     }
-    //  新增預設偏好設定
-    await db.insert(emailPreferences).values({ userId: userId });
 
-    //  寄出通知信（若偏好開啟）
+    await db.insert(emails).values({ userId });
+
     await notifyRegister(userId);
 
-    res.status(201).json({ message: "註冊成功，請重新登入" });
+    return res.status(HTTP.CREATED).json({ message: '註冊成功，請重新登入' });
   } catch (err) {
-    console.error('註冊請求處理失敗:', err); // 這會把詳細錯誤打印到後端終端機
-    res.status(500).json({ errors: ["伺服器錯誤，請稍後再試"] });
+    console.error('註冊錯誤：', err);
+    console.error('註冊請求處理失敗:', err);
+    return res.status(HTTP.INTERNAL_SERVER_ERROR).json({ errors: ['伺服器錯誤，請稍後再試'] });
   }
 };
 

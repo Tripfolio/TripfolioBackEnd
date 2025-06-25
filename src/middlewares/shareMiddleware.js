@@ -1,8 +1,8 @@
-const { tripShares } = require("../models/tripShares");
-const { travelSchedules } = require("../models/scheduleSchema");
-const { db } = require("../config/db");
-const { eq } = require("drizzle-orm");
-
+const { tripShares } = require('../models/tripSharesSchema');
+const { schedules } = require('../models/scheduleSchema');
+const { db } = require('../config/db');
+const { eq } = require('drizzle-orm');
+const { HTTP } = require('../constants/httpStatus');
 /**
  * @param {'viewer' | 'editor'} requiredPermission
  */
@@ -11,7 +11,7 @@ function verifyShareToken(requiredPermission) {
     const { token } = req.params;
 
     if (!token) {
-      return res.status(400).json({ error: "Token is required" });
+      return res.status(HTTP.BAD_REQUEST).json({ error: 'Token is required' });
     }
 
     try {
@@ -25,25 +25,25 @@ function verifyShareToken(requiredPermission) {
       const sharedTrip = sharedTripRows[0];
 
       if (!sharedTrip) {
-        return res.status(404).json({ error: "Shared trip not found" });
+        return res.status(HTTP.NOT_FOUND).json({ error: 'Shared trip not found' });
       }
 
       // 查詢對應的 trip（為了驗證主揪）
       const tripRows = await db
         .select()
-        .from(travelSchedules)
-        .where(eq(travelSchedules.id, sharedTrip.tripId))
+        .from(schedules)
+        .where(eq(schedules.id, sharedTrip.tripId))
         .limit(1);
 
       const trip = tripRows[0];
 
       if (!trip) {
-        return res.status(404).json({ error: "Trip not found" });
+        return res.status(HTTP.NOT_FOUND).json({ error: 'Trip not found' });
       }
 
       // 確保使用者已登入（authMiddleware 應先執行）
       if (!req.user || !req.user.id) {
-        return res.status(401).json({ error: "User not authenticated" });
+        return res.status(HTTP.UNAUTHORIZED).json({ error: 'User not authenticated' });
       }
 
       const userId = req.user.id;
@@ -53,24 +53,19 @@ function verifyShareToken(requiredPermission) {
         req.sharedTrip = {
           tripId: trip.id,
           sharedWithUserId: userId,
-          permission: "owner",
+          permission: 'owner',
         };
         return next();
       }
 
       // 檢查是否為被授權的共享對象
       if (sharedTrip.sharedWithUserId !== userId) {
-        return res
-          .status(403)
-          .json({ error: "Access denied: not the shared user" });
+        return res.status(HTTP.FORBIDDEN).json({ error: 'Access denied: not the shared user' });
       }
 
       // 權限驗證
-      if (
-        requiredPermission === "editor" &&
-        sharedTrip.permission !== "editor"
-      ) {
-        return res.status(403).json({ error: "Insufficient permission" });
+      if (requiredPermission === 'editor' && sharedTrip.permission !== 'editor') {
+        return res.status(HTTP.FORBIDDEN).json({ error: 'Insufficient permission' });
       }
 
       // 傳入共享資訊給後續 controller 使用
@@ -82,7 +77,7 @@ function verifyShareToken(requiredPermission) {
 
       next();
     } catch (error) {
-      res.status(500).json({ error: "Internal server error" });
+      res.status(HTTP.INTERNAL_SERVER_ERROR).json({ error: 'Internal server error' });
     }
   };
 }

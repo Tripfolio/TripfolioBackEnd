@@ -2,7 +2,7 @@ const { db } = require('../config/db');
 const { posts } = require('../models/postsSchema');
 const { schedules } = require('../models/scheduleSchema');
 const { users } = require('../models/usersSchema');
-const { eq, and } = require('drizzle-orm');
+const { eq, and, desc } = require('drizzle-orm');
 const HTTP = require('../constants/httpStatus');
 
 // 建立社群貼文
@@ -26,6 +26,7 @@ async function createCommunityPost(req, res) {
       result,
     });
   } catch (err) {
+    console.error('建立社群貼文失敗:', err);
     return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: '建立貼文失敗',
@@ -50,10 +51,11 @@ async function getAllCommunityPosts(req, res) {
       .from(posts)
       .leftJoin(schedules, eq(posts.scheduleId, schedules.id))
       .leftJoin(users, eq(posts.memberId, users.id))
-      .orderBy(posts.createdAt);
+      .orderBy(desc(posts.createdAt));
 
     return res.json({ posts: allPosts });
   } catch (err) {
+    console.error('取得社群貼文失敗:', err);
     return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
       message: '取得貼文失敗',
       error: err.message,

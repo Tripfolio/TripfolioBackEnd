@@ -1,4 +1,4 @@
-/*const multer = require('multer');
+const multer = require('multer');
 const multerS3 = require('multer-s3');
 const s3 = require('../config/s3');
 const path = require('path');
@@ -8,7 +8,7 @@ const path = require('path');
  * @param {string} prefix 檔名前綴（如 avatar、cover、post）
  * @returns multer middleware
  */
-/*function createS3Uploader(prefix) {
+function createS3Uploader(prefix) {
   return multer({
     storage: multerS3({
       s3: s3,
@@ -22,4 +22,4 @@ const path = require('path');
   });
 }
 
-module.exports = createS3Uploader;*/
+module.exports = createS3Uploader;

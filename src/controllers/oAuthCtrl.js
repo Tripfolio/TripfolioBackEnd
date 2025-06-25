@@ -1,6 +1,6 @@
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-const UserModel = require('../models/UserModel'); 
+const UserModel = require('../services/userModel'); 
 
 const googleAuth = passport.authenticate('google', {
   scope: ['profile', 'email'],
@@ -8,8 +8,6 @@ const googleAuth = passport.authenticate('google', {
 
 const googleAuthCallback = (req, res, next) => {
   passport.authenticate('google', { session: false }, async (err, user, info) => {
-    // 從後端環境變數中讀取前端 URL
-    // 使用解構賦值並提供一個預設值，以防變數未設置
     const FRONTEND_BASE_URL = process.env.FRONTEND_URL || 'http://localhost:5173'; 
 
     if (err) {
@@ -50,7 +48,6 @@ const googleAuthCallback = (req, res, next) => {
       );
 
       console.log('Google Auth Callback: JWT token generated. Redirecting to frontend.');
-      // 使用正確的後端環境變數來重定向
       return res.redirect(`${FRONTEND_BASE_URL}/?token=${token}`);
 
     } catch (error) {

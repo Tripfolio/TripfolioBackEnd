@@ -1,4 +1,4 @@
-/*const { pgTable, integer, boolean } = require('drizzle-orm/pg-core');
+const { pgTable, integer, boolean } = require('drizzle-orm/pg-core');
 const { users } = require('./usersSchema');
 
 const emails = pgTable('emails', {
@@ -12,4 +12,4 @@ const emails = pgTable('emails', {
   onBookmark: boolean('on_bookmark').notNull().default(true),
 });
 
-module.exports = { emails };*/
+module.exports = { emails };

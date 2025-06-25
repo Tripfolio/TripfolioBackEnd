@@ -1,4 +1,4 @@
-/*const express = require('express');
+const express = require('express');
 const router = express.Router();
 
 const { createSchedule, deleteSchedule } = require('../controllers/scheduleController');
@@ -17,4 +17,4 @@ router.get('/:id', authenticateToken, getTravelScheduleById);
 router.patch('/:id', authenticateToken, upload.single('cover'), updateSchedule);
 router.put('/:id', authenticateToken, upload.single('cover'), updateSchedule);
 
-module.exports = router;*/
+module.exports = router;

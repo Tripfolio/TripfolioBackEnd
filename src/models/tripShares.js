@@ -1,4 +1,4 @@
-/*const {
+const {
   pgTable,
   uuid,
   serial,
@@ -45,4 +45,4 @@ const tripSharesRelations = relations(tripShares, ({ one }) => ({
 module.exports = {
   tripShares,
   tripSharesRelations,
-};*/
+};

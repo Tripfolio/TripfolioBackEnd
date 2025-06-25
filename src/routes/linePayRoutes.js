@@ -1,13 +1,13 @@
-const express = require("express");
-const router = express.Router();
-const { checkPremiumStatus } = require("../controllers/linePayController");
+const express = require("express")
+const router = express.Router()
 const {
-  linePayConfirm,
+  requestLinePayPayment,
   linePayConfirmCallback,
-} = require("../controllers/linePayController");
+  checkPremiumStatus
+} = require("../controllers/linePayController")
 
-router.post("/confirm", linePayConfirm);
-router.get("/confirm-callback", linePayConfirmCallback);
-router.get("/check-status", checkPremiumStatus);
+router.post("/request", requestLinePayPayment)
+router.get("/confirm-callback", linePayConfirmCallback)
+router.get("/check-status", checkPremiumStatus)
 
-module.exports = router;
+module.exports = router

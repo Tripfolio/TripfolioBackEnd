@@ -22,7 +22,7 @@ exports.requestLinePayPayment = async (req, res) => {
     const authHeader = req.headers.authorization
     const token = authHeader?.split(" ")[1]
     if (!token) {
-      return res.status(401).json({ message: "未提供認證令牌" })
+      return res.status(401).json({ message: "未提供認證權限" })
     }
     const decoded = jwt.verify(token, JWT_SECRET)
     const userId = decoded.id
@@ -90,7 +90,7 @@ exports.requestLinePayPayment = async (req, res) => {
     res.json({ url: paymentUrl })
   } catch (err) {
     if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
-      return res.status(401).json({ message: "無效或過期的認證令牌" })
+      return res.status(401).json({ message: "無效或過期的認證權限" })
     }
     res.status(500).json({ message: "付款初始化失敗，請檢查日誌" })
   }
@@ -150,7 +150,7 @@ exports.checkPremiumStatus = async (req, res) => {
     const authHeader = req.headers.authorization
     const token = authHeader?.split(" ")[1]
     if (!token) {
-      return res.status(401).json({ isPremium: false, message: "未提供認證令牌" })
+      return res.status(401).json({ isPremium: false, message: "未提供認證權限" })
     }
 
     let decoded
@@ -158,7 +158,7 @@ exports.checkPremiumStatus = async (req, res) => {
       decoded = jwt.verify(token, JWT_SECRET)
     } catch (jwtError) {
       if (jwtError.name === 'JsonWebTokenError' || jwtError.name === 'TokenExpiredError') {
-        return res.status(401).json({ isPremium: false, message: "無效或過期的認證令牌" })
+        return res.status(401).json({ isPremium: false, message: "無效或過期的認證權限" })
       }
       return res.status(500).json({ isPremium: false, message: "JWT 驗證失敗" })
     }

@@ -21,6 +21,7 @@ const tripSharesRoute = require("./src/routes/tripSharesRoute");
 const loginRouter = require("./src/routes/loginRoutes");
 const arriveItinerary = require("./src/routes/arriveItinerary");
 const postsRoute = require("./src/routes/postsRoute");
+const trafficRoutes = require("./src/routes/trafficData");
 
 app.use(
   cors({
@@ -51,6 +52,7 @@ app.use("/api/community", communityRoutes);
 app.use("/api/tripShares", tripSharesRoute);
 app.use("/api/payment", paymentRoute);
 app.use("/api/allposts", postsRoute);
+app.use("/api/traffic", trafficRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Backend is alive 🚀" });

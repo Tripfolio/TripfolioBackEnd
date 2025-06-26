@@ -4,7 +4,7 @@ const { and, eq } = require('drizzle-orm');
 const HTTP = require('../constants/httpStatus');
 
 async function addPlace(req, res) {
-  const { itineraryId, name, address, photo, arrivalHour, arrivalMinute, placeOrder, date } =
+  const { itineraryId, name, address, photo, arrivalHour, arrivalMinute, placeOrder, date, lat, lng } =
     req.body;
 
   if (!itineraryId || typeof name !== 'string' || !name.trim() || !date) {
@@ -14,7 +14,7 @@ async function addPlace(req, res) {
   try {
     const [newPlace] = await db
       .insert(schedulePlaces)
-      .values({ itineraryId, name, address, photo, arrivalHour, arrivalMinute, placeOrder, date })
+      .values({ itineraryId, name, address, photo, arrivalHour, arrivalMinute, placeOrder, date, lat, lng })
       .returning();
 
     return res.json({ success: true, place: newPlace });
@@ -60,14 +60,25 @@ async function getPlaces(req, res) {
     const conditions = [eq(schedulePlaces.itineraryId, Number(itineraryId))];
 
     if (date) {
-      // 保證是乾淨字串傳入，資料庫目前 text 型態這樣最穩
+
       conditions.push(eq(schedulePlaces.date, String(date).trim()));
     }
 
     console.log("查詢條件：", conditions);
 
     const places = await db
-      .select()
+      .select({id: schedulePlaces.id,
+    itineraryId: schedulePlaces.itineraryId,
+    name: schedulePlaces.name,
+    address: schedulePlaces.address,
+    photo: schedulePlaces.photo,
+    arrivalHour: schedulePlaces.arrivalHour,
+    arrivalMinute: schedulePlaces.arrivalMinute,
+    placeOrder: schedulePlaces.placeOrder,
+    date: schedulePlaces.date,
+    lat: schedulePlaces.lat,
+    lng: schedulePlaces.lng
+    })
       .from(schedulePlaces)
       .where(and(...conditions));
 
@@ -119,10 +130,27 @@ async function updateArriveTime(req, res) {
   }
 }
 
+//刪除交通
+async function deletePlaceById(req, res) {
+  const { id } = req.query;
+
+  if (!id) {
+    return res.status(HTTP.BAD_REQUEST).json({ success: false, message: '缺少必要參數' });
+  }
+
+  try {
+    await db.delete(schedulePlaces).where(eq(schedulePlaces.id, Number(id)));
+    return res.json({ success: true });
+  } catch (err) {
+    return res.status(HTTP.INTERNAL_SERVER_ERROR).json({ success: false, message: '刪除失敗', error: err.message });
+  }
+}
+
 module.exports = {
   addPlace,
   deletePlace,
   getPlaces,
   updateOrder,
   updateArriveTime,
+  deletePlaceById,
 };

@@ -23,6 +23,8 @@ const arriveItinerary = require('./src/routes/arriveItinerary');
 const postsRoute = require('./src/routes/postsRoute');
 const commentsRoutes = require('./src/routes/commentsRoutes');
 const favoritesRoute = require('./src/routes/favoritesRoute');
+const trafficRoutes = require("./src/routes/trafficData");
+
 
 app.use(
   cors({
@@ -37,6 +39,7 @@ app.use(
 );
 
 app.use(express.json());
+
 app.use('/api/signup', authRoutes);
 app.use('/api', protectedRoutes);
 app.use('/api/profile', profileRoutes);
@@ -54,6 +57,8 @@ app.use('/api/payment', paymentRoute);
 app.use('/api/allposts', postsRoute);
 app.use('/api/post', commentsRoutes);
 app.use('/api/favorites', favoritesRoute);
+app.use("/api/traffic", trafficRoutes);
+
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Backend is alive 🚀' });

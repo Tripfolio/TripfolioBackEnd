@@ -1,34 +1,32 @@
 {
   "env": {
-    "node": true,
-    "es2021": true
+    "browser": true,
+    "es2021": true,
+    "node": true
   },
-  "parserOptions": {
-    "ecmaVersion": 12
-  },
+  "plugins": ["import", "unicorn"],
   "rules": {
     "no-console": "warn",
-    "eqeqeq": "error",
+    "no-debugger": "error",
+    "eqeqeq": ["error", "always"],
     "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     "no-undef": "error",
-    "no-use-before-define": ["error", { "functions": false, "classes": true }],
+    "no-use-before-define": ["error", { "functions": true, "classes": true }],
     "no-empty": ["error", { "allowEmptyCatch": false }],
-    "no-empty-function": ["warn", { "allow": ["arrowFunctions"] }],
-    "require-await": "warn",
+    "no-empty-function": "error",
+    "require-await": "error",
     "no-throw-literal": "error",
     "default-case": "error",
-
-    // 排版
-    "comma-dangle": "off",
-    "semi": "off",
-    "quotes": "off",
-    "indent": "off",
-    "space-before-function-paren": "off",
-    "object-curly-spacing": "off",
-    "key-spacing": "off",
-    "spaced-comment": "off",
-    "keyword-spacing": "off",
-    "curly": "off",
-    "no-multiple-empty-lines": "off"
+    "consistent-return": "error",
+    "no-magic-numbers": ["warn", { "ignore": [0, 1, -1], "detectObjects": false }],
+    "unicorn/filename-case": [
+      "error",
+      {
+        "cases": {
+          "kebabCase": true,
+          "camelCase": true
+        }
+      }
+    ]
   }
 }

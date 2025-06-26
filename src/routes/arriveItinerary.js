@@ -1,7 +1,7 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const ctrl = require("../controllers/arriveItinerary");
+const ctrl = require('../controllers/arriveItinerary');
 
-router.put("/places/:id", ctrl.updateArriveTime);
+router.put('/places/:id', ctrl.updateArriveTime);
 
 module.exports = router;

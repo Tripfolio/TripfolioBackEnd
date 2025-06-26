@@ -3,9 +3,9 @@ const { pgTable, serial, varchar, date,  boolean, timestamp } = require('drizzle
 const users = pgTable('users', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 10 }).notNull(),
-  email: varchar('email', { length: 100 }).notNull().unique(),
-  password: varchar('password', { length: 20 }),
-  gender: varchar('gender', { length: 10 }),
+  email: varchar('email', { length: 30 }).notNull().unique(),
+  password: varchar('password', { length: 120 }),
+  gender: varchar('gender', { length: 20 }),
   phone: varchar('phone', { length: 20 }),
   birthday: date('birthday'),
   avatar: varchar('avatar'),

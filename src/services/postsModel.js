@@ -18,6 +18,8 @@ async function getPaginatedPosts(page = 1, limit = 15) {
       imageUrl: posts.coverURL,
       createdAt: posts.createdAt,
       authorName: users.name,
+      authorAvatar: users.avatar,
+      content: posts.content,
     })
     .from(posts)
     .leftJoin(users, eq(posts.memberId, users.id))

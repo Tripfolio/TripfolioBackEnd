@@ -11,7 +11,7 @@ const users = pgTable('users', {
   avatar: varchar('avatar'),
   isPremium: boolean('is_premium').default(false),
   createdAt: timestamp('created_at', { precision: 2 }).defaultNow(),
-  google_id: varchar('google_id', { length: 255 }).unique(),
+  googleId: varchar('google_id', { length: 255 }).unique(),
 });
 
 module.exports = { users }; 

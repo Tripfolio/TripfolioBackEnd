@@ -34,7 +34,7 @@ async function login(req, res) {
       return res.status(HTTP.UNAUTHORIZED).json({ errors });
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user.id, email: user.email, name: user.name }, process.env.JWT_SECRET, {
       expiresIn: '30d',
     });
     await notifyLogin(user.id);

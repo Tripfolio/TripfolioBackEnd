@@ -2,6 +2,7 @@ const { db } = require('../config/db');
 const { favorites } = require('../models/favoritesSchema');
 const { posts } = require('../models/postsSchema');
 const { users } = require('../models/usersSchema');
+const { schedules } = require('../models/scheduleSchema');
 const { eq, and, desc } = require('drizzle-orm');
 const HTTP = require('../constants/httpStatus');
 
@@ -83,17 +84,18 @@ const getFavorites = async (req, res) => {
         favoriteId: favorites.id,
         createdAt: favorites.createdAt,
         postId: posts.id,
-        postTitle: posts.title,
+        postTitle: schedules.title,
         postContent: posts.content,
-        postImageUrl: posts.imageUrl,
-        postLikes: posts.likes,
-        authorId: posts.authorId,
+        postImageUrl: posts.coverURL,
+        // postLikes: posts.likes,
+        authorId: posts.memberId,
         authorName: users.name,
         authorAvatar: users.avatar,
       })
       .from(favorites)
       .leftJoin(posts, eq(favorites.postId, posts.id))
-      .leftJoin(users, eq(posts.authorId, users.id))
+      .leftJoin(users, eq(posts.memberId, users.id))
+      .leftJoin(schedules, eq(posts.scheduleId, schedules.id))
       .where(eq(favorites.memberId, memberId))
       .orderBy(desc(favorites.createdAt));
 

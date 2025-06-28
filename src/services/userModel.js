@@ -3,49 +3,73 @@ const { users } = require('../models/usersSchema');
 const { eq } = require('drizzle-orm');
 
 const findByEmail = async (email) => {
-  const usersData = await db.select().from(users).where(eq(users.email, email));
-  return usersData[0] || null;
+  const result = await db.select().from(users).where(eq(users.email, email));
+  return result[0] || null;
 };
 
 const findById = async (id) => {
-  const usersData = await db.select().from(users).where(eq(users.id, id));
-  return usersData[0] || null;
+  const result = await db.select().from(users).where(eq(users.id, id));
+  return result[0] || null;
 };
 
 const createUser = async ({ name, email, password, googleId = null }) => {
-  return await db.insert(users).values({
-    name: name,
-    email: email,
-    password: password,
-    google_id: googleId,
-  }).returning();
+  return await db
+    .insert(users)
+    .values({
+      name,
+      email,
+      password,
+      googleId,
+    })
+    .returning();
 };
 
 const updateGoogleId = async (userId, googleId) => {
-  await db.update(users).set({ google_id: googleId }).where(eq(users.id, userId));
+  return await db
+    .update(users)
+    .set({ googleId })
+    .where(eq(users.id, userId));
 };
 
 const findOrCreateGoogleUser = async ({ googleId, email, name }) => {
-  let existingUser = await db.select().from(users).where(eq(users.google_id, googleId));
-  if (existingUser.length > 0) {
-    return existingUser[0];
+  const byGoogleId = await db
+    .select()
+    .from(users)
+    .where(eq(users.googleId, googleId));
+
+  if (byGoogleId.length > 0) {
+    return byGoogleId[0];
   }
 
-  existingUser = await db.select().from(users).where(eq(users.email, email));
-  if (existingUser.length > 0) {
-    const userToUpdate = existingUser[0];
-    await updateGoogleId(userToUpdate.id, googleId);
-    return { ...userToUpdate, google_id: googleId };
+  const byEmail = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, email));
+
+  if (byEmail.length > 0) {
+    const user = byEmail[0];
+    await updateGoogleId(user.id, googleId);
+    return { ...user, googleId };
   }
 
-  const newUserResult = await db.insert(users).values({
-    name: name,
-    email: email,
-    password: null,
-    google_id: googleId,
-  }).returning();
+  const newUser = await db
+    .insert(users)
+    .values({
+      name,
+      email,
+      password: null,
+      googleId,
+    })
+    .returning();
 
-  return newUserResult[0];
+  return newUser[0];
+};
+
+const setPasswordByEmail = async (email, hashedPassword) => {
+  return await db
+    .update(users)
+    .set({ password: hashedPassword })
+    .where(eq(users.email, email));
 };
 
 module.exports = {
@@ -54,4 +78,5 @@ module.exports = {
   createUser,
   updateGoogleId,
   findOrCreateGoogleUser,
+  setPasswordByEmail,
 };

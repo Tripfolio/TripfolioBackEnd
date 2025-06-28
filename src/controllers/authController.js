@@ -1,17 +1,16 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const UserModel = require('../services/userModel');
 const { emails } = require('../models/emailsSchema');
 const { notifyRegister } = require('./notificationCtrl');
 const { db } = require('../config/db');
-const HTTP = require('../constants/httpStatus'); // 確保這個路徑是正確的
+const HTTP = require('../constants/httpStatus');
 const SALT_ROUNDS = 10;
 
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const errors = [];
-
-    console.log('收到註冊資料：', { name, email, password });
 
     if (!email || !password || !name) {
       errors.push('請填寫所有欄位');
@@ -34,14 +33,16 @@ const registerUser = async (req, res) => {
 
     if (email) {
       const existingUser = await UserModel.findByEmail(email);
-      console.log('existingUser:', existingUser);
       if (existingUser) {
-        errors.push('Email 已被註冊');
+        if (existingUser.password === null) {
+          errors.push('此帳號已使用 Google 註冊，請使用 Google 登入');
+        } else {
+          errors.push('Email 已被註冊');
+        }
       }
     }
 
     if (errors.length > 0) {
-      console.log('驗證錯誤：', errors);
       return res.status(HTTP.BAD_REQUEST).json({ errors });
     }
 
@@ -52,31 +53,58 @@ const registerUser = async (req, res) => {
       email,
       password: hashedPassword,
     });
-    console.log('insertResult:', insertResult);
 
     if (!insertResult || insertResult.length === 0) {
       return res.status(HTTP.INTERNAL_SERVER_ERROR).json({ errors: ['建立使用者失敗'] });
     }
 
     const userId = insertResult[0]?.id;
-    console.log('userId:', userId);
 
     if (!userId) {
       return res.status(HTTP.INTERNAL_SERVER_ERROR).json({ errors: ['無法取得使用者 ID'] });
     }
 
     await db.insert(emails).values({ userId });
-
     await notifyRegister(userId);
 
     return res.status(HTTP.CREATED).json({ message: '註冊成功，請重新登入' });
   } catch (err) {
-    console.error('註冊錯誤：', err);
-    console.error('註冊請求處理失敗:', err);
     return res.status(HTTP.INTERNAL_SERVER_ERROR).json({ errors: ['伺服器錯誤，請稍後再試'] });
+  }
+};
+
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await UserModel.findByEmail(email);
+
+    if (!user) {
+      return res.status(HTTP.UNAUTHORIZED).json({ message: '帳號或密碼錯誤' });
+    }
+
+    if (!user.password) {
+      return res.status(HTTP.FORBIDDEN).json({ message: '此帳號為 Google 登入帳號，請使用 Google 登入' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(HTTP.UNAUTHORIZED).json({ message: '帳號或密碼錯誤' });
+    }
+
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '30d' }
+    );
+
+    return res.status(HTTP.OK).json({ token });
+  } catch (err) {
+    return res.status(HTTP.INTERNAL_SERVER_ERROR).json({ message: '登入失敗，請稍後再試' });
   }
 };
 
 module.exports = {
   registerUser,
+  loginUser,
 };

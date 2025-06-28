@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken")
 const { db } = require("../config/db")
 const { users } = require("../models/usersSchema")
 const { eq } = require("drizzle-orm")
-
+const HTTP = require("../constants/httpStatus")
 const {
   LINEPAY_CHANNEL_ID,
   LINEPAY_SECRET,
@@ -22,13 +22,13 @@ exports.requestLinePayPayment = async (req, res) => {
     const authHeader = req.headers.authorization
     const token = authHeader?.split(" ")[1]
     if (!token) {
-      return res.status(401).json({ message: "未提供認證權限" })
+      return res.status(HTTP.UNAUTHORIZED).json({ message: "未提供認證權限" })
     }
     const decoded = jwt.verify(token, JWT_SECRET)
     const userId = decoded.id
 
     if (!userId) {
-      return res.status(400).json({ message: "認證失敗：無法獲取用戶 ID" })
+      return res.status(HTTP.BAD_REQUEST).json({ message: "認證失敗：無法獲取用戶 ID" })
     }
 
     const orderId = uuidv4()
@@ -78,22 +78,23 @@ exports.requestLinePayPayment = async (req, res) => {
 
     if (data.returnCode !== "0000") {
       return res
-        .status(500)
+        .status(HTTP.INTERNAL_SERVER_ERROR)
         .json({ message: `付款請求失敗：${data.returnMessage}` })
     }
 
     const paymentUrl = data?.info?.paymentUrl?.web
     if (!paymentUrl) {
-      return res.status(500).json({ message: "付款網址取得失敗" })
+      return res.status(HTTP.INTERNAL_SERVER_ERROR).json({ message: "付款網址取得失敗" })
     }
 
     res.json({ url: paymentUrl })
   } catch (err) {
     if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
-      return res.status(401).json({ message: "無效或過期的認證權限" })
+      return res.status(HTTP.UNAUTHORIZED).json({ message: "無效或過期的認證權限" })
     }
-    res.status(500).json({ message: "付款初始化失敗，請檢查日誌" })
+    return res.status(HTTP.INTERNAL_SERVER_ERROR).json({ message: "付款初始化失敗，請檢查日誌" })
   }
+  return null;
 }
 
 exports.linePayConfirmCallback = async (req, res) => {
@@ -150,7 +151,7 @@ exports.checkPremiumStatus = async (req, res) => {
     const authHeader = req.headers.authorization
     const token = authHeader?.split(" ")[1]
     if (!token) {
-      return res.status(401).json({ isPremium: false, message: "未提供認證權限" })
+      return res.status(HTTP.UNAUTHORIZED).json({ isPremium: false, message: "未提供認證權限" })
     }
 
     let decoded
@@ -158,15 +159,15 @@ exports.checkPremiumStatus = async (req, res) => {
       decoded = jwt.verify(token, JWT_SECRET)
     } catch (jwtError) {
       if (jwtError.name === 'JsonWebTokenError' || jwtError.name === 'TokenExpiredError') {
-        return res.status(401).json({ isPremium: false, message: "無效或過期的認證權限" })
+        return res.status(HTTP.UNAUTHORIZED).json({ isPremium: false, message: "無效或過期的認證權限" })
       }
-      return res.status(500).json({ isPremium: false, message: "JWT 驗證失敗" })
+      return res.status(HTTP.INTERNAL_SERVER_ERROR).json({ isPremium: false, message: "JWT 驗證失敗" })
     }
 
     const userId = decoded.id
 
     if (!userId) {
-      return res.status(400).json({ isPremium: false, message: "認證失敗：無法獲取用戶 ID" })
+      return res.status(HTTP.BAD_REQUEST).json({ isPremium: false, message: "認證失敗：無法獲取用戶 ID" })
     }
 
     const [user] = await db
@@ -175,11 +176,11 @@ exports.checkPremiumStatus = async (req, res) => {
       .where(eq(users.id, userId))
 
     if (!user) {
-      return res.status(404).json({ isPremium: false, message: "找不到使用者" })
+      return res.status(HTTP.NOT_FOUND).json({ isPremium: false, message: "找不到使用者" })
     }
 
-    res.json({ isPremium: user.isPremium })
+    return res.json({ isPremium: user.isPremium })
   } catch (err) {
-    res.status(500).json({ isPremium: false, message: "檢查會員狀態失敗" })
+    return res.status(HTTP.INTERNAL_SERVER_ERROR).json({ isPremium: false, message: "檢查會員狀態失敗" })
   }
 }

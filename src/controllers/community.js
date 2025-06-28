@@ -2,8 +2,11 @@ const { db } = require('../config/db');
 const { posts } = require('../models/postsSchema');
 const { schedules } = require('../models/scheduleSchema');
 const { users } = require('../models/usersSchema');
-const { eq, and } = require('drizzle-orm');
+const { eq, and, desc } = require('drizzle-orm');
 const HTTP = require('../constants/httpStatus');
+const { comments } = require('../models/commentsSchema');
+const { favorites } = require('../models/favoritesSchema');
+const { sql } = require('drizzle-orm');
 
 // 建立社群貼文
 async function createCommunityPost(req, res) {
@@ -26,6 +29,7 @@ async function createCommunityPost(req, res) {
       result,
     });
   } catch (err) {
+    console.error('建立社群貼文失敗:', err);
     return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: '建立貼文失敗',
@@ -50,10 +54,45 @@ async function getAllCommunityPosts(req, res) {
       .from(posts)
       .leftJoin(schedules, eq(posts.scheduleId, schedules.id))
       .leftJoin(users, eq(posts.memberId, users.id))
-      .orderBy(posts.createdAt);
+      .orderBy(desc(posts.createdAt));
 
-    return res.json({ posts: allPosts });
+    // 取得所有貼文 ID
+    const postIds = allPosts.map((p) => p.postId);
+
+    // 查詢留言數
+    const commentCounts = await db
+      .select({
+        postId: comments.postId,
+        count: sql`COUNT(*)`.as('count'),
+      })
+      .from(comments)
+      .where(sql`${comments.postId} = ANY(${sql.array(postIds)})`)
+      .groupBy(comments.postId);
+
+    // 查詢收藏數
+    const favoriteCounts = await db
+      .select({
+        postId: favorites.postId,
+        count: sql`COUNT(*)`.as('count'),
+      })
+      .from(favorites)
+      .where(sql`${favorites.postId} = ANY(${sql.array(postIds)})`)
+      .groupBy(favorites.postId);
+
+    // 建立留言數和收藏數的 Map
+    const commentMap = Object.fromEntries(commentCounts.map((c) => [c.postId, Number(c.count)]));
+    const favoriteMap = Object.fromEntries(favoriteCounts.map((f) => [f.postId, Number(f.count)]));
+
+    // 合併資料
+    const enrichedPosts = allPosts.map((post) => ({
+      ...post,
+      commentCount: commentMap[post.postId] || 0,
+      favoriteCount: favoriteMap[post.postId] || 0,
+    }));
+
+    return res.json({ posts: enrichedPosts });
   } catch (err) {
+    console.error('取得社群貼文失敗:', err);
     return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
       message: '取得貼文失敗',
       error: err.message,

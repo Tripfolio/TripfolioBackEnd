@@ -1,4 +1,4 @@
-const { pgTable, serial, varchar, integer, text } = require('drizzle-orm/pg-core');
+const { pgTable, serial, varchar, integer, text, doublePrecision } = require('drizzle-orm/pg-core');
 
 const schedulePlaces = pgTable('schedule_places', {
   id: serial('id').primaryKey(),
@@ -10,6 +10,8 @@ const schedulePlaces = pgTable('schedule_places', {
   arrivalMinute: integer('arrival_minute'),
   placeOrder: integer('place_order'),
   date: text('date').notNull(),
+  lat: doublePrecision('lat'),
+  lng: doublePrecision('lng'),
 });
 
 module.exports = {

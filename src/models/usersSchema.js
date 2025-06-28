@@ -1,4 +1,4 @@
-const { pgTable, serial, varchar, date,  boolean, timestamp } = require('drizzle-orm/pg-core');
+const { pgTable, serial, varchar, date, boolean, timestamp } = require('drizzle-orm/pg-core');
 
 const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -14,4 +14,4 @@ const users = pgTable('users', {
   googleId: varchar('google_id', { length: 120 }).unique(),
 });
 
-module.exports = { users }; 
+module.exports = { users };

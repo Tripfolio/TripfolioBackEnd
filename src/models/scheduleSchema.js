@@ -12,3 +12,4 @@ const schedules = pgTable('schedules', {
 });
 
 module.exports = { schedules };
+

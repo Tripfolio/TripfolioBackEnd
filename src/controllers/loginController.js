@@ -48,7 +48,6 @@ async function login(req, res) {
       },
     });
   } catch (err) {
-    console.error('登入時發生伺服器錯誤:', err);
     return res.status(HTTP.INTERNAL_SERVER_ERROR).json({ errors: ['伺服器錯誤，請稍後再試'] });
   }
 }

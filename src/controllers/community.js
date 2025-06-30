@@ -29,7 +29,7 @@ async function createCommunityPost(req, res) {
       result,
     });
   } catch (err) {
-    console.error('建立社群貼文失敗:', err);
+
     return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: '建立貼文失敗',
@@ -93,7 +93,7 @@ async function getAllCommunityPosts(req, res) {
 
     return res.json({ posts: enrichedPosts });
   } catch (err) {
-    console.error('取得社群貼文失敗:', err);
+
     return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
       message: '取得貼文失敗',
       error: err.message,

@@ -8,7 +8,7 @@ async function getPosts(req, res) {
     const posts = await getPaginatedPosts(page, limit);
     res.status(HTTP.OK).json({ posts });
   } catch (error) {
-    console.error('[getPosts] 取得貼文失敗:', error);
+
     res.status(HTTP.INTERNAL_SERVER_ERROR).json({ message: 'Failed to fetch posts' });
   }
 }

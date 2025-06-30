@@ -30,8 +30,6 @@ const getCommentsByPost = async (req, res) => {
 
     res.json(postComments);
   } catch (error) {
-    console.error('取得留言失敗:', error);
-    console.error('錯誤堆疊:', error.stack);
     return res.status(HTTP.INTERNAL_SERVER_ERROR).json({ error: '取得留言失敗' });
   }
   return null;
@@ -73,7 +71,7 @@ const addComment = async (req, res) => {
 
     return res.status(HTTP.CREATED).json(commentWithUser);
   } catch (error) {
-    console.error('新增留言失敗:', error);
+
     return res.status(HTTP.INTERNAL_SERVER_ERROR).json({ error: '新增留言失敗' });
   }
 };
@@ -103,7 +101,7 @@ const deleteComment = async (req, res) => {
     await db.delete(comments).where(eq(comments.id, parseInt(commentId, 10)));
     return res.json({ message: '留言已刪除' });
   } catch (error) {
-    console.error('刪除留言失敗:', error);
+
     return res.status(HTTP.INTERNAL_SERVER_ERROR).json({ error: '刪除留言失敗' });
   }
 };

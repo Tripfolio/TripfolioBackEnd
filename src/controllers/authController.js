@@ -11,8 +11,6 @@ const registerUser = async (req, res) => {
     const { name, email, password } = req.body;
     const errors = [];
 
-    console.log('收到註冊資料：', { name, email, password });
-
     if (!email || !password || !name) {
       errors.push('請填寫所有欄位');
     }
@@ -34,14 +32,13 @@ const registerUser = async (req, res) => {
 
     if (email) {
       const existingUser = await UserModel.findByEmail(email);
-      console.log('existingUser:', existingUser);
+
       if (existingUser) {
         errors.push('Email 已被註冊');
       }
     }
 
     if (errors.length > 0) {
-      console.log('驗證錯誤：', errors);
       return res.status(HTTP.BAD_REQUEST).json({ errors });
     }
 
@@ -52,14 +49,12 @@ const registerUser = async (req, res) => {
       email,
       password: hashedPassword,
     });
-    console.log('insertResult:', insertResult);
 
     if (!insertResult || insertResult.length === 0) {
       return res.status(HTTP.INTERNAL_SERVER_ERROR).json({ errors: ['建立使用者失敗'] });
     }
 
     const userId = insertResult[0]?.id;
-    console.log('userId:', userId);
 
     if (!userId) {
       return res.status(HTTP.INTERNAL_SERVER_ERROR).json({ errors: ['無法取得使用者 ID'] });
@@ -71,7 +66,6 @@ const registerUser = async (req, res) => {
 
     return res.status(HTTP.CREATED).json({ message: '註冊成功，請重新登入' });
   } catch (err) {
-    console.error('註冊錯誤：', err);
     return res.status(HTTP.INTERNAL_SERVER_ERROR).json({ errors: ['伺服器錯誤，請稍後再試'] });
   }
 };

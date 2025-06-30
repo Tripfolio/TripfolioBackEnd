@@ -29,11 +29,12 @@ Node.js + Express + PostgreSQL
 
 | 組員 | GitHub | 地圖 | 行程 | 社群 |會員 |其他|
 | --- | ---    | --- | --- |  --- |--- |--- |
-| 陳品均 |[LeoChen517](https://github.com/LeoChen517)  | | 行程共享、權限設定 |社群主頁 |郵件通知、設定 ||
-| 張哲豪 |[kiwiisfish](https://github.com/kiwiisfish)  | 類別篩選、定位 | 時間與排序 |按讚、留言 ||設計規劃|
+| 陳品均 |[LeoChen517](https://github.com/LeoChen517)  | | 行程共享<br>權限設定 |社群主頁 |郵件通知<br>設定 ||
+| 張哲豪 |[kiwiisfish](https://github.com/kiwiisfish)  | 類別篩選<br>定位 | 時間與排序 |按讚、留言 ||設計規劃|
 | 蘇怡瑄 |[mmaysu](https://github.com/mmaysu)  | 關鍵字搜尋 | 加入景點 | 建立貼文||部署|
 | 林芳綺 |[yanamint](https://github.com/yanamint)  || 加入 google calender|||切版|
 | 周子筠 |[yumi-chou](https://github.com/yumi-chou) | 地區篩選 | 交通方式與通勤時間 || |切版、設計規劃|
 | 許家瑜 |[Ninahsuuuuu](https://github.com/Ninahsuuuuu)|| 行程總覽 |個人頁| 資料變更 ||
-| 劉暄  | [pearl-liu-1203](https://github.com/pearl-liu-1203)|  | 行程頁面編輯 || 登入、註冊  ||
+| 劉暄  | [pearl-liu-1203](https://github.com/pearl-liu-1203)|  | 行程頁面編輯 || 登入、註冊  | LINE Pay|
+
 

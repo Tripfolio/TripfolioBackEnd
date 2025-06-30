@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
+
 const YAML = require('yamljs');
 
 const swaggerUi = require('swagger-ui-express');
@@ -84,6 +85,7 @@ app.use('/api/traffic', trafficRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Backend is alive' });
+
 });
 
 const PORT = process.env.PORT || 3000;

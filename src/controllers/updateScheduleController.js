@@ -150,11 +150,15 @@ const getTravelScheduleById = async (req, res) => {
       .select()
       .from(schedules)
       .where(eq(schedules.id, Number(id)))
-      .where(eq(schedules.userId, memberId))
       .limit(1);
 
     if (!schedule || schedule.length === 0) {
-      return res.status(HTTP.NOT_FOUND).json({ message: '找不到行程或無權限' });
+      return res.status(HTTP.NOT_FOUND).json({ message: '找不到行程' });
+    }
+
+    // 權限檢查：只能看自己的
+    if (schedule[0].userId !== memberId) {
+      return res.status(HTTP.FORBIDDEN).json({ message: '無權限查看此行程' });
     }
 
     return res.json(schedule[0]);

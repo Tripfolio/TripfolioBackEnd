@@ -24,9 +24,7 @@ const sharedUsers = pgTable('shared_users', {
     .notNull()
     .references(() => users.id),
   role: varchar('role').notNull(), // 'viewer' 或 'editor'
-  addedBy: integer('added_by')
-    .notNull()
-    .references(() => users.id),
+  addedBy: integer('added_by').references(() => users.id),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 

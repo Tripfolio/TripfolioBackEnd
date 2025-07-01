@@ -3,7 +3,7 @@ const { sharedUsers } = require('../models/tripSharesSchema');
 const { users } = require('../models/usersSchema');
 const { schedules } = require('../models/scheduleSchema');
 const { db } = require('../config/db');
-const { eq, desc } = require('drizzle-orm');
+const { eq, desc, inArray } = require('drizzle-orm');
 const { v4: uuidv4 } = require('uuid');
 
 const createShareLink = async (req, res) => {
@@ -29,7 +29,7 @@ const createShareLink = async (req, res) => {
     });
     console.log('資料庫插入結果:', result); // 檢查插入資料的結果
     // 組成可分享的網址
-    const shareUrl = `${process.env.FRONTEND_URL}/share/${token}`;
+    const shareUrl = `${process.env.VITE_API_URL}/share/${token}`;
     console.log('生成的分享連結:', shareUrl); // 檢查生成的分享連結
     return res.status(201).json({
       success: true,
@@ -117,9 +117,8 @@ const updateUserPermission = async (req, res) => {
       .update(sharedUsers)
       .set({ role: newRole })
       .where(
-        eq(sharedUsers.tripId, parseInt(tripId)).and(
-          eq(sharedUsers.userId, parseInt(targetUserId)),
-        ),
+        eq(sharedUsers.tripId, parseInt(tripId)),
+        eq(sharedUsers.userId, parseInt(targetUserId)),
       );
 
     return res.status(200).json({ success: true });
@@ -144,9 +143,7 @@ const removeSharedUser = async (req, res) => {
 
     await db
       .delete(sharedUsers)
-      .where(
-        eq(sharedUsers.tripId, parseInt(tripId)).and(eq(sharedUsers.userId, parseInt(userId))),
-      );
+      .where(eq(sharedUsers.tripId, parseInt(tripId)), eq(sharedUsers.userId, parseInt(userId)));
 
     return res.status(200).json({ success: true });
   } catch (err) {
@@ -157,20 +154,23 @@ const removeSharedUser = async (req, res) => {
 
 //驗證 & 授權 API
 const handleShareToken = async (req, res) => {
-  const userId = req.user?.id; // 登入驗證 middleware 已處理
+  console.log('✅ 進入 handleShareToken()');
+  const userId = req.user?.id; // 登入驗證
+  console.log('目前登入使用者 userId:', userId);
   const { token } = req.params;
-
+  console.log('收到分享 token:', token);
   try {
     // 查詢 token 是否存在 + 過期驗證
     const result = await db.select().from(tripShares).where(eq(tripShares.token, token));
-
+    console.log(result);
     if (!result.length) {
       return res.status(404).json({ success: false, message: '無效或過期的分享連結' });
     }
 
     const shareEntry = result[0];
-
+    console.log('分享資料:', shareEntry);
     if (new Date(shareEntry.expiresAt) < new Date()) {
+      console.log('分享連結已過期:', shareEntry.expiresAt);
       return res.status(403).json({ success: false, message: '分享連結已過期' });
     }
 
@@ -178,7 +178,7 @@ const handleShareToken = async (req, res) => {
     const exist = await db
       .select()
       .from(sharedUsers)
-      .where(eq(sharedUsers.tripId, shareEntry.tripId).and(eq(sharedUsers.userId, userId)));
+      .where(eq(sharedUsers.tripId, shareEntry.tripId), eq(sharedUsers.userId, userId));
 
     if (!exist.length) {
       // 第一次存取 → 加入共享清單
@@ -186,7 +186,6 @@ const handleShareToken = async (req, res) => {
         tripId: shareEntry.tripId,
         userId,
         role: shareEntry.permission,
-        addedBy: null, // 無 inviter，因為是透過連結
       });
     }
 
@@ -198,7 +197,12 @@ const handleShareToken = async (req, res) => {
     });
   } catch (err) {
     console.error('處理分享連結錯誤：', err);
-    return res.status(500).json({ success: false });
+    return res.status(500).json({
+      success: false,
+      message: '伺服器錯誤',
+      error: err.message,
+      stack: err.stack,
+    });
   }
 };
 
@@ -249,7 +253,7 @@ const getMyTripsAndShared = async (req, res) => {
             createdAt: schedules.createdAt,
           })
           .from(schedules)
-          .where(schedules.id.in(sharedTripIds))
+          .where(inArray(schedules.id, sharedTripIds))
           .orderBy(desc(schedules.createdAt))
       : [];
     console.log('Shared trips:', sharedTrips);
@@ -268,6 +272,17 @@ const getMyTripsAndShared = async (req, res) => {
 const getTripPermission = async (req, res) => {
   const userId = req.user.id;
   const tripId = parseInt(req.params.id);
+  const tripIdParam = req.params.id;
+
+  console.log('Received tripIdParam:', tripIdParam);
+  console.log('Parsed tripId:', tripId);
+  if (isNaN(tripId)) {
+    return res.status(400).json({
+      success: false,
+      message: '無效的行程ID',
+      error: `Invalid tripId: ${tripIdParam}`, // 把原始的參數也印出來
+    });
+  }
 
   try {
     const trip = await db.select().from(schedules).where(eq(schedules.id, tripId));
@@ -285,7 +300,7 @@ const getTripPermission = async (req, res) => {
     const shared = await db
       .select()
       .from(sharedUsers)
-      .where(eq(sharedUsers.tripId, tripId).and(eq(sharedUsers.userId, userId)));
+      .where(eq(sharedUsers.tripId, tripId), eq(sharedUsers.userId, userId));
 
     if (shared.length > 0) {
       return res.status(200).json({ success: true, role: shared[0].role }); // viewer 或 editor
@@ -295,7 +310,7 @@ const getTripPermission = async (req, res) => {
     return res.status(403).json({ success: false, message: '無權限' });
   } catch (err) {
     console.error('取得行程權限失敗：', err);
-    return res.status(500).json({ success: false });
+    return res.status(500).json({ success: false, error: err.message, stack: err.stack });
   }
 };
 

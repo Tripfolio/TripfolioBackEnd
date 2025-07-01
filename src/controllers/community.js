@@ -44,6 +44,7 @@ async function getAllCommunityPosts(req, res) {
     const allPosts = await db
       .select({
         postId: posts.id,
+        memberId: posts.memberId, 
         content: posts.content,
         coverURL: posts.coverURL,
         createdAt: posts.createdAt,

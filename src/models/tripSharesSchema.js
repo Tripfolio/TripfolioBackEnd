@@ -7,7 +7,7 @@ const tripShares = pgTable('trip_shares', {
   id: serial('id').primaryKey(),
   tripId: integer('trip_id')
     .notNull()
-    .references(() => schedules.id),
+    .references(() => schedules.id, { onDelete: 'cascade' }),
   token: varchar('token').notNull().unique(), // 分享連結唯一 token（由 UUID/JWT 產生）
   permission: varchar('permission').notNull(), // 'viewer' 或 'editor'
   expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
@@ -19,12 +19,12 @@ const sharedUsers = pgTable('shared_users', {
   id: serial('id').primaryKey(),
   tripId: integer('trip_id')
     .notNull()
-    .references(() => schedules.id),
+    .references(() => schedules.id, { onDelete: 'cascade' }),
   userId: integer('user_id')
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: 'cascade' }),
   role: varchar('role').notNull(), // 'viewer' 或 'editor'
-  addedBy: integer('added_by').references(() => users.id),
+  addedBy: integer('added_by').references(() => users.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 

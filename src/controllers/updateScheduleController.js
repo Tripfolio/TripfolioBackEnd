@@ -139,22 +139,21 @@ const addDayToSchedule = async (req, res) => {
 
 const getTravelScheduleById = async (req, res) => {
   const { id } = req.params;
-  const memberId = req.user?.id;
+  // const memberId = req.user?.id;
 
-  if (!memberId) {
-    return res.status(HTTP.FORBIDDEN).json({ message: 'JWT無效或未登入' });
-  }
+  // if (!memberId) {
+  //   return res.status(HTTP.FORBIDDEN).json({ message: 'JWT無效或未登入' });
+  // }
 
   try {
     const schedule = await db
       .select()
       .from(schedules)
       .where(eq(schedules.id, Number(id)))
-      .where(eq(schedules.userId, memberId))
       .limit(1);
 
     if (!schedule || schedule.length === 0) {
-      return res.status(HTTP.NOT_FOUND).json({ message: '找不到行程或無權限' });
+      return res.status(HTTP.NOT_FOUND).json({ message: '找不到行程' });
     }
 
     return res.json(schedule[0]);

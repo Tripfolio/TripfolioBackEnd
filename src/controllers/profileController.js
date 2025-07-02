@@ -18,6 +18,7 @@ exports.getProfile = async (req, res) => {
       email: users.email,
       birthday: users.birthday,
       avatar: users.avatar,
+      isPremium: users.isPremium,
     })
     .from(users)
     .where(eq(users.id, userId));

@@ -1,4 +1,4 @@
-const { pgTable, serial, text, varchar, date, timestamp, integer } = require('drizzle-orm/pg-core');
+const { pgTable, serial, varchar, date, timestamp, integer } = require('drizzle-orm/pg-core');
 
 const schedules = pgTable('schedules', {
   id: serial('id').primaryKey(),
@@ -12,3 +12,4 @@ const schedules = pgTable('schedules', {
 });
 
 module.exports = { schedules };
+

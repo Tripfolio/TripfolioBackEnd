@@ -1,41 +1,34 @@
-const { pgTable, serial, varchar, integer, timestamp } = require('drizzle-orm/pg-core');
-const { relations } = require('drizzle-orm');
+const { pgTable, serial, integer, varchar, timestamp } = require('drizzle-orm/pg-core');
+const { schedules } = require('./scheduleSchema');
 const { users } = require('./usersSchema');
-const { schedules: trips } = require('./scheduleSchema');
 
+// 行程分享連結 table
 const tripShares = pgTable('trip_shares', {
   id: serial('id').primaryKey(),
-
   tripId: integer('trip_id')
     .notNull()
-    .references(() => trips.id, { onDelete: 'cascade' }),
-
-  sharedWithUserId: integer('shared_with_user_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-
-  sharedByUserId: integer('shared_by_user_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-
-  permission: varchar('permission').notNull(),
-  token: varchar('token').notNull().unique(),
-
-  createdAt: timestamp('created_at').defaultNow(),
+    .references(() => schedules.id, { onDelete: 'cascade' }),
+  token: varchar('token').notNull().unique(), // 分享連結唯一 token（由 UUID/JWT 產生）
+  permission: varchar('permission').notNull(), // 'viewer' 或 'editor'
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
-const tripSharesRelations = relations(tripShares, ({ one }) => ({
-  user: one(users, {
-    fields: [tripShares.sharedWithUserId],
-    references: [users.id],
-  }),
-  trip: one(trips, {
-    fields: [tripShares.tripId],
-    references: [trips.id],
-  }),
-}));
+// 被共享者的權限記錄 table
+const sharedUsers = pgTable('shared_users', {
+  id: serial('id').primaryKey(),
+  tripId: integer('trip_id')
+    .notNull()
+    .references(() => schedules.id, { onDelete: 'cascade' }),
+  userId: integer('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  role: varchar('role').notNull(), // 'viewer' 或 'editor'
+  addedBy: integer('added_by').references(() => users.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
 
 module.exports = {
   tripShares,
-  tripSharesRelations,
+  sharedUsers,
 };

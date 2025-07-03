@@ -101,7 +101,7 @@ exports.linePayConfirmCallback = async (req, res) => {
   const { transactionId, orderId, userId } = req.query
 
   if (!transactionId || !orderId || !userId) {
-    return res.redirect(`${FRONTEND_URL}/linepay-fail`)
+    return res.redirect(`${FRONTEND_URL}/schedule?linepayResult=fail`)
   }
 
   try {
@@ -137,12 +137,12 @@ exports.linePayConfirmCallback = async (req, res) => {
         .set({ isPremium: true })
         .where(eq(users.id, parseInt(userId)))
 
-      return res.redirect(`${FRONTEND_URL}/linepay-success`)
+      return res.redirect(`${FRONTEND_URL}/schedule?linepayResult=success`)
     } else {
-      return res.redirect(`${FRONTEND_URL}/linepay-fail`)
+      return res.redirect(`${FRONTEND_URL}/schedule?linepayResult=fail`)
     }
   } catch (err) {
-    return res.redirect(`${FRONTEND_URL}/linepay-fail`)
+    return res.redirect(`${FRONTEND_URL}/schedule?linepayResult=fail`)
   }
 }
 

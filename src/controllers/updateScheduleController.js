@@ -1,5 +1,6 @@
 const { db } = require('../config/db');
 const { schedules } = require('../models/scheduleSchema');
+const { sharedUsers } = require('../models/tripSharesSchema');
 const { eq } = require('drizzle-orm');
 const s3 = require('../config/s3');
 const HTTP = require('../constants/httpStatus');
@@ -156,12 +157,25 @@ const getTravelScheduleById = async (req, res) => {
       return res.status(HTTP.NOT_FOUND).json({ message: '找不到行程' });
     }
 
-    // 權限檢查：只能看自己的
-    if (schedule[0].userId !== memberId) {
-      return res.status(HTTP.FORBIDDEN).json({ message: '無權限查看此行程' });
+    const trip = schedule[0];
+
+    // 如果是建立者 → 允許
+    if (trip.userId === memberId) {
+      return res.json(trip);
     }
 
-    return res.json(schedule[0]);
+    // 否則，檢查是否是被共享者
+    const shared = await db
+      .select()
+      .from(sharedUsers)
+      .where(eq(sharedUsers.tripId, trip.id))
+      .where(eq(sharedUsers.userId, memberId));
+
+    if (shared.length > 0) {
+      return res.json(trip);
+    }
+
+    return res.status(HTTP.FORBIDDEN).json({ message: '你沒有瀏覽此行程的權限' });
   } catch (error) {
     return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
       message: '獲取單一行程失敗',
